@@ -5,6 +5,7 @@ import AuthRoutes from "./routes/AuthRoutes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import {connectDB} from "./config/db.js";
+import PetRoutes from "./routes/PetRoutes.js";
 const app = express();
 
 connectDB();
@@ -23,5 +24,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/auth", AuthRoutes);
+app.use("/api/pets", PetRoutes);
 
 export default app;
