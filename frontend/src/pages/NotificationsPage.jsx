@@ -79,7 +79,6 @@ export default function NotificationsPage() {
               ["followUps", "Follow-up checkups"],
               ["appointmentReminders", "Appointment reminders"],
               ["email", "Email updates"],
-              ["sms", "SMS updates"],
             ].map(([key, label]) => (
               <button
                 key={key}

@@ -16,7 +16,7 @@ const navigation = [
   {to: "/dashboard", label: "Dashboard", icon: SparklesIcon},
   {to: "/adoption", label: "Online Adoption", icon: HeartIcon},
   {to: "/register-pet", label: "Register Pet", icon: ShieldIcon},
-  {to: "/matching", label: "AI Matching", icon: SparklesIcon},
+  {to: "/matching", label: "Pet Matching", icon: SparklesIcon},
   {to: "/appointments", label: "Appointments", icon: CalendarIcon},
   {to: "/my-pets", label: "My Pets", icon: StethoscopeIcon},
   {to: "/notifications", label: "Reminders", icon: BellIcon},
@@ -61,16 +61,6 @@ export default function AppLayout() {
               </NavLink>
             ))}
           </nav>
-
-          <div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-4">
-            <p className="text-sm font-medium text-slate-200">Quick action</p>
-            <p className="mt-1 text-sm leading-6 text-slate-300">
-              Jump straight to admin page.
-            </p>
-            <Button className="mt-3 w-full bg-yellow-500 text-slate-950 hover:bg-yellow-600" onClick={() => navigate("/admin")}>
-              Go to Admin
-            </Button>
-          </div>
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col">
@@ -91,7 +81,7 @@ export default function AppLayout() {
               <div className="hidden items-center gap-2 md:flex">
                 <Badge variant="primary" className="inline-flex">
                   {isAuthenticated
-                    ? `${currentUser?.name}${currentUser?.role === "pet_owner" ? " · Pet owner" : " · Adopter"}`
+                    ? `${currentUser?.name}${currentUser?.role === "admin" ? " · Admin" : currentUser?.role === "pet_owner" ? " · Pet owner" : " · Adopter"}`
                     : "Guest"}
                 </Badge>
                 {isAuthenticated ? (

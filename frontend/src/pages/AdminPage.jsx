@@ -1,46 +1,70 @@
-import { Link } from "react-router-dom";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { availablePets, reminderItems, screeningSteps, services } from "../data/mockData";
-import { BellIcon, CalendarIcon, HeartIcon, ShieldIcon, SparklesIcon, StethoscopeIcon } from "../components/icons";
+import {Link} from "react-router-dom";
+import {Badge} from "../components/ui/badge";
+import {Button} from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import {
+  availablePets,
+  reminderItems,
+  screeningSteps,
+  services,
+} from "../data/mockData";
+import {
+  BellIcon,
+  CalendarIcon,
+  HeartIcon,
+  ShieldIcon,
+  SparklesIcon,
+  StethoscopeIcon,
+} from "../components/icons";
 
 const stats = [
-  { label: "Total Pets", value: availablePets.length, note: "Ready to browse now", icon: HeartIcon },
-  { label: "Adopted Pets", value: services.length, note: "Consultation and Pakapon", icon: CalendarIcon },
-  { label: "Total Users", value: reminderItems.length, note: "Vaccinations and follow-ups", icon: BellIcon },
-  { label: "Appointments Today", value: availablePets.length, note: "Ready to browse now", icon: HeartIcon },
-  { label: "Pending Appointments", value: services.length, note: "Consultation and Pakapon", icon: CalendarIcon },
-  { label: "Match Success Rate", value: "99%", note: "Vaccinations and follow-ups", icon: BellIcon },
-];
-
-const shortcuts = [
   {
-    title: "Online adoption",
-    text: "Browse pets and submit an application.",
-    to: "/adoption",
+    label: "Total Pets",
+    value: availablePets.length,
+    note: "Ready to browse now",
+    icon: HeartIcon,
   },
   {
-    title: "AI matching",
-    text: "Answer a short questionnaire for recommendations.",
-    to: "/matching",
+    label: "Adopted Pets",
+    value: services.length,
+    note: "Consultation and Pakapon",
+    icon: CalendarIcon,
   },
   {
-    title: "Appointments",
-    text: "Pick a service and reserve a time.",
-    to: "/appointments",
+    label: "Total Users",
+    value: reminderItems.length,
+    note: "Vaccinations and follow-ups",
+    icon: BellIcon,
   },
   {
-    title: "My pets",
-    text: "Open health records and treatment notes.",
-    to: "/my-pets",
+    label: "Appointments Today",
+    value: availablePets.length,
+    note: "Ready to browse now",
+    icon: HeartIcon,
+  },
+  {
+    label: "Pending Appointments",
+    value: services.length,
+    note: "Consultation and Pakapon",
+    icon: CalendarIcon,
+  },
+  {
+    label: "Match Success Rate",
+    value: "99%",
+    note: "Vaccinations and follow-ups",
+    icon: BellIcon,
   },
 ];
 
 export default function AdminPage() {
   return (
     <div className="space-y-6">
-
       <div className="grid gap-4 md:grid-cols-3">
         {stats.map((stat) => (
           <Card key={stat.label} className="overflow-hidden">
@@ -62,56 +86,59 @@ export default function AdminPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         <Card>
-            <CardHeader>
-                <Badge variant="soft" className="w-fit">
-                Available Pets for Adoption
-                </Badge>
-                <CardTitle className="text-2xl">Pets Ready for Adoption 🐾</CardTitle>
-                <CardDescription className="max-w-2xl">
-                Browse pets that are currently available and waiting for a new home.
-                </CardDescription>
-            </CardHeader>
+          <CardHeader>
+            <Badge variant="soft" className="w-fit">
+              Available Pets for Adoption
+            </Badge>
+            <CardTitle className="text-2xl">
+              Pets Ready for Adoption 🐾
+            </CardTitle>
+            <CardDescription className="max-w-2xl">
+              Browse pets that are currently available and waiting for a new
+              home.
+            </CardDescription>
+          </CardHeader>
 
-            <CardContent className="grid gap-3 sm:grid-cols-1">
-                {availablePets.length === 0 ? (
-                <p className="text-slate-500">No pets available right now.</p>
-                ) : (
-                availablePets.map((pet) => (
-                    <div
-                    key={pet._id}
-                    className="rounded-2xl border justify-between items-start flex border-slate-200 bg-white p-4 transition hover:border-emerald-200 hover:bg-emerald-50/40"
-                    >
-                        <div className="flex flex-col gap-2">
-                            <p className="font-medium text-slate-950">
-                                {pet.name}
-                            </p>
+          <CardContent className="grid gap-3 sm:grid-cols-1">
+            {availablePets.length === 0 ? (
+              <p className="text-slate-500">No pets available right now.</p>
+            ) : (
+              availablePets.map((pet) => (
+                <div
+                  key={pet._id}
+                  className="rounded-2xl border justify-between items-start flex border-slate-200 bg-white p-4 transition hover:border-emerald-200 hover:bg-emerald-50/40"
+                >
+                  <div className="flex flex-col gap-2">
+                    <p className="font-medium text-slate-950">{pet.name}</p>
 
-                            <p className="text-sm text-slate-600">
-                                 {pet.breed}
-                            </p>
-                        </div>
-                    
-                        <div>
-                            <div className="mt-1 text-sm text-emerald-700 bg-green-100 rounded-full px-3">
-                                {pet.age}
-                            </div>
-                        </div>
+                    <p className="text-sm text-slate-600">{pet.breed}</p>
+                  </div>
 
+                  <div>
+                    <div className="mt-1 text-sm text-emerald-700 bg-green-100 rounded-full px-3">
+                      {pet.age}
                     </div>
-                ))
-                )}
-            </CardContent>
+                  </div>
+                </div>
+              ))
+            )}
+          </CardContent>
         </Card>
 
         <div className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>Upcoming Appointments Today</CardTitle>
-              <CardDescription>Upcoming vaccinations, follow-ups, and appointment reminders.</CardDescription>
+              <CardDescription>
+                Upcoming vaccinations, follow-ups, and appointment reminders.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {reminderItems.map((item) => (
-                <div key={item.title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div
+                  key={item.title}
+                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                >
                   <div className="flex items-center justify-between gap-3">
                     <p className="font-medium text-slate-950">{item.title}</p>
                     <Badge
@@ -126,7 +153,9 @@ export default function AdminPage() {
                       {item.tone}
                     </Badge>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">{item.detail}</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    {item.detail}
+                  </p>
                 </div>
               ))}
             </CardContent>
@@ -135,7 +164,9 @@ export default function AdminPage() {
           <Card>
             <CardHeader>
               <CardTitle>Screening status</CardTitle>
-              <CardDescription>Adoption applications begin as pending and update after review.</CardDescription>
+              <CardDescription>
+                Adoption applications begin as pending and update after review.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {screeningSteps.slice(0, 3).map((step, index) => (
@@ -148,11 +179,17 @@ export default function AdminPage() {
                       {index + 1}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-slate-950">{step.label}</p>
+                      <p className="text-sm font-medium text-slate-950">
+                        {step.label}
+                      </p>
                       <p className="text-xs text-slate-500">{step.date}</p>
                     </div>
                   </div>
-                  <Badge variant={step.status === "Complete" ? "primary" : "default"}>{step.status}</Badge>
+                  <Badge
+                    variant={step.status === "Complete" ? "primary" : "default"}
+                  >
+                    {step.status}
+                  </Badge>
                 </div>
               ))}
             </CardContent>
@@ -173,4 +210,3 @@ export default function AdminPage() {
     </div>
   );
 }
-

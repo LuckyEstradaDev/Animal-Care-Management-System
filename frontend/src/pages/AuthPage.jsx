@@ -29,9 +29,13 @@ export default function AuthPage() {
   const navigate = useNavigate();
   const { login, register, currentUser } = useAuth();
 
+  const getRedirectPath = (role) => {
+    return role === "admin" ? "/admin" : "/dashboard";
+  };
+
   useEffect(() => {
     if (currentUser) {
-      navigate("/dashboard", { replace: true });
+      navigate(getRedirectPath(currentUser.role), { replace: true });
     }
   }, [currentUser, navigate]);
 
@@ -47,8 +51,8 @@ export default function AuthPage() {
     setSuccess("");
 
     try {
-      login(loginForm.email, loginForm.password);
-      navigate("/dashboard", { replace: true });
+      const user = login(loginForm.email, loginForm.password);
+      navigate(getRedirectPath(user.role), { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed.");
     }
@@ -60,14 +64,14 @@ export default function AuthPage() {
     setSuccess("");
 
     try {
-      register({
+      const user = register({
         name: registerForm.name,
         email: registerForm.email,
         password: registerForm.password,
         role: registerForm.role,
       });
       setSuccess("Account created successfully. Redirecting to the dashboard.");
-      navigate("/dashboard", { replace: true });
+      navigate(getRedirectPath(user.role), { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed.");
     }
@@ -89,8 +93,8 @@ export default function AuthPage() {
           <CardContent className="space-y-4">
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="text-sm font-medium text-slate-950">Demo credentials</p>
-              <p className="mt-1 text-sm text-slate-600">Email: demo@animalcare.test</p>
-              <p className="text-sm text-slate-600">Password: demo123</p>
+              <p className="mt-1 text-sm text-slate-600">User: demo@animalcare.test / demo123</p>
+              <p className="text-sm text-slate-600">Admin: admin@animalcare.test / admin123</p>
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">

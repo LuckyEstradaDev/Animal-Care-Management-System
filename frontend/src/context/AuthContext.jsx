@@ -19,7 +19,15 @@ function readStoredUsers() {
 
   try {
     const raw = window.localStorage.getItem(USERS_KEY);
-    return raw ? JSON.parse(raw).map(normalizeUser) : defaultUsers.map(normalizeUser);
+    const stored = raw ? JSON.parse(raw).map(normalizeUser) : [];
+    // Always include default users
+    const allUsers = [...defaultUsers.map(normalizeUser)];
+    stored.forEach(user => {
+      if (!allUsers.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
+        allUsers.push(user);
+      }
+    });
+    return allUsers;
   } catch {
     return defaultUsers.map(normalizeUser);
   }
