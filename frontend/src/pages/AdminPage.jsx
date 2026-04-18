@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { PageHeader } from "../components/page-header";
 import { availablePets, reminderItems, screeningSteps, services } from "../data/mockData";
 import { BellIcon, CalendarIcon, HeartIcon, ShieldIcon, SparklesIcon, StethoscopeIcon } from "../components/icons";
 
@@ -41,12 +40,6 @@ const shortcuts = [
 export default function AdminPage() {
   return (
     <div className="space-y-6">
-      <PageHeader
-        eyebrow="Admin-side portal"
-        title="Welcome back, Admin!"
-        description="A cleaner central place for browsing pets, booking appointments, checking reminders, and reviewing health records."
-        
-      />
 
       <div className="grid gap-4 md:grid-cols-3">
         {stats.map((stat) => (
