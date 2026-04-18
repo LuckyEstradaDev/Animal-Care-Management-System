@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { useCallback } from "react";
-import { defaultUsers } from "../data/auth";
+import {createContext, useContext, useEffect, useMemo, useState} from "react";
+import {useCallback} from "react";
+import {defaultUsers} from "../data/auth";
 
 const USERS_KEY = "acm_users";
 const SESSION_KEY = "acm_session";
@@ -30,7 +30,7 @@ function readStoredSession() {
   }
 }
 
-export function AuthProvider({ children }) {
+export function AuthProvider({children}) {
   const [users, setUsers] = useState(readStoredUsers);
   const [currentUser, setCurrentUser] = useState(readStoredSession);
 
@@ -46,31 +46,41 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
-  const login = useCallback((email, password) => {
-    const user = users.find(
-      (entry) => entry.email.toLowerCase() === email.toLowerCase() && entry.password === password,
-    );
+  const login = useCallback(
+    (email, password) => {
+      const user = users.find(
+        (entry) =>
+          entry.email.toLowerCase() === email.toLowerCase() &&
+          entry.password === password,
+      );
 
-    if (!user) {
-      throw new Error("Invalid email or password.");
-    }
+      if (!user) {
+        throw new Error("Invalid email or password.");
+      }
 
-    setCurrentUser({ name: user.name, email: user.email });
-    return user;
-  }, [users]);
+      setCurrentUser({name: user.name, email: user.email});
+      return user;
+    },
+    [users],
+  );
 
-  const register = useCallback(({ name, email, password }) => {
-    const exists = users.some((entry) => entry.email.toLowerCase() === email.toLowerCase());
+  const register = useCallback(
+    ({name, email, password}) => {
+      const exists = users.some(
+        (entry) => entry.email.toLowerCase() === email.toLowerCase(),
+      );
 
-    if (exists) {
-      throw new Error("This email is already registered.");
-    }
+      if (exists) {
+        throw new Error("This email is already registered.");
+      }
 
-    const nextUser = { name, email, password };
-    setUsers((current) => [...current, nextUser]);
-    setCurrentUser({ name, email });
-    return nextUser;
-  }, [users]);
+      const nextUser = {name, email, password};
+      setUsers((current) => [...current, nextUser]);
+      setCurrentUser({name, email});
+      return nextUser;
+    },
+    [users],
+  );
 
   const logout = useCallback(() => {
     setCurrentUser(null);
