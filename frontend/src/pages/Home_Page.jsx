@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import NavigationBar from "../components/NavigationBar";
 
 const Home_Page = () => {
@@ -18,9 +19,18 @@ const Home_Page = () => {
           </p>
 
           <div className="mt-8 flex gap-4">
-            <button className="bg-emerald-600 text-white px-6 py-2 rounded-full hover:bg-emerald-700">
+            <Link
+              to="/auth?mode=register"
+              className="rounded-full bg-emerald-600 px-6 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+            >
               Get Started
-            </button>
+            </Link>
+            <Link
+              to="/auth?mode=login"
+              className="rounded-full border border-slate-200 bg-white px-6 py-2 text-sm font-medium text-slate-900 hover:bg-slate-50"
+            >
+              Login
+            </Link>
           </div>
         </div>
       </section>

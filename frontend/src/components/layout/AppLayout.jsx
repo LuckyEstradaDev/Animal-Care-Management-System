@@ -10,6 +10,7 @@ import {
   StethoscopeIcon,
 } from "../icons";
 import { cn } from "../../lib/cn";
+import { useAuth } from "../../context/AuthContext";
 
 const navigation = [
   { to: "/dashboard", label: "Dashboard", icon: SparklesIcon },
@@ -23,6 +24,7 @@ const navigation = [
 
 export default function AppLayout() {
   const navigate = useNavigate();
+  const { currentUser, logout, isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.12),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(251,191,36,0.12),_transparent_28%),linear-gradient(180deg,_#f8fafc_0%,_#eefaf4_100%)] text-slate-900">
@@ -87,9 +89,25 @@ export default function AppLayout() {
                 </div>
               </div>
 
-              <Badge variant="primary" className="hidden md:inline-flex">
-                Connected
-              </Badge>
+              <div className="hidden items-center gap-2 md:flex">
+                <Badge variant="primary" className="inline-flex">
+                  {isAuthenticated ? currentUser?.name : "Guest"}
+                </Badge>
+                {isAuthenticated ? (
+                  <Button variant="outline" size="sm" className="border-slate-200 bg-white" onClick={logout}>
+                    Logout
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-slate-200 bg-white"
+                    onClick={() => navigate("/auth?mode=login")}
+                  >
+                    Login
+                  </Button>
+                )}
+              </div>
             </div>
 
             <div className="mt-3 flex gap-2 overflow-x-auto pb-1 lg:hidden">
