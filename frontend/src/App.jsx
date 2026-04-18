@@ -8,6 +8,7 @@ import MyPetsPage from "./pages/MyPetsPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import ScreeningPage from "./pages/ScreeningPage";
 import AuthPage from "./pages/AuthPage";
+import PetRegistrationPage from "./pages/PetRegistrationPage";
 import Website from "./pages/Website_Page";
 import HomePage from "./pages/Home_Page";
 import AboutPage from "./pages/About_Page";
@@ -24,6 +25,7 @@ function App() {
           <Route index element={<Navigate to="/website" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="adoption" element={<AdoptionPage />} />
+          <Route path="register-pet" element={<PetRegistrationPage />} />
           <Route path="matching" element={<MatchingPage />} />
           <Route path="appointments" element={<AppointmentsPage />} />
           <Route path="my-pets" element={<MyPetsPage />} />

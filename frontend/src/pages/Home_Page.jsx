@@ -31,6 +31,12 @@ const Home_Page = () => {
             >
               Login
             </Link>
+            <Link
+              to="/register-pet"
+              className="rounded-full border border-emerald-200 bg-emerald-50 px-6 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-100"
+            >
+              Register Pet
+            </Link>
           </div>
         </div>
       </section>

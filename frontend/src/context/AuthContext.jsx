@@ -1,21 +1,27 @@
 /* eslint-disable react-refresh/only-export-components */
-import {createContext, useContext, useEffect, useMemo, useState} from "react";
-import {useCallback} from "react";
-import {defaultUsers} from "../data/auth";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { defaultUsers } from "../data/auth";
 
 const USERS_KEY = "acm_users";
 const SESSION_KEY = "acm_session";
 
 const AuthContext = createContext(null);
 
+function normalizeUser(user) {
+  return {
+    ...user,
+    role: user.role ?? "adopter",
+  };
+}
+
 function readStoredUsers() {
-  if (typeof window === "undefined") return defaultUsers;
+  if (typeof window === "undefined") return defaultUsers.map(normalizeUser);
 
   try {
     const raw = window.localStorage.getItem(USERS_KEY);
-    return raw ? JSON.parse(raw) : defaultUsers;
+    return raw ? JSON.parse(raw).map(normalizeUser) : defaultUsers.map(normalizeUser);
   } catch {
-    return defaultUsers;
+    return defaultUsers.map(normalizeUser);
   }
 }
 
@@ -24,13 +30,13 @@ function readStoredSession() {
 
   try {
     const raw = window.localStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return raw ? normalizeUser(JSON.parse(raw)) : null;
   } catch {
     return null;
   }
 }
 
-export function AuthProvider({children}) {
+export function AuthProvider({ children }) {
   const [users, setUsers] = useState(readStoredUsers);
   const [currentUser, setCurrentUser] = useState(readStoredSession);
 
@@ -58,14 +64,18 @@ export function AuthProvider({children}) {
         throw new Error("Invalid email or password.");
       }
 
-      setCurrentUser({name: user.name, email: user.email});
+      setCurrentUser({
+        name: user.name,
+        email: user.email,
+        role: user.role ?? "adopter",
+      });
       return user;
     },
     [users],
   );
 
   const register = useCallback(
-    ({name, email, password}) => {
+    ({ name, email, password, role = "adopter" }) => {
       const exists = users.some(
         (entry) => entry.email.toLowerCase() === email.toLowerCase(),
       );
@@ -74,9 +84,9 @@ export function AuthProvider({children}) {
         throw new Error("This email is already registered.");
       }
 
-      const nextUser = {name, email, password};
+      const nextUser = { name, email, password, role };
       setUsers((current) => [...current, nextUser]);
-      setCurrentUser({name, email});
+      setCurrentUser({ name, email, role });
       return nextUser;
     },
     [users],

@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Badge } from "../components/ui/badge";
+import {useMemo, useState} from "react";
+import {Badge} from "../components/ui/badge";
 import {
   Card,
   CardContent,
@@ -7,9 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { PageHeader } from "../components/page-header";
-import { petProfiles } from "../data/mockData";
-import { StethoscopeIcon } from "../components/icons";
+import {petProfiles} from "../data/mockData";
+import {StethoscopeIcon} from "../components/icons";
 
 export default function MyPetsPage() {
   const [selectedPetId, setSelectedPetId] = useState(petProfiles[0].id);
@@ -21,12 +20,6 @@ export default function MyPetsPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader
-        eyebrow="2.4 Pet Health Digital Profile"
-        title="Review vaccination records, medical history, and treatments"
-        description="Select a pet to open the digital profile and track its care details in one place."
-      />
-
       <div className="grid gap-6 xl:grid-cols-[0.78fr_1.22fr]">
         <Card>
           <CardHeader>
@@ -36,34 +29,36 @@ export default function MyPetsPage() {
           <CardContent className="space-y-3">
             {petProfiles.map((pet) => {
               const active = pet.id === selectedPetId;
-                return (
-                  <button
-                    key={pet.id}
-                    type="button"
-                    onClick={() => setSelectedPetId(pet.id)}
-                    className={`w-full rounded-3xl border p-4 text-left transition hover:-translate-y-0.5 ${
-                      active
-                        ? "border-emerald-400 bg-emerald-50 shadow-lg shadow-emerald-950/10"
-                        : "border-slate-200 bg-white hover:bg-slate-50"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={pet.imageUrl}
-                        alt={pet.name}
-                        className="h-14 w-14 rounded-2xl object-cover"
-                        loading="lazy"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <p className="text-lg font-semibold text-slate-950">{pet.name}</p>
-                        <p className="text-sm text-slate-600">
-                          {pet.species} | {pet.breed}
-                        </p>
-                      </div>
-                      <Badge variant={active ? "primary" : "default"}>Open</Badge>
+              return (
+                <button
+                  key={pet.id}
+                  type="button"
+                  onClick={() => setSelectedPetId(pet.id)}
+                  className={`w-full rounded-3xl border p-4 text-left transition hover:-translate-y-0.5 ${
+                    active
+                      ? "border-emerald-400 bg-emerald-50 shadow-lg shadow-emerald-950/10"
+                      : "border-slate-200 bg-white hover:bg-slate-50"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={pet.imageUrl}
+                      alt={pet.name}
+                      className="h-14 w-14 rounded-2xl object-cover"
+                      loading="lazy"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-lg font-semibold text-slate-950">
+                        {pet.name}
+                      </p>
+                      <p className="text-sm text-slate-600">
+                        {pet.species} | {pet.breed}
+                      </p>
                     </div>
-                    <div className="mt-4 flex items-center gap-3 text-sm text-slate-600">
-                      <StethoscopeIcon className="h-4 w-4" />
+                    <Badge variant={active ? "primary" : "default"}>Open</Badge>
+                  </div>
+                  <div className="mt-4 flex items-center gap-3 text-sm text-slate-600">
+                    <StethoscopeIcon className="h-4 w-4" />
                     Next visit: {pet.nextVisit}
                   </div>
                 </button>
@@ -87,16 +82,28 @@ export default function MyPetsPage() {
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-3">
               <div className="rounded-3xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Vaccinations</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{selectedPet.vaccinationRecords.length}</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                  Vaccinations
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                  {selectedPet.vaccinationRecords.length}
+                </p>
               </div>
               <div className="rounded-3xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">History notes</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{selectedPet.medicalHistory.length}</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                  History notes
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                  {selectedPet.medicalHistory.length}
+                </p>
               </div>
               <div className="rounded-3xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Treatments</p>
-                <p className="mt-2 text-2xl font-semibold text-slate-950">{selectedPet.treatments.length}</p>
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                  Treatments
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                  {selectedPet.treatments.length}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -108,10 +115,19 @@ export default function MyPetsPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {selectedPet.vaccinationRecords.map((record) => (
-                  <div key={record.label} className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div
+                    key={record.label}
+                    className="rounded-2xl border border-slate-200 bg-white p-4"
+                  >
                     <div className="flex items-center justify-between gap-3">
-                      <p className="font-medium text-slate-950">{record.label}</p>
-                      <Badge variant={record.status === "Upcoming" ? "warning" : "primary"}>
+                      <p className="font-medium text-slate-950">
+                        {record.label}
+                      </p>
+                      <Badge
+                        variant={
+                          record.status === "Upcoming" ? "warning" : "primary"
+                        }
+                      >
                         {record.status}
                       </Badge>
                     </div>
@@ -127,7 +143,10 @@ export default function MyPetsPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {selectedPet.medicalHistory.map((item) => (
-                  <div key={item} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700"
+                  >
                     {item}
                   </div>
                 ))}
@@ -140,7 +159,10 @@ export default function MyPetsPage() {
               </CardHeader>
               <CardContent className="space-y-3">
                 {selectedPet.treatments.map((item) => (
-                  <div key={item} className="rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-700">
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-700"
+                  >
                     {item}
                   </div>
                 ))}

@@ -1,14 +1,19 @@
-import { useMemo, useState } from "react";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Dialog } from "../components/ui/dialog";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Select } from "../components/ui/select";
-import { Textarea } from "../components/ui/textarea";
-import { PageHeader } from "../components/page-header";
-import { availablePets } from "../data/mockData";
+import {useMemo, useState} from "react";
+import {Badge} from "../components/ui/badge";
+import {Button} from "../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import {Dialog} from "../components/ui/dialog";
+import {Input} from "../components/ui/input";
+import {Label} from "../components/ui/label";
+import {Select} from "../components/ui/select";
+import {Textarea} from "../components/ui/textarea";
+import {availablePets} from "../data/mockData";
 
 const initialForm = {
   fullName: "",
@@ -53,16 +58,12 @@ export default function AdoptionPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        eyebrow="2.2 Online Adoption"
-        title="Browse pets and apply in a simple modal"
-        description="Click any pet card to open the application form. The page stays clean while the modal handles the details."
-      />
-
       <Card>
         <CardHeader>
           <CardTitle>Available pets</CardTitle>
-          <CardDescription>Click a card to open the application modal.</CardDescription>
+          <CardDescription>
+            Click a card to open the application modal.
+          </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {availablePets.map((pet) => (
@@ -86,14 +87,18 @@ export default function AdoptionPage() {
               <div className="space-y-3 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-950">{pet.name}</h3>
+                    <h3 className="text-lg font-semibold text-slate-950">
+                      {pet.name}
+                    </h3>
                     <p className="text-sm text-slate-600">
                       {pet.species} | {pet.breed}
                     </p>
                   </div>
                   <Badge variant="default">{pet.energy}</Badge>
                 </div>
-                <p className="text-sm leading-6 text-slate-600">{pet.description}</p>
+                <p className="text-sm leading-6 text-slate-600">
+                  {pet.description}
+                </p>
               </div>
             </button>
           ))}
@@ -112,17 +117,28 @@ export default function AdoptionPage() {
           submittedApplication ? (
             <div className="grid gap-6 md:grid-cols-[0.95fr_1.05fr]">
               <div className="overflow-hidden rounded-3xl bg-slate-50">
-                <img src={activePet.imageUrl} alt={activePet.name} className="h-full w-full object-cover" />
+                <img
+                  src={activePet.imageUrl}
+                  alt={activePet.name}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div className="space-y-4">
                 <Badge variant="primary">{submittedApplication.status}</Badge>
-                <h3 className="text-2xl font-semibold text-slate-950">Application submitted</h3>
+                <h3 className="text-2xl font-semibold text-slate-950">
+                  Application submitted
+                </h3>
                 <p className="text-sm leading-6 text-slate-600">
-                  Your application for {submittedApplication.pet} has been received and is waiting for admin review.
+                  Your application for {submittedApplication.pet} has been
+                  received and is waiting for admin review.
                 </p>
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="text-sm font-medium text-slate-950">{submittedApplication.id}</p>
-                  <p className="text-sm text-slate-600">Submitted {submittedApplication.submittedAt}</p>
+                  <p className="text-sm font-medium text-slate-950">
+                    {submittedApplication.id}
+                  </p>
+                  <p className="text-sm text-slate-600">
+                    Submitted {submittedApplication.submittedAt}
+                  </p>
                 </div>
                 <Button className="w-full" onClick={closeModal}>
                   Close
@@ -133,19 +149,27 @@ export default function AdoptionPage() {
             <div className="grid gap-6 md:grid-cols-[0.95fr_1.05fr]">
               <div className="space-y-4">
                 <div className="overflow-hidden rounded-3xl bg-slate-100">
-                  <img src={activePet.imageUrl} alt={activePet.name} className="h-72 w-full object-cover" />
+                  <img
+                    src={activePet.imageUrl}
+                    alt={activePet.name}
+                    className="h-72 w-full object-cover"
+                  />
                 </div>
                 <div className="space-y-3 rounded-3xl border border-slate-200 bg-slate-50 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h3 className="text-2xl font-semibold text-slate-950">{activePet.name}</h3>
+                      <h3 className="text-2xl font-semibold text-slate-950">
+                        {activePet.name}
+                      </h3>
                       <p className="text-sm text-slate-600">
                         {activePet.species} | {activePet.breed}
                       </p>
                     </div>
                     <Badge variant="default">{activePet.energy}</Badge>
                   </div>
-                  <p className="text-sm leading-6 text-slate-600">{activePet.idealHome}</p>
+                  <p className="text-sm leading-6 text-slate-600">
+                    {activePet.idealHome}
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {activePet.compatibility.map((item) => (
                       <Badge key={item} variant="default">
@@ -164,7 +188,9 @@ export default function AdoptionPage() {
                       <Input
                         id="fullName"
                         value={form.fullName}
-                        onChange={(event) => setForm({ ...form, fullName: event.target.value })}
+                        onChange={(event) =>
+                          setForm({...form, fullName: event.target.value})
+                        }
                         placeholder="Jane Tan"
                         required
                       />
@@ -174,7 +200,9 @@ export default function AdoptionPage() {
                       <Input
                         id="phone"
                         value={form.phone}
-                        onChange={(event) => setForm({ ...form, phone: event.target.value })}
+                        onChange={(event) =>
+                          setForm({...form, phone: event.target.value})
+                        }
                         placeholder="+65 9123 4567"
                         required
                       />
@@ -187,7 +215,9 @@ export default function AdoptionPage() {
                       id="email"
                       type="email"
                       value={form.email}
-                      onChange={(event) => setForm({ ...form, email: event.target.value })}
+                      onChange={(event) =>
+                        setForm({...form, email: event.target.value})
+                      }
                       placeholder="jane@example.com"
                       required
                     />
@@ -199,7 +229,9 @@ export default function AdoptionPage() {
                       <Select
                         id="homeType"
                         value={form.homeType}
-                        onChange={(event) => setForm({ ...form, homeType: event.target.value })}
+                        onChange={(event) =>
+                          setForm({...form, homeType: event.target.value})
+                        }
                       >
                         <option>Apartment</option>
                         <option>House</option>
@@ -212,7 +244,9 @@ export default function AdoptionPage() {
                       <Select
                         id="experience"
                         value={form.experience}
-                        onChange={(event) => setForm({ ...form, experience: event.target.value })}
+                        onChange={(event) =>
+                          setForm({...form, experience: event.target.value})
+                        }
                       >
                         <option>First-time adopter</option>
                         <option>Some experience</option>
@@ -222,11 +256,15 @@ export default function AdoptionPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="message">Why do you want to adopt {activePet.name}?</Label>
+                    <Label htmlFor="message">
+                      Why do you want to adopt {activePet.name}?
+                    </Label>
                     <Textarea
                       id="message"
                       value={form.message}
-                      onChange={(event) => setForm({ ...form, message: event.target.value })}
+                      onChange={(event) =>
+                        setForm({...form, message: event.target.value})
+                      }
                       placeholder="Tell us about your home, routine, and the companion you are looking for."
                     />
                   </div>
@@ -235,7 +273,12 @@ export default function AdoptionPage() {
                     <Button type="submit" className="flex-1">
                       Submit application
                     </Button>
-                    <Button type="button" variant="outline" className="border-slate-200 bg-white" onClick={closeModal}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="border-slate-200 bg-white"
+                      onClick={closeModal}
+                    >
                       Cancel
                     </Button>
                   </div>

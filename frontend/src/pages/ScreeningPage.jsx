@@ -1,23 +1,24 @@
-import { Badge } from "../components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { PageHeader } from "../components/page-header";
-import { screeningSteps } from "../data/mockData";
-import { ShieldIcon } from "../components/icons";
+import {Badge} from "../components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
+import {screeningSteps} from "../data/mockData";
+import {ShieldIcon} from "../components/icons";
 
 export default function ScreeningPage() {
   return (
     <div className="space-y-8">
-      <PageHeader
-        eyebrow="2.6 Adoption Screening"
-        title="Track the application review outcome"
-        description="The screening flow shows the states a user can see after an adoption form is submitted: pending, approved, or rejected."
-      />
-
       <div className="grid gap-6 xl:grid-cols-[1.08fr_0.92fr]">
         <Card>
           <CardHeader>
             <CardTitle>Screening timeline</CardTitle>
-            <CardDescription>Follow the review journey from submission to final decision.</CardDescription>
+            <CardDescription>
+              Follow the review journey from submission to final decision.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -27,12 +28,18 @@ export default function ScreeningPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-sm font-semibold text-white">
                       {index + 1}
                     </div>
-                    {index < screeningSteps.length - 1 ? <div className="mt-2 h-full w-px bg-slate-200" /> : null}
+                    {index < screeningSteps.length - 1 ? (
+                      <div className="mt-2 h-full w-px bg-slate-200" />
+                    ) : null}
                   </div>
                   <div className="pb-5">
                     <div className="flex items-center gap-3">
                       <p className="font-medium text-slate-950">{step.label}</p>
-                      <Badge variant={step.status === "Complete" ? "primary" : "default"}>
+                      <Badge
+                        variant={
+                          step.status === "Complete" ? "primary" : "default"
+                        }
+                      >
                         {step.status}
                       </Badge>
                     </div>
@@ -50,7 +57,9 @@ export default function ScreeningPage() {
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <CardTitle>Possible outcomes</CardTitle>
-                  <CardDescription>Users should see one of these states after review.</CardDescription>
+                  <CardDescription>
+                    Users should see one of these states after review.
+                  </CardDescription>
                 </div>
                 <div className="rounded-2xl bg-emerald-50 p-2 text-emerald-700">
                   <ShieldIcon className="h-6 w-6" />
@@ -75,9 +84,14 @@ export default function ScreeningPage() {
                   tone: "default",
                 },
               ].map((item) => (
-                <div key={item.title} className="rounded-3xl border border-slate-200 bg-white p-5">
+                <div
+                  key={item.title}
+                  className="rounded-3xl border border-slate-200 bg-white p-5"
+                >
                   <Badge variant={item.tone}>{item.title}</Badge>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">{item.text}</p>
+                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                    {item.text}
+                  </p>
                 </div>
               ))}
             </CardContent>
@@ -87,12 +101,14 @@ export default function ScreeningPage() {
             <CardHeader>
               <CardTitle>What the user sees</CardTitle>
               <CardDescription>
-                A concise message, a status badge, and the application reference number.
+                A concise message, a status badge, and the application reference
+                number.
               </CardDescription>
             </CardHeader>
             <CardContent className="rounded-3xl bg-slate-50 p-5 text-sm leading-6 text-slate-600">
-              Once the adoption form is submitted, the status card on the adoption page updates immediately to
-              show pending review. Later, the same location can present approved or rejected states without
+              Once the adoption form is submitted, the status card on the
+              adoption page updates immediately to show pending review. Later,
+              the same location can present approved or rejected states without
               changing the layout.
             </CardContent>
           </Card>

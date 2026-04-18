@@ -16,6 +16,7 @@ const registerInitial = {
   name: "",
   email: "",
   password: "",
+  role: "adopter",
 };
 
 export default function AuthPage() {
@@ -63,6 +64,7 @@ export default function AuthPage() {
         name: registerForm.name,
         email: registerForm.email,
         password: registerForm.password,
+        role: registerForm.role,
       });
       setSuccess("Account created successfully. Redirecting to the dashboard.");
       navigate("/dashboard", { replace: true });
@@ -203,6 +205,18 @@ export default function AuthPage() {
                     placeholder="Create a password"
                     required
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="register-role">Account type</Label>
+                  <select
+                    id="register-role"
+                    value={registerForm.role}
+                    onChange={(event) => setRegisterForm({ ...registerForm, role: event.target.value })}
+                    className="flex h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  >
+                    <option value="adopter">Adopter</option>
+                    <option value="pet_owner">Pet owner</option>
+                  </select>
                 </div>
                 <Button type="submit" className="w-full">
                   Create account
