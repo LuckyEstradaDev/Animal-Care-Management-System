@@ -3,11 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import { PetRegistrationProvider } from './context/PetRegistrationContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
-      <App />
+      <PetRegistrationProvider>
+        <App />
+      </PetRegistrationProvider>
     </AuthProvider>
   </StrictMode>,
 )

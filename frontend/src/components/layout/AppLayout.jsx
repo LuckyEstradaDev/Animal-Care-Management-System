@@ -1,6 +1,6 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
+import {NavLink, Outlet, useNavigate} from "react-router-dom";
+import {Badge} from "../ui/badge";
+import {Button} from "../ui/button";
 import {
   BellIcon,
   CalendarIcon,
@@ -9,40 +9,37 @@ import {
   SparklesIcon,
   StethoscopeIcon,
 } from "../icons";
-import { cn } from "../../lib/cn";
-import { useAuth } from "../../context/AuthContext";
+import {cn} from "../../lib/cn";
+import {useAuth} from "../../context/AuthContext";
 
 const navigation = [
-  { to: "/dashboard", label: "Dashboard", icon: SparklesIcon },
-  { to: "/adoption", label: "Online Adoption", icon: HeartIcon },
-  { to: "/matching", label: "AI Matching", icon: SparklesIcon },
-  { to: "/appointments", label: "Appointments", icon: CalendarIcon },
-  { to: "/my-pets", label: "My Pets", icon: StethoscopeIcon },
-  { to: "/notifications", label: "Reminders", icon: BellIcon },
-  { to: "/adoption-status", label: "Screening", icon: ShieldIcon },
+  {to: "/dashboard", label: "Dashboard", icon: SparklesIcon},
+  {to: "/adoption", label: "Online Adoption", icon: HeartIcon},
+  {to: "/register-pet", label: "Register Pet", icon: ShieldIcon},
+  {to: "/matching", label: "AI Matching", icon: SparklesIcon},
+  {to: "/appointments", label: "Appointments", icon: CalendarIcon},
+  {to: "/my-pets", label: "My Pets", icon: StethoscopeIcon},
+  {to: "/notifications", label: "Reminders", icon: BellIcon},
+  {to: "/adoption-status", label: "Screening", icon: ShieldIcon},
 ];
 
 export default function AppLayout() {
   const navigate = useNavigate();
-  const { currentUser, logout, isAuthenticated } = useAuth();
+  const {currentUser, logout, isAuthenticated} = useAuth();
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.12),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(251,191,36,0.12),_transparent_28%),linear-gradient(180deg,_#f8fafc_0%,_#eefaf4_100%)] text-slate-900">
       <div className="min-h-screen lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
         <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col border-r border-white/60 bg-slate-950/92 px-4 py-5 text-slate-100 backdrop-blur">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <div className="rounded-2xl">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/20 text-emerald-300">
                 <HeartIcon className="h-5 w-5" />
               </div>
               <div>
                 <p className="text-sm font-semibold">PawCare</p>
-                <p className="text-xs text-slate-300">User experience</p>
               </div>
             </div>
-            <p className="mt-3 text-sm leading-6 text-slate-300">
-              Adoption, matching, appointments, and care.
-            </p>
           </div>
 
           <nav className="mt-6 space-y-1">
@@ -50,7 +47,7 @@ export default function AppLayout() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({ isActive }) =>
+                className={({isActive}) =>
                   cn(
                     "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
                     isActive
@@ -84,17 +81,29 @@ export default function AppLayout() {
                   <HeartIcon className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-950">Animal Care Management</p>
+                  <p className="text-sm font-semibold text-slate-950">
+                    Animal Care Management
+                  </p>
                   <p className="text-sm text-slate-500">User portal</p>
                 </div>
               </div>
 
               <div className="hidden items-center gap-2 md:flex">
                 <Badge variant="primary" className="inline-flex">
-                  {isAuthenticated ? currentUser?.name : "Guest"}
+                  {isAuthenticated
+                    ? `${currentUser?.name}${currentUser?.role === "pet_owner" ? " · Pet owner" : " · Adopter"}`
+                    : "Guest"}
                 </Badge>
                 {isAuthenticated ? (
-                  <Button variant="outline" size="sm" className="border-slate-200 bg-white" onClick={logout}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-slate-200 bg-white"
+                    onClick={() => {
+                      logout();
+                      navigate("/website");
+                    }}
+                  >
                     Logout
                   </Button>
                 ) : (
@@ -111,14 +120,16 @@ export default function AppLayout() {
             </div>
 
             <div className="mt-3 flex gap-2 overflow-x-auto pb-1 lg:hidden">
-              {navigation.map(({ to, label }) => (
+              {navigation.map(({to, label}) => (
                 <NavLink
                   key={to}
                   to={to}
-                  className={({ isActive }) =>
+                  className={({isActive}) =>
                     cn(
                       "whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium transition",
-                      isActive ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+                      isActive
+                        ? "bg-emerald-600 text-white"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200",
                     )
                   }
                 >
@@ -129,7 +140,7 @@ export default function AppLayout() {
           </header>
 
           <main className="flex-1 px-4 py-5 md:px-6">
-            <div className="mx-auto w-full max-w-6xl">
+            <div className="mx-auto w-full">
               <Outlet />
             </div>
           </main>

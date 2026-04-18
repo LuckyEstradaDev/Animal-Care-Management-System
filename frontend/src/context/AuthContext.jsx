@@ -1,6 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { useCallback } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { defaultUsers } from "../data/auth";
 
 const USERS_KEY = "acm_users";
@@ -8,14 +7,21 @@ const SESSION_KEY = "acm_session";
 
 const AuthContext = createContext(null);
 
+function normalizeUser(user) {
+  return {
+    ...user,
+    role: user.role ?? "adopter",
+  };
+}
+
 function readStoredUsers() {
-  if (typeof window === "undefined") return defaultUsers;
+  if (typeof window === "undefined") return defaultUsers.map(normalizeUser);
 
   try {
     const raw = window.localStorage.getItem(USERS_KEY);
-    return raw ? JSON.parse(raw) : defaultUsers;
+    return raw ? JSON.parse(raw).map(normalizeUser) : defaultUsers.map(normalizeUser);
   } catch {
-    return defaultUsers;
+    return defaultUsers.map(normalizeUser);
   }
 }
 
@@ -24,7 +30,7 @@ function readStoredSession() {
 
   try {
     const raw = window.localStorage.getItem(SESSION_KEY);
-    return raw ? JSON.parse(raw) : null;
+    return raw ? normalizeUser(JSON.parse(raw)) : null;
   } catch {
     return null;
   }
@@ -46,31 +52,45 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
-  const login = useCallback((email, password) => {
-    const user = users.find(
-      (entry) => entry.email.toLowerCase() === email.toLowerCase() && entry.password === password,
-    );
+  const login = useCallback(
+    (email, password) => {
+      const user = users.find(
+        (entry) =>
+          entry.email.toLowerCase() === email.toLowerCase() &&
+          entry.password === password,
+      );
 
-    if (!user) {
-      throw new Error("Invalid email or password.");
-    }
+      if (!user) {
+        throw new Error("Invalid email or password.");
+      }
 
-    setCurrentUser({ name: user.name, email: user.email });
-    return user;
-  }, [users]);
+      setCurrentUser({
+        name: user.name,
+        email: user.email,
+        role: user.role ?? "adopter",
+      });
+      return user;
+    },
+    [users],
+  );
 
-  const register = useCallback(({ name, email, password }) => {
-    const exists = users.some((entry) => entry.email.toLowerCase() === email.toLowerCase());
+  const register = useCallback(
+    ({ name, email, password, role = "adopter" }) => {
+      const exists = users.some(
+        (entry) => entry.email.toLowerCase() === email.toLowerCase(),
+      );
 
-    if (exists) {
-      throw new Error("This email is already registered.");
-    }
+      if (exists) {
+        throw new Error("This email is already registered.");
+      }
 
-    const nextUser = { name, email, password };
-    setUsers((current) => [...current, nextUser]);
-    setCurrentUser({ name, email });
-    return nextUser;
-  }, [users]);
+      const nextUser = { name, email, password, role };
+      setUsers((current) => [...current, nextUser]);
+      setCurrentUser({ name, email, role });
+      return nextUser;
+    },
+    [users],
+  );
 
   const logout = useCallback(() => {
     setCurrentUser(null);
