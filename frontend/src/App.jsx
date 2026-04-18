@@ -11,6 +11,7 @@ import AuthPage from "./pages/AuthPage";
 import Website from "./pages/Website_Page";
 import HomePage from "./pages/Home_Page";
 import AboutPage from "./pages/About_Page";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="adoption-status" element={<ScreeningPage />} />
           <Route path="*" element={<Navigate to="/website" replace />} />
+          <Route path="admin" element={<AdminPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
