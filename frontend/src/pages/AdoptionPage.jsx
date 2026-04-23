@@ -1,4 +1,4 @@
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
 import {
@@ -13,7 +13,7 @@ import {Input} from "../components/ui/input";
 import {Label} from "../components/ui/label";
 import {Select} from "../components/ui/select";
 import {Textarea} from "../components/ui/textarea";
-import {availablePets} from "../data/mockData";
+import {getAllPets} from "../services/petService";
 
 const initialForm = {
   fullName: "",
@@ -25,17 +25,39 @@ const initialForm = {
 };
 
 export default function AdoptionPage() {
+  const [pets, setPets] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [activePetId, setActivePetId] = useState(null);
   const [form, setForm] = useState(initialForm);
   const [submittedApplication, setSubmittedApplication] = useState(null);
 
+  useEffect(() => {
+    const fetchPets = async () => {
+      try {
+        const res = await getAllPets();
+
+        console.log("FULL API RESPONSE:", res);
+        console.log("PETS ARRAY:", res?.pets);
+
+        setPets(res.pets || []);
+      } catch (error) {
+        console.error("FETCH ERROR:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPets();
+  }, []);
+
   const activePet = useMemo(
-    () => availablePets.find((pet) => pet.id === activePetId) ?? null,
-    [activePetId],
+    () => pets.find((pet) => pet._id === activePetId) || null,
+    [activePetId, pets],
   );
 
   function openModal(pet) {
-    setActivePetId(pet.id);
+    setActivePetId(pet._id);
     setForm(initialForm);
     setSubmittedApplication(null);
   }
@@ -50,7 +72,7 @@ export default function AdoptionPage() {
     event.preventDefault();
     setSubmittedApplication({
       id: `APP-${String(Math.floor(Math.random() * 9000) + 1000)}`,
-      pet: activePet?.name ?? "Selected pet",
+      pet: activePet?.name || "Selected pet",
       status: "Pending review",
       submittedAt: "Today",
     });
@@ -65,43 +87,52 @@ export default function AdoptionPage() {
             Click a card to open the application modal.
           </CardDescription>
         </CardHeader>
+
         <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {availablePets.map((pet) => (
-            <button
-              key={pet.id}
-              type="button"
-              onClick={() => openModal(pet)}
-              className="group overflow-hidden rounded-3xl border border-slate-200 bg-white text-left transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-xl hover:shadow-slate-950/10"
-            >
-              <div className="relative h-56 bg-slate-100">
-                <img
-                  src={pet.imageUrl}
-                  alt={pet.name}
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-                  loading="lazy"
-                />
-                <div className="absolute left-4 top-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
-                  {pet.status}
-                </div>
-              </div>
-              <div className="space-y-3 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-semibold text-slate-950">
-                      {pet.name}
-                    </h3>
-                    <p className="text-sm text-slate-600">
-                      {pet.species} | {pet.breed}
-                    </p>
+          {loading ? (
+            <p>Loading pets...</p>
+          ) : (
+            pets.map((pet) => (
+              <button
+                key={pet._id}
+                type="button"
+                onClick={() => openModal(pet)}
+                className="group overflow-hidden rounded-3xl border border-slate-200 bg-white text-left transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-xl hover:shadow-slate-950/10"
+              >
+                <div className="relative h-56 bg-slate-100">
+                  <img
+                    src={pet.imageUrl || "https://via.placeholder.com/300"}
+                    alt={pet.name}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                    loading="lazy"
+                  />
+                  <div className="absolute left-4 top-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
+                    {pet.availability}
                   </div>
-                  <Badge variant="default">{pet.energy}</Badge>
                 </div>
-                <p className="text-sm leading-6 text-slate-600">
-                  {pet.description}
-                </p>
-              </div>
-            </button>
-          ))}
+
+                <div className="space-y-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <h3 className="text-lg font-semibold text-slate-950">
+                        {pet.name}
+                      </h3>
+                      <p className="text-sm text-slate-600">
+                        {pet.species} | {pet.breed}
+                      </p>
+                    </div>
+                    <Badge variant="default">
+                      {pet.age ? `${pet.age} yrs` : "N/A"}
+                    </Badge>
+                  </div>
+
+                  <p className="text-sm leading-6 text-slate-600">
+                    Weight: {pet.weight || "N/A"} kg
+                  </p>
+                </div>
+              </button>
+            ))
+          )}
         </CardContent>
       </Card>
 
@@ -118,20 +149,22 @@ export default function AdoptionPage() {
             <div className="grid gap-6 md:grid-cols-[0.95fr_1.05fr]">
               <div className="overflow-hidden rounded-3xl bg-slate-50">
                 <img
-                  src={activePet.imageUrl}
+                  src={activePet.imageUrl || "https://via.placeholder.com/300"}
                   alt={activePet.name}
                   className="h-full w-full object-cover"
                 />
               </div>
+
               <div className="space-y-4">
                 <Badge variant="primary">{submittedApplication.status}</Badge>
                 <h3 className="text-2xl font-semibold text-slate-950">
                   Application submitted
                 </h3>
-                <p className="text-sm leading-6 text-slate-600">
+                <p className="text-sm text-slate-600">
                   Your application for {submittedApplication.pet} has been
-                  received and is waiting for admin review.
+                  received.
                 </p>
+
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
                   <p className="text-sm font-medium text-slate-950">
                     {submittedApplication.id}
@@ -140,6 +173,7 @@ export default function AdoptionPage() {
                     Submitted {submittedApplication.submittedAt}
                   </p>
                 </div>
+
                 <Button className="w-full" onClick={closeModal}>
                   Close
                 </Button>
@@ -150,33 +184,21 @@ export default function AdoptionPage() {
               <div className="space-y-4">
                 <div className="overflow-hidden rounded-3xl bg-slate-100">
                   <img
-                    src={activePet.imageUrl}
+                    src={
+                      activePet.imageUrl || "https://via.placeholder.com/300"
+                    }
                     alt={activePet.name}
                     className="h-72 w-full object-cover"
                   />
                 </div>
+
                 <div className="space-y-3 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h3 className="text-2xl font-semibold text-slate-950">
-                        {activePet.name}
-                      </h3>
-                      <p className="text-sm text-slate-600">
-                        {activePet.species} | {activePet.breed}
-                      </p>
-                    </div>
-                    <Badge variant="default">{activePet.energy}</Badge>
-                  </div>
-                  <p className="text-sm leading-6 text-slate-600">
-                    {activePet.idealHome}
+                  <h3 className="text-2xl font-semibold text-slate-950">
+                    {activePet.name}
+                  </h3>
+                  <p className="text-sm text-slate-600">
+                    {activePet.species} | {activePet.breed}
                   </p>
-                  <div className="flex flex-wrap gap-2">
-                    {activePet.compatibility.map((item) => (
-                      <Badge key={item} variant="default">
-                        {item}
-                      </Badge>
-                    ))}
-                  </div>
                 </div>
               </div>
 
@@ -188,100 +210,29 @@ export default function AdoptionPage() {
                       <Input
                         id="fullName"
                         value={form.fullName}
-                        onChange={(event) =>
-                          setForm({...form, fullName: event.target.value})
+                        onChange={(e) =>
+                          setForm({...form, fullName: e.target.value})
                         }
-                        placeholder="Jane Tan"
                         required
                       />
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone</Label>
                       <Input
                         id="phone"
                         value={form.phone}
-                        onChange={(event) =>
-                          setForm({...form, phone: event.target.value})
+                        onChange={(e) =>
+                          setForm({...form, phone: e.target.value})
                         }
-                        placeholder="+65 9123 4567"
                         required
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={form.email}
-                      onChange={(event) =>
-                        setForm({...form, email: event.target.value})
-                      }
-                      placeholder="jane@example.com"
-                      required
-                    />
-                  </div>
-
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="homeType">Home type</Label>
-                      <Select
-                        id="homeType"
-                        value={form.homeType}
-                        onChange={(event) =>
-                          setForm({...form, homeType: event.target.value})
-                        }
-                      >
-                        <option>Apartment</option>
-                        <option>House</option>
-                        <option>Condominium</option>
-                        <option>Farm or open space</option>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="experience">Experience</Label>
-                      <Select
-                        id="experience"
-                        value={form.experience}
-                        onChange={(event) =>
-                          setForm({...form, experience: event.target.value})
-                        }
-                      >
-                        <option>First-time adopter</option>
-                        <option>Some experience</option>
-                        <option>Experienced owner</option>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="message">
-                      Why do you want to adopt {activePet.name}?
-                    </Label>
-                    <Textarea
-                      id="message"
-                      value={form.message}
-                      onChange={(event) =>
-                        setForm({...form, message: event.target.value})
-                      }
-                      placeholder="Tell us about your home, routine, and the companion you are looking for."
-                    />
-                  </div>
-
-                  <div className="flex gap-3">
-                    <Button type="submit" className="flex-1">
-                      Submit application
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="border-slate-200 bg-white"
-                      onClick={closeModal}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
+                  <Button type="submit" className="w-full">
+                    Submit application
+                  </Button>
                 </form>
               </div>
             </div>
