@@ -1,14 +1,8 @@
 import {useMemo, useState} from "react";
-import {Link, Navigate} from "react-router-dom";
+import {Navigate} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
 import {Input} from "../components/ui/input";
 import {Label} from "../components/ui/label";
 import {Select} from "../components/ui/select";
@@ -71,34 +65,24 @@ export default function PetRegistrationPage() {
           </CardHeader>
           <CardContent>
             <form className="space-y-4" onSubmit={handleSubmit}>
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="ownerName">Owner name</Label>
-                  <Input
-                    id="ownerName"
-                    value={currentUser?.name ?? ""}
-                    readOnly
-                  />
+                  <Input id="ownerName" value={currentUser?.name ?? ""} readOnly />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="ownerEmail">Owner email</Label>
-                  <Input
-                    id="ownerEmail"
-                    value={currentUser?.email ?? ""}
-                    readOnly
-                  />
+                  <Input id="ownerEmail" value={currentUser?.email ?? ""} readOnly />
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="petName">Pet name</Label>
                   <Input
                     id="petName"
                     value={form.petName}
-                    onChange={(event) =>
-                      setForm({...form, petName: event.target.value})
-                    }
+                    onChange={(event) => setForm({...form, petName: event.target.value})}
                     placeholder="Coco"
                     required
                   />
@@ -108,24 +92,20 @@ export default function PetRegistrationPage() {
                   <Input
                     id="breed"
                     value={form.breed}
-                    onChange={(event) =>
-                      setForm({...form, breed: event.target.value})
-                    }
+                    onChange={(event) => setForm({...form, breed: event.target.value})}
                     placeholder="Mixed Breed"
                     required
                   />
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-3">
                 <div className="space-y-2">
                   <Label htmlFor="species">Species</Label>
                   <Select
                     id="species"
                     value={form.species}
-                    onChange={(event) =>
-                      setForm({...form, species: event.target.value})
-                    }
+                    onChange={(event) => setForm({...form, species: event.target.value})}
                   >
                     <option>Dog</option>
                     <option>Cat</option>
@@ -139,9 +119,7 @@ export default function PetRegistrationPage() {
                   <Input
                     id="age"
                     value={form.age}
-                    onChange={(event) =>
-                      setForm({...form, age: event.target.value})
-                    }
+                    onChange={(event) => setForm({...form, age: event.target.value})}
                     placeholder="2 years"
                     required
                   />
@@ -151,9 +129,7 @@ export default function PetRegistrationPage() {
                   <Select
                     id="size"
                     value={form.size}
-                    onChange={(event) =>
-                      setForm({...form, size: event.target.value})
-                    }
+                    onChange={(event) => setForm({...form, size: event.target.value})}
                   >
                     <option>Small</option>
                     <option>Medium</option>
@@ -162,15 +138,13 @@ export default function PetRegistrationPage() {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="temperament">Temperament</Label>
                   <Select
                     id="temperament"
                     value={form.temperament}
-                    onChange={(event) =>
-                      setForm({...form, temperament: event.target.value})
-                    }
+                    onChange={(event) => setForm({...form, temperament: event.target.value})}
                   >
                     <option>Calm</option>
                     <option>Playful</option>
@@ -183,9 +157,7 @@ export default function PetRegistrationPage() {
                   <Input
                     id="photoUrl"
                     value={form.photoUrl}
-                    onChange={(event) =>
-                      setForm({...form, photoUrl: event.target.value})
-                    }
+                    onChange={(event) => setForm({...form, photoUrl: event.target.value})}
                     placeholder="Optional image link"
                   />
                 </div>
@@ -196,9 +168,7 @@ export default function PetRegistrationPage() {
                 <Textarea
                   id="description"
                   value={form.description}
-                  onChange={(event) =>
-                    setForm({...form, description: event.target.value})
-                  }
+                  onChange={(event) => setForm({...form, description: event.target.value})}
                   placeholder="Tell us about the pet's personality, habits, and care needs."
                   required
                 />
@@ -209,9 +179,7 @@ export default function PetRegistrationPage() {
                 <Textarea
                   id="reason"
                   value={form.reason}
-                  onChange={(event) =>
-                    setForm({...form, reason: event.target.value})
-                  }
+                  onChange={(event) => setForm({...form, reason: event.target.value})}
                   placeholder="Explain the reason for the adoption listing."
                   required
                 />
@@ -235,30 +203,29 @@ export default function PetRegistrationPage() {
             <CardContent className="space-y-4">
               {submitted ? (
                 <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-medium text-emerald-900">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="break-words text-sm font-medium text-emerald-900">
                         {submitted.petName}
                       </p>
-                      <p className="text-sm text-emerald-800">
+                      <p className="break-words text-sm text-emerald-800">
                         {submitted.species} | {submitted.breed}
                       </p>
                     </div>
-                    <Badge variant="warning">{submitted.status}</Badge>
+                    <Badge className="self-start sm:self-auto" variant="warning">
+                      {submitted.status}
+                    </Badge>
                   </div>
-                  <p className="mt-4 text-sm leading-6 text-emerald-900/90">
+                  <p className="mt-4 break-words text-sm leading-6 text-emerald-900/90">
                     Admins will review the listing before it appears as
                     available for adoption.
                   </p>
                 </div>
               ) : (
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                  <p className="font-medium text-slate-950">
-                    No submission yet.
-                  </p>
+                  <p className="font-medium text-slate-950">No submission yet.</p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Once submitted, the status will show as pending until an
-                    admin reviews it.
+                    Once submitted, the status will show as pending until an admin reviews it.
                   </p>
                 </div>
               )}
@@ -275,20 +242,19 @@ export default function PetRegistrationPage() {
             <CardContent className="space-y-3">
               {mySubmissions.length > 0 ? (
                 mySubmissions.map((item) => (
-                  <div
-                    key={item.id}
-                    className="rounded-2xl border border-slate-200 bg-white p-4"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="font-medium text-slate-950">
+                  <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="min-w-0">
+                        <p className="break-words font-medium text-slate-950">
                           {item.petName}
                         </p>
-                        <p className="text-sm text-slate-600">
+                        <p className="break-words text-sm text-slate-600">
                           {item.species} | {item.breed}
                         </p>
                       </div>
-                      <Badge variant="warning">{item.status}</Badge>
+                      <Badge className="self-start sm:self-auto" variant="warning">
+                        {item.status}
+                      </Badge>
                     </div>
                     <p className="mt-2 text-xs uppercase tracking-[0.16em] text-slate-500">
                       Submitted {item.submittedAt}

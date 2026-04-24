@@ -1,5 +1,6 @@
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
+import AdminLayout from "./components/layout/AdminLayout";
 import DashboardPage from "./pages/DashboardPage";
 import AdoptionPage from "./pages/AdoptionPage";
 import MatchingPage from "./pages/MatchingPage";
@@ -33,7 +34,9 @@ function App() {
           <Route path="notifications" element={<NotificationsPage />} />
           <Route path="adoption-status" element={<ScreeningPage />} />
           <Route path="*" element={<Navigate to="/website" replace />} />
-          <Route path="admin" element={<AdminPage />} />
+        </Route>
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

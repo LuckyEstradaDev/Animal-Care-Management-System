@@ -1,11 +1,5 @@
 import {Badge} from "../components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
 import {screeningSteps} from "../data/mockData";
 import {ShieldIcon} from "../components/icons";
 
@@ -25,21 +19,19 @@ export default function ScreeningPage() {
               {screeningSteps.map((step, index) => (
                 <div key={step.label} className="flex gap-4">
                   <div className="flex flex-col items-center">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-sm font-semibold text-white">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-sm font-semibold text-white">
                       {index + 1}
                     </div>
                     {index < screeningSteps.length - 1 ? (
                       <div className="mt-2 h-full w-px bg-slate-200" />
                     ) : null}
                   </div>
-                  <div className="pb-5">
-                    <div className="flex items-center gap-3">
-                      <p className="font-medium text-slate-950">{step.label}</p>
-                      <Badge
-                        variant={
-                          step.status === "Complete" ? "primary" : "default"
-                        }
-                      >
+                  <div className="min-w-0 pb-5">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                      <p className="break-words font-medium text-slate-950">
+                        {step.label}
+                      </p>
+                      <Badge variant={step.status === "Complete" ? "primary" : "default"}>
                         {step.status}
                       </Badge>
                     </div>
@@ -54,14 +46,14 @@ export default function ScreeningPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between gap-4">
-                <div>
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
                   <CardTitle>Possible outcomes</CardTitle>
                   <CardDescription>
                     Users should see one of these states after review.
                   </CardDescription>
                 </div>
-                <div className="rounded-2xl bg-emerald-50 p-2 text-emerald-700">
+                <div className="shrink-0 rounded-2xl bg-emerald-50 p-2 text-emerald-700">
                   <ShieldIcon className="h-6 w-6" />
                 </div>
               </div>
@@ -89,7 +81,7 @@ export default function ScreeningPage() {
                   className="rounded-3xl border border-slate-200 bg-white p-5"
                 >
                   <Badge variant={item.tone}>{item.title}</Badge>
-                  <p className="mt-3 text-sm leading-6 text-slate-600">
+                  <p className="mt-3 break-words text-sm leading-6 text-slate-600">
                     {item.text}
                   </p>
                 </div>
@@ -101,8 +93,7 @@ export default function ScreeningPage() {
             <CardHeader>
               <CardTitle>What the user sees</CardTitle>
               <CardDescription>
-                A concise message, a status badge, and the application reference
-                number.
+                A concise message, a status badge, and the application reference number.
               </CardDescription>
             </CardHeader>
             <CardContent className="rounded-3xl bg-slate-50 p-5 text-sm leading-6 text-slate-600">

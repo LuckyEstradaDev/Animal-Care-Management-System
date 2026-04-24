@@ -1,27 +1,8 @@
 import {Link} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
-import {Button} from "../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import {
-  availablePets,
-  reminderItems,
-  screeningSteps,
-  services,
-} from "../data/mockData";
-import {
-  BellIcon,
-  CalendarIcon,
-  HeartIcon,
-  ShieldIcon,
-  SparklesIcon,
-  StethoscopeIcon,
-} from "../components/icons";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
+import {availablePets, reminderItems, screeningSteps, services} from "../data/mockData";
+import {BellIcon, CalendarIcon, HeartIcon} from "../components/icons";
 
 const stats = [
   {
@@ -45,50 +26,30 @@ const stats = [
 ];
 
 const shortcuts = [
-  {
-    title: "Online adoption",
-    text: "Browse pets and submit an application.",
-    to: "/adoption",
-  },
-  {
-    title: "Register pet",
-    text: "Submit a pet for admin review and future adoption.",
-    to: "/register-pet",
-  },
-  {
-    title: "AI matching",
-    text: "Answer a short questionnaire for recommendations.",
-    to: "/matching",
-  },
-  {
-    title: "Appointments",
-    text: "Pick a service and reserve a time.",
-    to: "/appointments",
-  },
-  {
-    title: "My pets",
-    text: "Open health records and treatment notes.",
-    to: "/my-pets",
-  },
+  {title: "Online adoption", text: "Browse pets and submit an application.", to: "/adoption"},
+  {title: "Register pet", text: "Submit a pet for admin review and future adoption.", to: "/register-pet"},
+  {title: "AI matching", text: "Answer a short questionnaire for recommendations.", to: "/matching"},
+  {title: "Appointments", text: "Pick a service and reserve a time.", to: "/appointments"},
+  {title: "My pets", text: "Open health records and treatment notes.", to: "/my-pets"},
 ];
 
 export default function DashboardPage() {
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {stats.map((stat) => (
           <Card key={stat.label} className="overflow-hidden">
             <CardHeader className="flex-row items-start justify-between space-y-0">
-              <div>
-                <CardDescription>{stat.label}</CardDescription>
-                <CardTitle className="mt-2 text-3xl">{stat.value}</CardTitle>
+              <div className="min-w-0">
+                <CardDescription className="break-words">{stat.label}</CardDescription>
+                <CardTitle className="mt-2 text-2xl sm:text-3xl">{stat.value}</CardTitle>
               </div>
-              <div className="rounded-2xl bg-emerald-50 p-3 text-emerald-700">
+              <div className="shrink-0 rounded-2xl bg-emerald-50 p-3 text-emerald-700">
                 <stat.icon className="h-5 w-5" />
               </div>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-slate-600">{stat.note}</p>
+              <p className="break-words text-sm text-slate-600">{stat.note}</p>
             </CardContent>
           </Card>
         ))}
@@ -100,7 +61,7 @@ export default function DashboardPage() {
             <Badge variant="soft" className="w-fit">
               Guided flow
             </Badge>
-            <CardTitle className="text-2xl">
+            <CardTitle className="text-2xl sm:text-3xl">
               Simple entry points for the main user journeys
             </CardTitle>
             <CardDescription className="max-w-2xl">
@@ -115,8 +76,8 @@ export default function DashboardPage() {
                 to={item.to}
                 className="rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-emerald-200 hover:bg-emerald-50/40"
               >
-                <p className="font-medium text-slate-950">{item.title}</p>
-                <p className="mt-1 text-sm leading-6 text-slate-600">
+                <p className="break-words font-medium text-slate-950">{item.title}</p>
+                <p className="mt-1 break-words text-sm leading-6 text-slate-600">
                   {item.text}
                 </p>
               </Link>
@@ -138,9 +99,13 @@ export default function DashboardPage() {
                   key={item.title}
                   className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-medium text-slate-950">{item.title}</p>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="break-words font-medium text-slate-950">{item.title}</p>
+                      <p className="break-words text-sm text-slate-600">{item.detail}</p>
+                    </div>
                     <Badge
+                      className="self-start sm:self-auto"
                       variant={
                         item.tone === "primary"
                           ? "primary"
@@ -152,9 +117,6 @@ export default function DashboardPage() {
                       {item.tone}
                     </Badge>
                   </div>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    {item.detail}
-                  </p>
                 </div>
               ))}
             </CardContent>
@@ -171,20 +133,21 @@ export default function DashboardPage() {
               {screeningSteps.slice(0, 3).map((step, index) => (
                 <div
                   key={step.label}
-                  className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3"
+                  className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-700">
                       {index + 1}
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-950">
+                    <div className="min-w-0">
+                      <p className="break-words text-sm font-medium text-slate-950">
                         {step.label}
                       </p>
                       <p className="text-xs text-slate-500">{step.date}</p>
                     </div>
                   </div>
                   <Badge
+                    className="self-start sm:self-auto"
                     variant={step.status === "Complete" ? "primary" : "default"}
                   >
                     {step.status}
@@ -196,85 +159,35 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      
-  <Card>
-    <div className="justify-between items-end flex p-6">
-      <div>
-        <h1 className="text-lg font-semibold tracking-tight text-slate-900">Pet Appointments Table</h1>
-          <p className="text-sm leading-6 text-slate-600">
-            Upcoming vaccinations, follow-ups, and appointment reminders.
-          </p>
-      </div>
-      
-
-      {/* CREATE BUTTON */}
-      <div className="flex justify-end h-full">
-        <Button onClick={() => alert('Tipaklong')}>+ Add Reminder</Button>
-      </div>
-    </div>
-
-    <CardContent>
-
-      {/* TABLE HEADER */}
-      <div className="grid grid-cols-4 bg-slate-100 p-3 rounded-t-xl font-semibold text-sm">
-        <div>Title</div>
-        <div>Detail</div>
-        <div>Status</div>
-        <div className="text-right">Actions</div>
-      </div>
-
-      {/* TABLE BODY */}
-      <div className="divide-y">
-        {reminderItems.map((item, index) => (
-          <div
-            key={index}
-            className="grid grid-cols-4 items-center p-3 bg-white hover:bg-slate-50"
-          >
-            {/* TITLE */}
-            <div className="font-medium">{item.title}</div>
-
-            {/* DETAIL */}
-            <div className="text-sm text-slate-600">{item.detail}</div>
-
-            {/* STATUS */}
-            <div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Pet appointments overview</CardTitle>
+          <CardDescription>
+            Quick reminder list that stays readable on mobile.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-3">
+          {reminderItems.map((item) => (
+            <div
+              key={item.title}
+              className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="min-w-0">
+                <p className="break-words font-medium text-slate-950">{item.title}</p>
+                <p className="break-words text-sm leading-6 text-slate-600">
+                  {item.detail}
+                </p>
+              </div>
               <Badge
-                variant={
-                  item.tone === "primary"
-                    ? "default"
-                    : item.tone === "warning"
-                    ? "secondary"
-                    : "outline"
-                }
+                className="self-start sm:self-auto"
+                variant={item.tone === "warning" ? "warning" : "primary"}
               >
                 {item.tone}
               </Badge>
             </div>
-
-            {/* ACTIONS */}
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => alert('Tipaklong')}
-              >
-                Edit
-              </Button>
-
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => alert('Tipaklong')}
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </CardContent>
-  </Card>
-
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }

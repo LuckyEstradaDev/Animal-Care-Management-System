@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { useAuth } from "../context/AuthContext";
+import {useEffect, useState} from "react";
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
+import {Badge} from "../components/ui/badge";
+import {Button} from "../components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
+import {Input} from "../components/ui/input";
+import {Label} from "../components/ui/label";
+import {useAuth} from "../context/AuthContext";
 
 const loginInitial = {
   email: "demo@animalcare.test",
@@ -27,22 +27,20 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-  const { login, register, currentUser } = useAuth();
+  const {login, register, currentUser} = useAuth();
 
-  const getRedirectPath = (role) => {
-    return role === "admin" ? "/admin" : "/dashboard";
-  };
+  const getRedirectPath = (role) => (role === "admin" ? "/admin" : "/dashboard");
 
   useEffect(() => {
     if (currentUser) {
-      navigate(getRedirectPath(currentUser.role), { replace: true });
+      navigate(getRedirectPath(currentUser.role), {replace: true});
     }
   }, [currentUser, navigate]);
 
   function switchMode(nextMode) {
     setError("");
     setSuccess("");
-    setSearchParams({ mode: nextMode });
+    setSearchParams({mode: nextMode});
   }
 
   function handleLogin(event) {
@@ -52,7 +50,7 @@ export default function AuthPage() {
 
     try {
       const user = login(loginForm.email, loginForm.password);
-      navigate(getRedirectPath(user.role), { replace: true });
+      navigate(getRedirectPath(user.role), {replace: true});
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed.");
     }
@@ -71,21 +69,23 @@ export default function AuthPage() {
         role: registerForm.role,
       });
       setSuccess("Account created successfully. Redirecting to the dashboard.");
-      navigate(getRedirectPath(user.role), { replace: true });
+      navigate(getRedirectPath(user.role), {replace: true});
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed.");
     }
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_32%),linear-gradient(180deg,#f8fafc_0%,#eefaf4_100%)] px-4 py-10">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_32%),linear-gradient(180deg,#f8fafc_0%,#eefaf4_100%)] px-4 py-8 sm:py-10">
       <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[0.95fr_1.05fr]">
         <Card className="overflow-hidden">
           <CardHeader>
             <Badge variant="soft" className="w-fit">
               Animal Care Auth
             </Badge>
-            <CardTitle className="text-3xl">Simple login and registration prototype</CardTitle>
+            <CardTitle className="text-2xl sm:text-3xl">
+              Simple login and registration prototype
+            </CardTitle>
             <CardDescription>
               Use the demo account or create a new static user. This is front-end only for now.
             </CardDescription>
@@ -93,8 +93,12 @@ export default function AuthPage() {
           <CardContent className="space-y-4">
             <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
               <p className="text-sm font-medium text-slate-950">Demo credentials</p>
-              <p className="mt-1 text-sm text-slate-600">User: demo@animalcare.test / demo123</p>
-              <p className="text-sm text-slate-600">Admin: admin@animalcare.test / admin123</p>
+              <p className="mt-1 break-words text-sm text-slate-600">
+                User: demo@animalcare.test / demo123
+              </p>
+              <p className="break-words text-sm text-slate-600">
+                Admin: admin@animalcare.test / admin123
+              </p>
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">
@@ -156,7 +160,7 @@ export default function AuthPage() {
                     id="login-email"
                     type="email"
                     value={loginForm.email}
-                    onChange={(event) => setLoginForm({ ...loginForm, email: event.target.value })}
+                    onChange={(event) => setLoginForm({...loginForm, email: event.target.value})}
                     placeholder="you@example.com"
                     required
                   />
@@ -167,7 +171,7 @@ export default function AuthPage() {
                     id="login-password"
                     type="password"
                     value={loginForm.password}
-                    onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
+                    onChange={(event) => setLoginForm({...loginForm, password: event.target.value})}
                     placeholder="••••••••"
                     required
                   />
@@ -183,7 +187,7 @@ export default function AuthPage() {
                   <Input
                     id="register-name"
                     value={registerForm.name}
-                    onChange={(event) => setRegisterForm({ ...registerForm, name: event.target.value })}
+                    onChange={(event) => setRegisterForm({...registerForm, name: event.target.value})}
                     placeholder="Jane Tan"
                     required
                   />
@@ -194,7 +198,7 @@ export default function AuthPage() {
                     id="register-email"
                     type="email"
                     value={registerForm.email}
-                    onChange={(event) => setRegisterForm({ ...registerForm, email: event.target.value })}
+                    onChange={(event) => setRegisterForm({...registerForm, email: event.target.value})}
                     placeholder="jane@example.com"
                     required
                   />
@@ -205,7 +209,7 @@ export default function AuthPage() {
                     id="register-password"
                     type="password"
                     value={registerForm.password}
-                    onChange={(event) => setRegisterForm({ ...registerForm, password: event.target.value })}
+                    onChange={(event) => setRegisterForm({...registerForm, password: event.target.value})}
                     placeholder="Create a password"
                     required
                   />
@@ -215,7 +219,7 @@ export default function AuthPage() {
                   <select
                     id="register-role"
                     value={registerForm.role}
-                    onChange={(event) => setRegisterForm({ ...registerForm, role: event.target.value })}
+                    onChange={(event) => setRegisterForm({...registerForm, role: event.target.value})}
                     className="flex h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                   >
                     <option value="adopter">Adopter</option>
