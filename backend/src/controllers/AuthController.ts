@@ -8,10 +8,19 @@ import type {Request, Response} from "express";
 
 export const registerController = async (req: Request, res: Response) => {
   try {
-    await registerService(req.body);
-    return res.status(200).json({message: "Account created successfully."});
+    const {token, user} = await registerService(req.body);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" ? true : false,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 60 * 60 * 1000,
+    });
+
+    return res
+      .status(200)
+      .json({message: "Account created successfully.", user});
   } catch (error: any) {
-    return res.status(500).json({message: error.message});
+    return res.status(error.status || 500).json({message: error.message});
   }
 };
 
@@ -25,9 +34,9 @@ export const loginController = async (req: Request, res: Response) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       maxAge: 60 * 60 * 1000, // 1 hour
     });
-    return res.status(200).json({message: "Logged in successfully."});
+    return res.status(200).json({message: "Logged in successfully.", user});
   } catch (error: any) {
-    return res.status(500).json({message: error.message});
+    return res.status(error.status || 500).json({message: error.message});
   }
 };
 

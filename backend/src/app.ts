@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import {connectDB} from "./config/db.js";
 import PetRoutes from "./routes/PetRoutes.js";
 import AppointmentRoutes from "./routes/AppointmentRoutes.js";
+import AdoptionRoutes from "./routes/AdoptionRoutes.js";
 const app = express();
 
 connectDB();
@@ -28,5 +29,6 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/auth", AuthRoutes);
 app.use("/api/pets", PetRoutes);
 app.use("/api/appointment", AppointmentRoutes);
+app.use("/api/adoptions", AdoptionRoutes);
 
 export default app;

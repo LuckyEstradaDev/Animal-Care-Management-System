@@ -4,8 +4,7 @@ import type {IUserInterface} from "../interfaces/IUser.js";
 
 export class AuthRepository {
   async register(data: IUserInterface) {
-    // const hashedPassword = await bcrypt.hash(data.rawPassword, 10);
-    const hashedPassword = data.rawPassword;
+    const hashedPassword = await bcrypt.hash(data.rawPassword, 10);
 
     const user = await UserModel.create({
       ...data,
@@ -23,5 +22,14 @@ export class AuthRepository {
 
   async findUserById(id: string) {
     return UserModel.findById(id);
+  }
+
+  async ensureAdminExists(data: IUserInterface) {
+    const existingAdmin = await UserModel.findOne({email: data.email});
+    if (existingAdmin) {
+      return existingAdmin;
+    }
+
+    return this.register(data);
   }
 }

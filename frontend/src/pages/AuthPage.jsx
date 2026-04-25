@@ -2,14 +2,21 @@ import {useEffect, useState} from "react";
 import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import {Input} from "../components/ui/input";
 import {Label} from "../components/ui/label";
 import {useAuth} from "../context/AuthContext";
+import {HeartIcon, ShieldIcon, SparklesIcon} from "../components/icons";
 
 const loginInitial = {
-  email: "demo@animalcare.test",
-  password: "demo123",
+  email: "",
+  password: "",
 };
 
 const registerInitial = {
@@ -27,15 +34,16 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-  const {login, register, currentUser} = useAuth();
+  const {login, register, currentUser, isAuthLoading} = useAuth();
 
-  const getRedirectPath = (role) => (role === "admin" ? "/admin" : "/dashboard");
+  const getRedirectPath = (role) =>
+    role === "admin" ? "/admin" : "/dashboard";
 
   useEffect(() => {
-    if (currentUser) {
+    if (!isAuthLoading && currentUser) {
       navigate(getRedirectPath(currentUser.role), {replace: true});
     }
-  }, [currentUser, navigate]);
+  }, [currentUser, navigate, isAuthLoading]);
 
   function switchMode(nextMode) {
     setError("");
@@ -43,26 +51,26 @@ export default function AuthPage() {
     setSearchParams({mode: nextMode});
   }
 
-  function handleLogin(event) {
+  async function handleLogin(event) {
     event.preventDefault();
     setError("");
     setSuccess("");
 
     try {
-      const user = login(loginForm.email, loginForm.password);
+      const user = await login(loginForm.email, loginForm.password);
       navigate(getRedirectPath(user.role), {replace: true});
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed.");
     }
   }
 
-  function handleRegister(event) {
+  async function handleRegister(event) {
     event.preventDefault();
     setError("");
     setSuccess("");
 
     try {
-      const user = register({
+      const user = await register({
         name: registerForm.name,
         email: registerForm.email,
         password: registerForm.password,
@@ -76,29 +84,64 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_32%),linear-gradient(180deg,#f8fafc_0%,#eefaf4_100%)] px-4 py-8 sm:py-10">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(251,191,36,0.12),transparent_26%),linear-gradient(180deg,#f8fafc_0%,#eefaf4_100%)] px-4 py-8 sm:py-10">
       <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <Card className="overflow-hidden">
-          <CardHeader>
+        <Card className="overflow-hidden border-white/70 bg-white/85 shadow-xl shadow-emerald-950/5 backdrop-blur">
+          <CardHeader className="space-y-5">
             <Badge variant="soft" className="w-fit">
-              Animal Care Auth
+              Welcome to PawCare
             </Badge>
-            <CardTitle className="text-2xl sm:text-3xl">
-              Simple login and registration prototype
-            </CardTitle>
-            <CardDescription>
-              Use the demo account or create a new static user. This is front-end only for now.
+            <div className="flex items-center gap-4">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-950/15">
+                <HeartIcon className="h-7 w-7" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
+                  Animal Care Management System
+                </p>
+                <CardTitle className="mt-1 text-3xl sm:text-4xl">
+                  Sign in to PawCare
+                </CardTitle>
+              </div>
+            </div>
+            <CardDescription className="max-w-xl text-base leading-7 text-slate-600">
+              Access the user portal for pet registration, appointments, and
+              personal pet records from one place.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-sm font-medium text-slate-950">Demo credentials</p>
-              <p className="mt-1 break-words text-sm text-slate-600">
-                User: demo@animalcare.test / demo123
-              </p>
-              <p className="break-words text-sm text-slate-600">
-                Admin: admin@animalcare.test / admin123
-              </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-emerald-100 bg-emerald-50/80 p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-emerald-700 shadow-sm">
+                    <ShieldIcon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-950">
+                      Secure authentication
+                    </p>
+                    <p className="mt-1 text-sm text-slate-600">
+                      Protected backend login with validated passwords.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-amber-100 bg-amber-50/80 p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-amber-700 shadow-sm">
+                    <SparklesIcon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-950">
+                      User portal access
+                    </p>
+                    <p className="mt-1 text-sm text-slate-600">
+                      Continue into pet registration, my pets, and appointments.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div className="grid gap-3 md:grid-cols-2">
@@ -112,7 +155,9 @@ export default function AuthPage() {
                 }`}
               >
                 <p className="text-sm font-semibold text-slate-950">Login</p>
-                <p className="mt-1 text-sm text-slate-600">Sign in with your existing account.</p>
+                <p className="mt-1 text-sm text-slate-600">
+                  Sign in with your existing account.
+                </p>
               </button>
               <button
                 type="button"
@@ -124,19 +169,23 @@ export default function AuthPage() {
                 }`}
               >
                 <p className="text-sm font-semibold text-slate-950">Register</p>
-                <p className="mt-1 text-sm text-slate-600">Create a new static user profile.</p>
+                <p className="mt-1 text-sm text-slate-600">
+                  Create a new secure user profile.
+                </p>
               </button>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-white/70 bg-white/92 shadow-xl shadow-emerald-950/5 backdrop-blur">
           <CardHeader>
-            <CardTitle>{mode === "login" ? "Login" : "Create account"}</CardTitle>
+            <CardTitle>
+              {mode === "login" ? "Login" : "Create account"}
+            </CardTitle>
             <CardDescription>
               {mode === "login"
                 ? "Sign in to continue to the dashboard."
-                : "Register a new account for this prototype."}
+                : "Register a new account for the PawCare user portal."}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -160,7 +209,9 @@ export default function AuthPage() {
                     id="login-email"
                     type="email"
                     value={loginForm.email}
-                    onChange={(event) => setLoginForm({...loginForm, email: event.target.value})}
+                    onChange={(event) =>
+                      setLoginForm({...loginForm, email: event.target.value})
+                    }
                     placeholder="you@example.com"
                     required
                   />
@@ -171,7 +222,9 @@ export default function AuthPage() {
                     id="login-password"
                     type="password"
                     value={loginForm.password}
-                    onChange={(event) => setLoginForm({...loginForm, password: event.target.value})}
+                    onChange={(event) =>
+                      setLoginForm({...loginForm, password: event.target.value})
+                    }
                     placeholder="••••••••"
                     required
                   />
@@ -187,7 +240,12 @@ export default function AuthPage() {
                   <Input
                     id="register-name"
                     value={registerForm.name}
-                    onChange={(event) => setRegisterForm({...registerForm, name: event.target.value})}
+                    onChange={(event) =>
+                      setRegisterForm({
+                        ...registerForm,
+                        name: event.target.value,
+                      })
+                    }
                     placeholder="Jane Tan"
                     required
                   />
@@ -198,7 +256,12 @@ export default function AuthPage() {
                     id="register-email"
                     type="email"
                     value={registerForm.email}
-                    onChange={(event) => setRegisterForm({...registerForm, email: event.target.value})}
+                    onChange={(event) =>
+                      setRegisterForm({
+                        ...registerForm,
+                        email: event.target.value,
+                      })
+                    }
                     placeholder="jane@example.com"
                     required
                   />
@@ -209,22 +272,19 @@ export default function AuthPage() {
                     id="register-password"
                     type="password"
                     value={registerForm.password}
-                    onChange={(event) => setRegisterForm({...registerForm, password: event.target.value})}
+                    onChange={(event) =>
+                      setRegisterForm({
+                        ...registerForm,
+                        password: event.target.value,
+                      })
+                    }
                     placeholder="Create a password"
                     required
                   />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-role">Account type</Label>
-                  <select
-                    id="register-role"
-                    value={registerForm.role}
-                    onChange={(event) => setRegisterForm({...registerForm, role: event.target.value})}
-                    className="flex h-11 w-full rounded-2xl border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm transition focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                  >
-                    <option value="adopter">Adopter</option>
-                    <option value="pet_owner">Pet owner</option>
-                  </select>
+                  <p className="text-xs text-slate-500">
+                    Use at least 8 characters with a letter, a number, and a
+                    special character.
+                  </p>
                 </div>
                 <Button type="submit" className="w-full">
                   Create account
@@ -233,7 +293,10 @@ export default function AuthPage() {
             )}
 
             <div className="mt-4 text-sm text-slate-600">
-              <Link to="/website" className="font-medium text-emerald-700 hover:text-emerald-600">
+              <Link
+                to="/website"
+                className="font-medium text-emerald-700 hover:text-emerald-600"
+              >
                 Back to landing page
               </Link>
             </div>

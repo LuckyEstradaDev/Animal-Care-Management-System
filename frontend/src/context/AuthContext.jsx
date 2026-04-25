@@ -1,70 +1,85 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { defaultUsers } from "../data/auth";
+import {createContext, useCallback, useContext, useEffect, useMemo, useState} from "react";
 
-const USERS_KEY = "acm_users";
 const SESSION_KEY = "acm_session";
+const API_BASE_URL = "http://localhost:5000/api/auth";
+const PASSWORD_REGEX =
+  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 
 const AuthContext = createContext(null);
 
-function createObjectId() {
-  return Array.from({ length: 24 }, () =>
-    Math.floor(Math.random() * 16).toString(16),
-  ).join("");
-}
-
 function normalizeUser(user) {
+  if (!user) return null;
+
   return {
-    ...user,
-    id: user.id ?? createObjectId(),
-    role: user.role ?? "adopter",
+    id: user.id,
+    name:
+      user.name ??
+      [user.firstName, user.lastName].filter(Boolean).join(" ").trim(),
+    email: user.email,
+    role: user.role,
   };
 }
 
-function readStoredUsers() {
-  if (typeof window === "undefined") return defaultUsers.map(normalizeUser);
-
-  try {
-    const raw = window.localStorage.getItem(USERS_KEY);
-    const stored = raw ? JSON.parse(raw).map(normalizeUser) : [];
-    // Always include default users
-    const allUsers = [...defaultUsers.map(normalizeUser)];
-    stored.forEach(user => {
-      if (!allUsers.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
-        allUsers.push(user);
-      }
-    });
-    return allUsers;
-  } catch {
-    return defaultUsers.map(normalizeUser);
-  }
-}
-
-function readStoredSession(users) {
+function readStoredSession() {
   if (typeof window === "undefined") return null;
 
   try {
     const raw = window.localStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-
-    const session = normalizeUser(JSON.parse(raw));
-    const matchingUser = users.find(
-      (user) => user.email.toLowerCase() === session.email.toLowerCase(),
-    );
-
-    return matchingUser ?? session;
+    return raw ? normalizeUser(JSON.parse(raw)) : null;
   } catch {
     return null;
   }
 }
 
-export function AuthProvider({ children }) {
-  const [users, setUsers] = useState(readStoredUsers);
-  const [currentUser, setCurrentUser] = useState(() => readStoredSession(users));
+async function handleResponse(response) {
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Request failed.");
+  }
+
+  return data;
+}
+
+function validatePassword(password) {
+  if (!PASSWORD_REGEX.test(password)) {
+    throw new Error(
+      "Password must be at least 8 characters and include a letter, a number, and a special character.",
+    );
+  }
+}
+
+export function AuthProvider({children}) {
+  const [currentUser, setCurrentUser] = useState(readStoredSession);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   useEffect(() => {
-    window.localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  }, [users]);
+    async function hydrateSession() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/me`, {
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          setCurrentUser(null);
+          window.localStorage.removeItem(SESSION_KEY);
+          return;
+        }
+
+        const data = await response.json();
+        const user = normalizeUser(data.user);
+        setCurrentUser(user);
+        window.localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+      } catch {
+        setCurrentUser(readStoredSession());
+      } finally {
+        setIsAuthLoading(false);
+      }
+    }
+
+    hydrateSession();
+  }, []);
 
   useEffect(() => {
     if (currentUser) {
@@ -74,72 +89,75 @@ export function AuthProvider({ children }) {
     }
   }, [currentUser]);
 
-  const login = useCallback(
-    (email, password) => {
-      const user = users.find(
-        (entry) =>
-          entry.email.toLowerCase() === email.toLowerCase() &&
-          entry.password === password,
-      );
+  const login = useCallback(async (email, password) => {
+    const data = await handleResponse(
+      await fetch(`${API_BASE_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          email,
+          rawPassword: password,
+        }),
+      }),
+    );
 
-      if (!user) {
-        throw new Error("Invalid email or password.");
-      }
+    const user = normalizeUser(data.user);
+    setCurrentUser(user);
+    return user;
+  }, []);
 
-      setCurrentUser({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role ?? "adopter",
+  const register = useCallback(async ({name, email, password, role = "adopter"}) => {
+    validatePassword(password);
+
+    const [firstName, ...rest] = name.trim().split(/\s+/);
+    const lastName = rest.join(" ") || "User";
+
+    const data = await handleResponse(
+      await fetch(`${API_BASE_URL}/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          email,
+          rawPassword: password,
+          role,
+        }),
+      }),
+    );
+
+    const user = normalizeUser(data.user);
+    setCurrentUser(user);
+    return user;
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await fetch(`${API_BASE_URL}/sign-out`, {
+        method: "POST",
+        credentials: "include",
       });
-      return user;
-    },
-    [users],
-  );
-
-  const register = useCallback(
-    ({ name, email, password, role = "adopter" }) => {
-      const exists = users.some(
-        (entry) => entry.email.toLowerCase() === email.toLowerCase(),
-      );
-
-      if (exists) {
-        throw new Error("This email is already registered.");
-      }
-
-      const nextUser = {
-        id: createObjectId(),
-        name,
-        email,
-        password,
-        role,
-      };
-      setUsers((current) => [...current, nextUser]);
-      setCurrentUser({
-        id: nextUser.id,
-        name,
-        email,
-        role,
-      });
-      return nextUser;
-    },
-    [users],
-  );
-
-  const logout = useCallback(() => {
-    setCurrentUser(null);
+    } finally {
+      setCurrentUser(null);
+    }
   }, []);
 
   const value = useMemo(
     () => ({
-      users,
       currentUser,
       login,
       register,
       logout,
       isAuthenticated: Boolean(currentUser),
+      isAuthLoading,
     }),
-    [users, currentUser, login, register, logout],
+    [currentUser, login, register, logout, isAuthLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
