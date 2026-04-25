@@ -4,5 +4,9 @@ import {AppointmentRepository} from "../repositories/AppointmentRepository.js";
 let appointmentRepository = new AppointmentRepository();
 
 export const createAppointment = async (data: IAppointment) => {
-  await appointmentRepository.create(data);
+  return appointmentRepository.create(data);
+};
+
+export const getAppointmentsByUser = async (userId: string) => {
+  return appointmentRepository.getByUser(userId);
 };

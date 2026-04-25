@@ -3,6 +3,10 @@ import {AppointmentModel} from "../models/AppointmentModel.js";
 
 export class AppointmentRepository {
   async create(data: IAppointment) {
-    await AppointmentModel.create(data);
+    return AppointmentModel.create(data);
+  }
+
+  async getByUser(userId: string) {
+    return AppointmentModel.find({userId}).sort({createdAt: -1});
   }
 }

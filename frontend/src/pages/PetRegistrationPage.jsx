@@ -1,5 +1,5 @@
-import {useMemo, useState} from "react";
-import {Link, Navigate} from "react-router-dom";
+import {useEffect, useMemo, useState} from "react";
+import {Navigate} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
 import {
@@ -14,47 +14,92 @@ import {Label} from "../components/ui/label";
 import {Select} from "../components/ui/select";
 import {Textarea} from "../components/ui/textarea";
 import {useAuth} from "../context/AuthContext";
-import {usePetRegistration} from "../context/PetRegistrationContext";
+import {createPet, getPetsByOwner} from "../services/petService";
 
 const initialForm = {
-  petName: "",
+  name: "",
   species: "Dog",
   breed: "",
   age: "",
-  size: "Medium",
-  temperament: "Calm",
+  weight: "",
   description: "",
-  reason: "",
-  photoUrl: "",
+  imageUrl: "",
 };
 
 export default function PetRegistrationPage() {
   const {currentUser, isAuthenticated} = useAuth();
-  const {submissions, registerPet} = usePetRegistration();
   const [form, setForm] = useState(initialForm);
-  const [submitted, setSubmitted] = useState(null);
+  const [pets, setPets] = useState([]);
+  const [submittedPet, setSubmittedPet] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingPets, setIsLoadingPets] = useState(true);
+  const [error, setError] = useState("");
 
-  const mySubmissions = useMemo(
-    () => submissions.filter((item) => item.ownerEmail === currentUser?.email),
-    [submissions, currentUser],
-  );
+  const hasPets = useMemo(() => pets.length > 0, [pets]);
+
+  useEffect(() => {
+    async function loadPets() {
+      if (!currentUser?.id) {
+        setPets([]);
+        setIsLoadingPets(false);
+        return;
+      }
+
+      try {
+        setIsLoadingPets(true);
+        const response = await getPetsByOwner(currentUser.id);
+        setPets(response.pets ?? []);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to load your pets.",
+        );
+      } finally {
+        setIsLoadingPets(false);
+      }
+    }
+
+    loadPets();
+  }, [currentUser?.id]);
 
   if (!isAuthenticated) {
     return <Navigate to="/auth?mode=login" replace />;
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
-    const nextSubmission = registerPet({
-      ownerName: currentUser?.name ?? "",
-      ownerEmail: currentUser?.email ?? "",
-      accountType: currentUser?.role ?? "adopter",
-      ...form,
-    });
+    if (!currentUser?.id) {
+      setError("No signed-in user was found for this session.");
+      return;
+    }
 
-    setSubmitted(nextSubmission);
-    setForm(initialForm);
+    try {
+      setIsSubmitting(true);
+      setError("");
+
+      const response = await createPet({
+        name: form.name.trim(),
+        species: form.species,
+        breed: form.breed.trim(),
+        age: form.age ? Number(form.age) : undefined,
+        weight: form.weight ? Number(form.weight) : undefined,
+        description: form.description.trim(),
+        imageUrl: form.imageUrl.trim(),
+        availability: "not available",
+        owner: currentUser.id,
+      });
+
+      const nextPet = response.pet ?? null;
+      if (nextPet) {
+        setSubmittedPet(nextPet);
+        setPets((current) => [nextPet, ...current]);
+      }
+      setForm(initialForm);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to register pet.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -62,14 +107,19 @@ export default function PetRegistrationPage() {
       <div className="grid gap-6 xl:grid-cols-[1fr_0.85fr]">
         <Card>
           <CardHeader>
-            <CardTitle>Pet registration form</CardTitle>
+            <CardTitle>Register your pet</CardTitle>
             <CardDescription>
-              {currentUser?.role === "pet_owner"
-                ? "Your account is marked as a pet owner."
-                : "This page is open to logged-in users, but it is designed for pet owners."}
+              Save your pet to your account so it appears in My Pets and can be
+              selected for appointments.
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {error ? (
+              <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {error}
+              </div>
+            ) : null}
+
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
@@ -92,12 +142,12 @@ export default function PetRegistrationPage() {
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="petName">Pet name</Label>
+                  <Label htmlFor="name">Pet name</Label>
                   <Input
-                    id="petName"
-                    value={form.petName}
+                    id="name"
+                    value={form.name}
                     onChange={(event) =>
-                      setForm({...form, petName: event.target.value})
+                      setForm({...form, name: event.target.value})
                     }
                     placeholder="Coco"
                     required
@@ -112,7 +162,6 @@ export default function PetRegistrationPage() {
                       setForm({...form, breed: event.target.value})
                     }
                     placeholder="Mixed Breed"
-                    required
                   />
                 </div>
               </div>
@@ -138,87 +187,58 @@ export default function PetRegistrationPage() {
                   <Label htmlFor="age">Age</Label>
                   <Input
                     id="age"
+                    type="number"
+                    min="0"
+                    step="1"
                     value={form.age}
                     onChange={(event) =>
                       setForm({...form, age: event.target.value})
                     }
-                    placeholder="2 years"
-                    required
+                    placeholder="2"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="size">Size</Label>
-                  <Select
-                    id="size"
-                    value={form.size}
-                    onChange={(event) =>
-                      setForm({...form, size: event.target.value})
-                    }
-                  >
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="temperament">Temperament</Label>
-                  <Select
-                    id="temperament"
-                    value={form.temperament}
-                    onChange={(event) =>
-                      setForm({...form, temperament: event.target.value})
-                    }
-                  >
-                    <option>Calm</option>
-                    <option>Playful</option>
-                    <option>Gentle</option>
-                    <option>Active</option>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="photoUrl">Photo URL</Label>
+                  <Label htmlFor="weight">Weight (kg)</Label>
                   <Input
-                    id="photoUrl"
-                    value={form.photoUrl}
+                    id="weight"
+                    type="number"
+                    min="0"
+                    step="0.1"
+                    value={form.weight}
                     onChange={(event) =>
-                      setForm({...form, photoUrl: event.target.value})
+                      setForm({...form, weight: event.target.value})
                     }
-                    placeholder="Optional image link"
+                    placeholder="12.5"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Pet description</Label>
+                <Label htmlFor="imageUrl">Photo URL</Label>
+                <Input
+                  id="imageUrl"
+                  value={form.imageUrl}
+                  onChange={(event) =>
+                    setForm({...form, imageUrl: event.target.value})
+                  }
+                  placeholder="Optional image link"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Care notes</Label>
                 <Textarea
                   id="description"
                   value={form.description}
                   onChange={(event) =>
                     setForm({...form, description: event.target.value})
                   }
-                  placeholder="Tell us about the pet's personality, habits, and care needs."
-                  required
+                  placeholder="Add anything useful about temperament, routines, or care needs."
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="reason">Why is the pet being registered?</Label>
-                <Textarea
-                  id="reason"
-                  value={form.reason}
-                  onChange={(event) =>
-                    setForm({...form, reason: event.target.value})
-                  }
-                  placeholder="Explain the reason for the adoption listing."
-                  required
-                />
-              </div>
-
-              <Button type="submit" className="w-full">
-                Submit for admin review
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Saving pet..." : "Register pet"}
               </Button>
             </form>
           </CardContent>
@@ -227,38 +247,36 @@ export default function PetRegistrationPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Review status</CardTitle>
+              <CardTitle>Latest registration</CardTitle>
               <CardDescription>
-                New pet registrations always enter pending review first.
+                Your newest saved pet will appear here right away.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {submitted ? (
+              {submittedPet ? (
                 <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="text-sm font-medium text-emerald-900">
-                        {submitted.petName}
+                        {submittedPet.name}
                       </p>
                       <p className="text-sm text-emerald-800">
-                        {submitted.species} | {submitted.breed}
+                        {submittedPet.species}
+                        {submittedPet.breed ? ` | ${submittedPet.breed}` : ""}
                       </p>
                     </div>
-                    <Badge variant="warning">{submitted.status}</Badge>
+                    <Badge variant="primary">Saved</Badge>
                   </div>
                   <p className="mt-4 text-sm leading-6 text-emerald-900/90">
-                    Admins will review the listing before it appears as
-                    available for adoption.
+                    This pet is now linked to your account and available in My
+                    Pets and the appointment booking page.
                   </p>
                 </div>
               ) : (
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                  <p className="font-medium text-slate-950">
-                    No submission yet.
-                  </p>
+                  <p className="font-medium text-slate-950">No recent save yet.</p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Once submitted, the status will show as pending until an
-                    admin reviews it.
+                    Submit the form to create your first pet profile.
                   </p>
                 </div>
               )}
@@ -267,37 +285,39 @@ export default function PetRegistrationPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Your submissions</CardTitle>
+              <CardTitle>Your registered pets</CardTitle>
               <CardDescription>
-                These entries remain in local storage for the prototype.
+                These records are loaded from the backend by your user id.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {mySubmissions.length > 0 ? (
-                mySubmissions.map((item) => (
+              {isLoadingPets ? (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                  Loading your pets...
+                </div>
+              ) : hasPets ? (
+                pets.map((pet) => (
                   <div
-                    key={item.id}
+                    key={pet._id}
                     className="rounded-2xl border border-slate-200 bg-white p-4"
                   >
                     <div className="flex items-center justify-between gap-3">
                       <div>
-                        <p className="font-medium text-slate-950">
-                          {item.petName}
-                        </p>
+                        <p className="font-medium text-slate-950">{pet.name}</p>
                         <p className="text-sm text-slate-600">
-                          {item.species} | {item.breed}
+                          {pet.species}
+                          {pet.breed ? ` | ${pet.breed}` : ""}
                         </p>
                       </div>
-                      <Badge variant="warning">{item.status}</Badge>
+                      <Badge variant="soft">
+                        {pet.availability ?? "not available"}
+                      </Badge>
                     </div>
-                    <p className="mt-2 text-xs uppercase tracking-[0.16em] text-slate-500">
-                      Submitted {item.submittedAt}
-                    </p>
                   </div>
                 ))
               ) : (
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                  Your submissions will appear here after you register a pet.
+                  Your pets will appear here after you register them.
                 </div>
               )}
             </CardContent>

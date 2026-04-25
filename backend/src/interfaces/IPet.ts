@@ -6,5 +6,7 @@ export interface IPet extends mongoose.Document {
   breed?: string;
   age?: number;
   weight?: number;
+  description?: string;
+  imageUrl?: string;
   owner: mongoose.Types.ObjectId;
 }

@@ -1,4 +1,5 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
+import {Navigate} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
 import {
@@ -14,240 +15,361 @@ import {Select} from "../components/ui/select";
 import {Textarea} from "../components/ui/textarea";
 import {services} from "../data/mockData";
 import {CalendarIcon} from "../components/icons";
+import {useAuth} from "../context/AuthContext";
 import {getPetsByOwner} from "../services/petService";
+import {
+  createAppointment,
+  getAppointmentsByUser,
+} from "../services/appoitnmentService";
 
-// ---- INITIAL STATE ----
+function getToday() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function formatSchedule(date, time) {
+  if (!date || !time) return "Schedule unavailable";
+  const timestamp = new Date(`${date}T${time}`);
+  return timestamp.toLocaleString([], {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+}
+
 const initialBooking = {
   service: services[0],
-  date: "2026-04-21",
-  time: "11:30",
+  appointmentDate: getToday(),
+  appointmentTime: "11:30",
   notes: "",
   petId: "",
 };
 
 export default function AppointmentsPage() {
+  const {currentUser, isAuthenticated} = useAuth();
   const [pets, setPets] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [booking, setBooking] = useState(initialBooking);
   const [confirmation, setConfirmation] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  // ---- FETCH PETS ----
   useEffect(() => {
-    async function fetchPets() {
+    async function loadData() {
+      if (!currentUser?.id) {
+        setPets([]);
+        setAppointments([]);
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const ownerId = "CURRENT_USER_ID"; // 🔁 replace with actual logged-in user ID
-        const res = await getPetsByOwner(ownerId);
+        setIsLoading(true);
+        setError("");
 
-        setPets(res.data);
+        const [petResponse, appointmentResponse] = await Promise.all([
+          getPetsByOwner(currentUser.id),
+          getAppointmentsByUser(currentUser.id),
+        ]);
 
-        // auto-select first pet
-        if (res.data.length > 0) {
-          setBooking((prev) => ({
-            ...prev,
-            petId: res.data[0].id,
-          }));
-        }
+        const ownerPets = petResponse.pets ?? [];
+        setPets(ownerPets);
+        setAppointments(appointmentResponse.appointments ?? []);
+        setBooking((current) => ({
+          ...current,
+          petId: current.petId || ownerPets[0]?._id || "",
+        }));
       } catch (err) {
-        console.error("Failed to fetch pets:", err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to load appointments page data.",
+        );
+      } finally {
+        setIsLoading(false);
       }
     }
 
-    fetchPets();
-  }, []);
+    loadData();
+  }, [currentUser?.id]);
 
-  // ---- SUBMIT ----
-  function handleSubmit(event) {
+  const selectedPet = useMemo(
+    () => pets.find((pet) => pet._id === booking.petId) ?? null,
+    [pets, booking.petId],
+  );
+
+  if (!isAuthenticated) {
+    return <Navigate to="/auth?mode=login" replace />;
+  }
+
+  async function handleSubmit(event) {
     event.preventDefault();
 
-    if (!booking.petId) {
-      alert("Please select a pet");
+    if (!currentUser?.id) {
+      setError("No signed-in user was found for this session.");
       return;
     }
 
-    setConfirmation({
-      number: `APT-${String(Math.floor(Math.random() * 9000) + 1000)}`,
-      ...booking,
-      status: "Confirmed",
-    });
-  }
+    if (!booking.petId) {
+      setError("Please register or select a pet first.");
+      return;
+    }
 
-  const selectedPet = pets.find((p) => p.id === booking.petId);
+    try {
+      setIsSubmitting(true);
+      setError("");
+
+      const response = await createAppointment({
+        userId: currentUser.id,
+        petId: booking.petId,
+        service: booking.service,
+        appointmentDate: booking.appointmentDate,
+        appointmentTime: booking.appointmentTime,
+        notes: booking.notes.trim(),
+      });
+
+      const nextAppointment = response.appointment ?? null;
+      if (nextAppointment) {
+        setConfirmation(nextAppointment);
+        setAppointments((current) => [nextAppointment, ...current]);
+      }
+
+      setBooking((current) => ({
+        ...initialBooking,
+        petId: current.petId,
+      }));
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to create appointment.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        {/* ---- FORM ---- */}
         <Card>
           <CardHeader>
             <CardTitle>Book appointment</CardTitle>
             <CardDescription>
-              Choose your pet, service, date, and time.
+              Choose one of your pets, pick a service, and save the booking to
+              the backend.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              {/* ---- PET SELECT ---- */}
-              <div className="space-y-2">
-                <Label htmlFor="pet">Select Pet</Label>
-                <Select
-                  id="pet"
-                  value={booking.petId}
-                  onChange={(event) =>
-                    setBooking({...booking, petId: event.target.value})
-                  }
-                >
-                  {pets.length === 0 ? (
-                    <option disabled>No pets found</option>
-                  ) : (
-                    pets.map((pet) => (
-                      <option key={pet.id} value={pet.id}>
-                        {pet.name} ({pet.type})
-                      </option>
-                    ))
-                  )}
-                </Select>
+            {error ? (
+              <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {error}
               </div>
+            ) : null}
 
-              {/* ---- SERVICE ---- */}
-              <div className="space-y-2">
-                <Label htmlFor="service">Service</Label>
-                <Select
-                  id="service"
-                  value={booking.service}
-                  onChange={(event) =>
-                    setBooking({...booking, service: event.target.value})
-                  }
-                >
-                  {services.map((service) => (
-                    <option key={service}>{service}</option>
-                  ))}
-                </Select>
+            {isLoading ? (
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
+                Loading your pets and appointments...
               </div>
-
-              {/* ---- DATE & TIME ---- */}
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="date">Date</Label>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={booking.date}
-                    onChange={(event) =>
-                      setBooking({...booking, date: event.target.value})
-                    }
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="time">Time</Label>
-                  <Input
-                    id="time"
-                    type="time"
-                    value={booking.time}
-                    onChange={(event) =>
-                      setBooking({...booking, time: event.target.value})
-                    }
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* ---- NOTES ---- */}
-              <div className="space-y-2">
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                  id="notes"
-                  value={booking.notes}
-                  onChange={(event) =>
-                    setBooking({...booking, notes: event.target.value})
-                  }
-                  placeholder="Anything the clinic should know before your visit?"
-                />
-              </div>
-
-              {/* ---- SUBMIT ---- */}
-              <Button type="submit" className="w-full">
-                <CalendarIcon className="h-4 w-4" />
-                Book Appointment
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        {/* ---- CONFIRMATION ---- */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Confirmation</CardTitle>
-            <CardDescription>
-              The booking summary appears here after submission.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {confirmation ? (
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-medium text-emerald-900">
-                      {confirmation.number}
-                    </p>
-                    <p className="text-sm text-emerald-800">
-                      {confirmation.service}
-                    </p>
-                  </div>
-                  <Badge variant="primary">{confirmation.status}</Badge>
-                </div>
-
-                <div className="mt-4 grid gap-3 md:grid-cols-4">
-                  {/* PET */}
-                  <div className="rounded-2xl bg-white p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                      Pet
-                    </p>
-                    <p className="mt-1 font-semibold text-slate-950">
-                      {selectedPet?.name || "N/A"}
-                    </p>
-                  </div>
-
-                  {/* DATE */}
-                  <div className="rounded-2xl bg-white p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                      Date
-                    </p>
-                    <p className="mt-1 font-semibold text-slate-950">
-                      {confirmation.date}
-                    </p>
-                  </div>
-
-                  {/* TIME */}
-                  <div className="rounded-2xl bg-white p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                      Time
-                    </p>
-                    <p className="mt-1 font-semibold text-slate-950">
-                      {confirmation.time}
-                    </p>
-                  </div>
-
-                  {/* STATUS */}
-                  <div className="rounded-2xl bg-white p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                      Status
-                    </p>
-                    <p className="mt-1 font-semibold text-slate-950">
-                      Awaiting confirmation
-                    </p>
-                  </div>
-                </div>
+            ) : pets.length === 0 ? (
+              <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-800">
+                Register a pet first so you can book an appointment for it.
               </div>
             ) : (
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                <p className="font-medium text-slate-950">No booking yet.</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Submit the form to generate a booking confirmation card.
-                </p>
-              </div>
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <div className="space-y-2">
+                  <Label htmlFor="pet">Select pet</Label>
+                  <Select
+                    id="pet"
+                    value={booking.petId}
+                    onChange={(event) =>
+                      setBooking({...booking, petId: event.target.value})
+                    }
+                  >
+                    {pets.map((pet) => (
+                      <option key={pet._id} value={pet._id}>
+                        {pet.name} ({pet.species})
+                      </option>
+                    ))}
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="service">Service</Label>
+                  <Select
+                    id="service"
+                    value={booking.service}
+                    onChange={(event) =>
+                      setBooking({...booking, service: event.target.value})
+                    }
+                  >
+                    {services.map((service) => (
+                      <option key={service}>{service}</option>
+                    ))}
+                  </Select>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="appointmentDate">Date</Label>
+                    <Input
+                      id="appointmentDate"
+                      type="date"
+                      value={booking.appointmentDate}
+                      min={getToday()}
+                      onChange={(event) =>
+                        setBooking({
+                          ...booking,
+                          appointmentDate: event.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="appointmentTime">Time</Label>
+                    <Input
+                      id="appointmentTime"
+                      type="time"
+                      value={booking.appointmentTime}
+                      onChange={(event) =>
+                        setBooking({
+                          ...booking,
+                          appointmentTime: event.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="notes">Notes</Label>
+                  <Textarea
+                    id="notes"
+                    value={booking.notes}
+                    onChange={(event) =>
+                      setBooking({...booking, notes: event.target.value})
+                    }
+                    placeholder="Anything the clinic should know before your visit?"
+                  />
+                </div>
+
+                <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  <CalendarIcon className="h-4 w-4" />
+                  {isSubmitting ? "Saving appointment..." : "Book appointment"}
+                </Button>
+              </form>
             )}
           </CardContent>
         </Card>
+
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Confirmation</CardTitle>
+              <CardDescription>
+                The latest successful booking appears here.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {confirmation ? (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-medium text-emerald-900">
+                        {confirmation.service}
+                      </p>
+                      <p className="text-sm text-emerald-800">
+                        {selectedPet?.name || "Selected pet"}
+                      </p>
+                    </div>
+                    <Badge variant="primary">{confirmation.status}</Badge>
+                  </div>
+
+                  <div className="mt-4 grid gap-3 md:grid-cols-3">
+                    <div className="rounded-2xl bg-white p-4">
+                      <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                        Schedule
+                      </p>
+                      <p className="mt-1 font-semibold text-slate-950">
+                        {formatSchedule(
+                          confirmation.appointmentDate,
+                          confirmation.appointmentTime,
+                        )}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-white p-4">
+                      <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                        Pet
+                      </p>
+                      <p className="mt-1 font-semibold text-slate-950">
+                        {selectedPet?.name || "Unavailable"}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-white p-4">
+                      <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                        Notes
+                      </p>
+                      <p className="mt-1 text-sm text-slate-700">
+                        {confirmation.notes?.trim() || "No notes added"}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                  <p className="font-medium text-slate-950">No booking yet.</p>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">
+                    Submit the form to create an appointment record.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent appointments</CardTitle>
+              <CardDescription>
+                This list is loaded from the backend for the current user.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {appointments.length > 0 ? (
+                appointments.map((appointment) => {
+                  const pet = pets.find((item) => item._id === appointment.petId);
+                  return (
+                    <div
+                      key={appointment._id}
+                      className="rounded-2xl border border-slate-200 bg-white p-4"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <p className="font-medium text-slate-950">
+                            {appointment.service}
+                          </p>
+                          <p className="text-sm text-slate-600">
+                            {pet?.name || "Unknown pet"}
+                          </p>
+                        </div>
+                        <Badge variant="soft">{appointment.status}</Badge>
+                      </div>
+                      <p className="mt-3 text-sm text-slate-600">
+                        {formatSchedule(
+                          appointment.appointmentDate,
+                          appointment.appointmentTime,
+                        )}
+                      </p>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                  Your appointment history will appear here after your first
+                  booking.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

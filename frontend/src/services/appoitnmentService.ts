@@ -1,42 +1,61 @@
 export interface CreateAppointmentPayload {
-  name: string;
-  email: string;
-  date: string;
-  time: string;
+  userId: string;
+  petId: string;
+  service: string;
+  appointmentDate: string;
+  appointmentTime: string;
   notes?: string;
 }
 
-export interface CreateAppointmentResponse {
-  success: boolean;
-  message: string;
-  data?: any;
+export interface Appointment {
+  _id?: string;
+  userId: string;
+  petId: string;
+  service: string;
+  appointmentDate: string;
+  appointmentTime: string;
+  notes?: string;
+  status: "pending" | "confirmed";
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-const API_BASE_URL = "http://localhost:3000/api/appointments";
-// adjust if needed
+export interface AppointmentApiResponse<T> {
+  message: string;
+  appointment?: T;
+  appointments?: T;
+}
+
+const API_BASE_URL = "http://localhost:5000/api/appointment";
 
 export async function createAppointment(
   payload: CreateAppointmentPayload,
-): Promise<CreateAppointmentResponse> {
-  try {
-    const response = await fetch(`${API_BASE_URL}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+): Promise<AppointmentApiResponse<Appointment>> {
+  const response = await fetch(API_BASE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
-    if (!response.ok) {
-      // handle non-2xx responses
-      const errorText = await response.text();
-      throw new Error(errorText || "Failed to create appointment");
-    }
-
-    const data: CreateAppointmentResponse = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error creating appointment:", error);
-    throw error;
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to create appointment");
   }
+
+  return data;
+}
+
+export async function getAppointmentsByUser(
+  userId: string,
+): Promise<AppointmentApiResponse<Appointment[]>> {
+  const response = await fetch(`${API_BASE_URL}/user/${userId}`);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch appointments");
+  }
+
+  return data;
 }

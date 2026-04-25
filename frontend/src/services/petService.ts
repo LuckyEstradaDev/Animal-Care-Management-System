@@ -5,6 +5,8 @@ export interface Pet {
   breed?: string;
   age?: number;
   weight?: number;
+  description?: string;
+  imageUrl?: string;
   availability?: "available" | "not available";
   owner?: string;
   createdAt?: string;
@@ -14,7 +16,7 @@ export interface Pet {
 export interface ApiResponse<T> {
   message: string;
   pet?: T;
-  pets?: T[];
+  pets?: T;
 }
 const BASE_URL = "http://localhost:5000/api/pets";
 

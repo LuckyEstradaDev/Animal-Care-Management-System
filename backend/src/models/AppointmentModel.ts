@@ -4,12 +4,32 @@ const appointmentSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
+      required: true,
     },
-    type: {
+    petId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+    service: {
       type: String,
+      required: true,
     },
-    scheduledDate: {
-      type: Date,
+    appointmentDate: {
+      type: String,
+      required: true,
+    },
+    appointmentTime: {
+      type: String,
+      required: true,
+    },
+    notes: {
+      type: String,
+      trim: true,
+    },
+    status: {
+      type: String,
+      enum: ["pending", "confirmed"],
+      default: "confirmed",
     },
   },
   {

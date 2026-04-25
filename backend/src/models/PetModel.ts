@@ -24,6 +24,14 @@ const petSchema = new mongoose.Schema(
       type: Number,
       min: 0,
     },
+    description: {
+      type: String,
+      trim: true,
+    },
+    imageUrl: {
+      type: String,
+      trim: true,
+    },
     availability: {
       type: String,
       enum: ["available", "not available"],
@@ -31,6 +39,7 @@ const petSchema = new mongoose.Schema(
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
+      required: true,
     },
   },
   {

@@ -7,9 +7,16 @@ const SESSION_KEY = "acm_session";
 
 const AuthContext = createContext(null);
 
+function createObjectId() {
+  return Array.from({ length: 24 }, () =>
+    Math.floor(Math.random() * 16).toString(16),
+  ).join("");
+}
+
 function normalizeUser(user) {
   return {
     ...user,
+    id: user.id ?? createObjectId(),
     role: user.role ?? "adopter",
   };
 }
@@ -33,12 +40,19 @@ function readStoredUsers() {
   }
 }
 
-function readStoredSession() {
+function readStoredSession(users) {
   if (typeof window === "undefined") return null;
 
   try {
     const raw = window.localStorage.getItem(SESSION_KEY);
-    return raw ? normalizeUser(JSON.parse(raw)) : null;
+    if (!raw) return null;
+
+    const session = normalizeUser(JSON.parse(raw));
+    const matchingUser = users.find(
+      (user) => user.email.toLowerCase() === session.email.toLowerCase(),
+    );
+
+    return matchingUser ?? session;
   } catch {
     return null;
   }
@@ -46,7 +60,7 @@ function readStoredSession() {
 
 export function AuthProvider({ children }) {
   const [users, setUsers] = useState(readStoredUsers);
-  const [currentUser, setCurrentUser] = useState(readStoredSession);
+  const [currentUser, setCurrentUser] = useState(() => readStoredSession(users));
 
   useEffect(() => {
     window.localStorage.setItem(USERS_KEY, JSON.stringify(users));
@@ -73,6 +87,7 @@ export function AuthProvider({ children }) {
       }
 
       setCurrentUser({
+        id: user.id,
         name: user.name,
         email: user.email,
         role: user.role ?? "adopter",
@@ -92,9 +107,20 @@ export function AuthProvider({ children }) {
         throw new Error("This email is already registered.");
       }
 
-      const nextUser = { name, email, password, role };
+      const nextUser = {
+        id: createObjectId(),
+        name,
+        email,
+        password,
+        role,
+      };
       setUsers((current) => [...current, nextUser]);
-      setCurrentUser({ name, email, role });
+      setCurrentUser({
+        id: nextUser.id,
+        name,
+        email,
+        role,
+      });
       return nextUser;
     },
     [users],
