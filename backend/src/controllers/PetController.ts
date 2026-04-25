@@ -4,6 +4,7 @@ import {
   getPetById,
   updatePet,
   deletePet,
+  getPetsByOwner,
 } from "../services/pet.service.js";
 import type {Request, Response} from "express";
 
@@ -64,6 +65,20 @@ export const deletePetController = async (req: Request, res: Response) => {
     }
     await deletePet(req.params.id);
     return res.status(200).json({message: "Pet deleted successfully."});
+  } catch (error: any) {
+    return res.status(500).json({message: error.message});
+  }
+};
+
+export const getPetsByOwnerController = async (req: Request, res: Response) => {
+  try {
+    if (!req.params.ownerId) {
+      return res.status(400).json({message: "Invalid request."});
+    }
+    const pets = await getPetsByOwner(req.params.ownerId);
+    return res
+      .status(200)
+      .json({message: "Pets retrieved successfully.", pets});
   } catch (error: any) {
     return res.status(500).json({message: error.message});
   }

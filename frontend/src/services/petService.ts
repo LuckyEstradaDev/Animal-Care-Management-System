@@ -76,3 +76,10 @@ export const deletePet = async (id: string): Promise<ApiResponse<null>> => {
 
   return handleResponse<ApiResponse<null>>(res);
 };
+
+export const getPetsByOwner = async (
+  ownerId: string,
+): Promise<ApiResponse<Pet[]>> => {
+  const res = await fetch(`${BASE_URL}/owner/${ownerId}`);
+  return handleResponse<ApiResponse<Pet[]>>(res);
+};

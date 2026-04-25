@@ -25,4 +25,9 @@ export class PetRepository {
   async delete(id: string) {
     await PetModel.findByIdAndDelete(id);
   }
+
+  async getByOwner(ownerId: string) {
+    const pets = await PetModel.find({owner: ownerId});
+    return pets;
+  }
 }

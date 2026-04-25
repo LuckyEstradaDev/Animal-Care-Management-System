@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
 import {
@@ -14,20 +14,55 @@ import {Select} from "../components/ui/select";
 import {Textarea} from "../components/ui/textarea";
 import {services} from "../data/mockData";
 import {CalendarIcon} from "../components/icons";
+import {getPetsByOwner} from "../services/petService";
 
+// ---- INITIAL STATE ----
 const initialBooking = {
   service: services[0],
   date: "2026-04-21",
   time: "11:30",
   notes: "",
+  petId: "",
 };
 
 export default function AppointmentsPage() {
+  const [pets, setPets] = useState([]);
   const [booking, setBooking] = useState(initialBooking);
   const [confirmation, setConfirmation] = useState(null);
 
+  // ---- FETCH PETS ----
+  useEffect(() => {
+    async function fetchPets() {
+      try {
+        const ownerId = "CURRENT_USER_ID"; // 🔁 replace with actual logged-in user ID
+        const res = await getPetsByOwner(ownerId);
+
+        setPets(res.data);
+
+        // auto-select first pet
+        if (res.data.length > 0) {
+          setBooking((prev) => ({
+            ...prev,
+            petId: res.data[0].id,
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch pets:", err);
+      }
+    }
+
+    fetchPets();
+  }, []);
+
+  // ---- SUBMIT ----
   function handleSubmit(event) {
     event.preventDefault();
+
+    if (!booking.petId) {
+      alert("Please select a pet");
+      return;
+    }
+
     setConfirmation({
       number: `APT-${String(Math.floor(Math.random() * 9000) + 1000)}`,
       ...booking,
@@ -35,18 +70,44 @@ export default function AppointmentsPage() {
     });
   }
 
+  const selectedPet = pets.find((p) => p.id === booking.petId);
+
   return (
     <div className="space-y-6">
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+        {/* ---- FORM ---- */}
         <Card>
           <CardHeader>
             <CardTitle>Book appointment</CardTitle>
             <CardDescription>
-              Choose the service, date, and time.
+              Choose your pet, service, date, and time.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form className="space-y-4" onSubmit={handleSubmit}>
+              {/* ---- PET SELECT ---- */}
+              <div className="space-y-2">
+                <Label htmlFor="pet">Select Pet</Label>
+                <Select
+                  id="pet"
+                  value={booking.petId}
+                  onChange={(event) =>
+                    setBooking({...booking, petId: event.target.value})
+                  }
+                >
+                  {pets.length === 0 ? (
+                    <option disabled>No pets found</option>
+                  ) : (
+                    pets.map((pet) => (
+                      <option key={pet.id} value={pet.id}>
+                        {pet.name} ({pet.type})
+                      </option>
+                    ))
+                  )}
+                </Select>
+              </div>
+
+              {/* ---- SERVICE ---- */}
               <div className="space-y-2">
                 <Label htmlFor="service">Service</Label>
                 <Select
@@ -62,6 +123,7 @@ export default function AppointmentsPage() {
                 </Select>
               </div>
 
+              {/* ---- DATE & TIME ---- */}
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="date">Date</Label>
@@ -89,6 +151,7 @@ export default function AppointmentsPage() {
                 </div>
               </div>
 
+              {/* ---- NOTES ---- */}
               <div className="space-y-2">
                 <Label htmlFor="notes">Notes</Label>
                 <Textarea
@@ -101,6 +164,7 @@ export default function AppointmentsPage() {
                 />
               </div>
 
+              {/* ---- SUBMIT ---- */}
               <Button type="submit" className="w-full">
                 <CalendarIcon className="h-4 w-4" />
                 Book Appointment
@@ -109,6 +173,7 @@ export default function AppointmentsPage() {
           </CardContent>
         </Card>
 
+        {/* ---- CONFIRMATION ---- */}
         <Card>
           <CardHeader>
             <CardTitle>Confirmation</CardTitle>
@@ -130,7 +195,19 @@ export default function AppointmentsPage() {
                   </div>
                   <Badge variant="primary">{confirmation.status}</Badge>
                 </div>
-                <div className="mt-4 grid gap-3 md:grid-cols-3">
+
+                <div className="mt-4 grid gap-3 md:grid-cols-4">
+                  {/* PET */}
+                  <div className="rounded-2xl bg-white p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                      Pet
+                    </p>
+                    <p className="mt-1 font-semibold text-slate-950">
+                      {selectedPet?.name || "N/A"}
+                    </p>
+                  </div>
+
+                  {/* DATE */}
                   <div className="rounded-2xl bg-white p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
                       Date
@@ -139,6 +216,8 @@ export default function AppointmentsPage() {
                       {confirmation.date}
                     </p>
                   </div>
+
+                  {/* TIME */}
                   <div className="rounded-2xl bg-white p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
                       Time
@@ -147,6 +226,8 @@ export default function AppointmentsPage() {
                       {confirmation.time}
                     </p>
                   </div>
+
+                  {/* STATUS */}
                   <div className="rounded-2xl bg-white p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
                       Status

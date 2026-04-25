@@ -25,3 +25,8 @@ export const updatePet = async (id: string, data: Partial<IPet>) => {
 export const deletePet = async (id: string) => {
   await petRepository.delete(id);
 };
+
+export const getPetsByOwner = async (ownerId: string) => {
+  const pets = await petRepository.getByOwner(ownerId);
+  return pets;
+};
