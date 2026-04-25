@@ -1,21 +1,27 @@
 import {useEffect, useMemo, useState} from "react";
 import {Navigate} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
+import {StethoscopeIcon} from "../components/icons";
 import {useAuth} from "../context/AuthContext";
 import {getPetsByOwner} from "../services/petService";
 
 const fallbackImage = "https://via.placeholder.com/320x220?text=Pet";
 
-function formatDate(value) {
-  if (!value) return "Not available";
-  return new Date(value).toLocaleDateString();
+function createPetSummary(pet) {
+  const notes = pet.description
+    ? pet.description
+        .split("\n")
+        .map((item) => item.trim())
+        .filter(Boolean)
+    : [];
+
+  return {
+    nextVisit: "No appointment yet",
+    vaccinationRecords: [],
+    medicalHistory: notes.length > 0 ? notes : ["No medical notes recorded yet."],
+    treatments: pet.weight ? [`Current weight recorded at ${pet.weight} kg.`] : ["No treatment notes recorded yet."],
+  };
 }
 
 export default function MyPetsPage() {
@@ -29,6 +35,7 @@ export default function MyPetsPage() {
     async function loadPets() {
       if (!currentUser?.id) {
         setPets([]);
+        setSelectedPetId(null);
         setIsLoading(false);
         return;
       }
@@ -61,7 +68,7 @@ export default function MyPetsPage() {
 
   if (isLoading) {
     return (
-      <div className="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
         Loading your pets...
       </div>
     );
@@ -69,7 +76,7 @@ export default function MyPetsPage() {
 
   if (error) {
     return (
-      <div className="rounded-3xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-700">
+      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-sm text-rose-700">
         {error}
       </div>
     );
@@ -77,7 +84,7 @@ export default function MyPetsPage() {
 
   if (!selectedPet) {
     return (
-      <div className="rounded-3xl border border-slate-200 bg-white p-6">
+      <div className="rounded-2xl border border-slate-200 bg-white p-6">
         <p className="text-lg font-semibold text-slate-950">No pets yet</p>
         <p className="mt-2 text-sm leading-6 text-slate-600">
           Register a pet first and it will show up here automatically.
@@ -86,19 +93,21 @@ export default function MyPetsPage() {
     );
   }
 
+  const details = createPetSummary(selectedPet);
+
   return (
     <div className="space-y-8">
       <div className="grid gap-6 xl:grid-cols-[0.78fr_1.22fr]">
         <Card>
           <CardHeader>
             <CardTitle>My pets</CardTitle>
-            <CardDescription>
-              Select one of your saved pets to review its profile.
-            </CardDescription>
+            <CardDescription>Choose a pet profile to inspect.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {pets.map((pet) => {
               const active = pet._id === selectedPet._id;
+              const petDetails = createPetSummary(pet);
+
               return (
                 <button
                   key={pet._id}
@@ -110,7 +119,7 @@ export default function MyPetsPage() {
                       : "border-slate-200 bg-white hover:bg-slate-50"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <img
                       src={pet.imageUrl || fallbackImage}
                       alt={pet.name}
@@ -118,17 +127,20 @@ export default function MyPetsPage() {
                       loading="lazy"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="text-lg font-semibold text-slate-950">
+                      <p className="break-words text-lg font-semibold text-slate-950">
                         {pet.name}
                       </p>
-                      <p className="text-sm text-slate-600">
-                        {pet.species}
-                        {pet.breed ? ` | ${pet.breed}` : ""}
+                      <p className="break-words text-sm text-slate-600">
+                        {pet.species} | {pet.breed || "Unknown breed"}
                       </p>
                     </div>
-                    <Badge variant={active ? "primary" : "default"}>
+                    <Badge className="self-start sm:self-auto" variant={active ? "primary" : "default"}>
                       {pet.availability ?? "saved"}
                     </Badge>
+                  </div>
+                  <div className="mt-4 flex items-center gap-3 text-sm text-slate-600">
+                    <StethoscopeIcon className="h-4 w-4" />
+                    <span className="break-words">Next visit: {petDetails.nextVisit}</span>
                   </div>
                 </button>
               );
@@ -137,82 +149,114 @@ export default function MyPetsPage() {
         </Card>
 
         <div className="space-y-6">
-          <Card className="overflow-hidden">
-            <div className="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
-              <div className="min-h-[280px] bg-slate-100">
-                <img
-                  src={selectedPet.imageUrl || fallbackImage}
-                  alt={selectedPet.name}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div>
-                <CardHeader>
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <CardTitle>{selectedPet.name}</CardTitle>
-                      <CardDescription>
-                        {selectedPet.species}
-                        {selectedPet.breed ? ` | ${selectedPet.breed}` : ""}
-                      </CardDescription>
-                    </div>
-                    <Badge variant="soft">
-                      {selectedPet.availability ?? "saved"}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="grid gap-4 md:grid-cols-2">
-                  <div className="rounded-3xl bg-slate-50 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                      Age
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold text-slate-950">
-                      {selectedPet.age ?? "N/A"}
-                    </p>
-                  </div>
-                  <div className="rounded-3xl bg-slate-50 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                      Weight
-                    </p>
-                    <p className="mt-2 text-2xl font-semibold text-slate-950">
-                      {selectedPet.weight ? `${selectedPet.weight} kg` : "N/A"}
-                    </p>
-                  </div>
-                  <div className="rounded-3xl bg-slate-50 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                      Registered
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-slate-950">
-                      {formatDate(selectedPet.createdAt)}
-                    </p>
-                  </div>
-                  <div className="rounded-3xl bg-slate-50 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-                      Owner
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-slate-950">
-                      {currentUser?.name}
-                    </p>
-                  </div>
-                </CardContent>
-              </div>
-            </div>
-          </Card>
-
           <Card>
             <CardHeader>
-              <CardTitle>Care notes</CardTitle>
-              <CardDescription>
-                Profile notes saved during registration.
-              </CardDescription>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <CardTitle className="break-words">{selectedPet.name}</CardTitle>
+                  <CardDescription className="break-words">
+                    {selectedPet.species} | {selectedPet.breed || "Unknown breed"}
+                  </CardDescription>
+                </div>
+                <Badge className="self-start sm:self-auto" variant="soft">
+                  Next visit {details.nextVisit}
+                </Badge>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="rounded-3xl border border-slate-200 bg-slate-50 p-5 text-sm leading-6 text-slate-700">
-                {selectedPet.description?.trim() ||
-                  "No extra care notes were added for this pet yet."}
+            <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="rounded-3xl bg-slate-50 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                  Vaccinations
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                  {details.vaccinationRecords.length}
+                </p>
+              </div>
+              <div className="rounded-3xl bg-slate-50 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                  History notes
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                  {details.medicalHistory.length}
+                </p>
+              </div>
+              <div className="rounded-3xl bg-slate-50 p-4">
+                <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
+                  Treatments
+                </p>
+                <p className="mt-2 text-2xl font-semibold text-slate-950">
+                  {details.treatments.length}
+                </p>
               </div>
             </CardContent>
           </Card>
+
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Vaccination records</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {details.vaccinationRecords.length > 0 ? (
+                  details.vaccinationRecords.map((record) => (
+                    <div
+                      key={record.label}
+                      className="rounded-2xl border border-slate-200 bg-white p-4"
+                    >
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <p className="break-words font-medium text-slate-950">
+                          {record.label}
+                        </p>
+                        <Badge
+                          className="self-start sm:self-auto"
+                          variant={record.status === "Upcoming" ? "warning" : "primary"}
+                        >
+                          {record.status}
+                        </Badge>
+                      </div>
+                      <p className="mt-2 text-sm text-slate-600">{record.date}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                    No vaccination records available yet.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Medical history</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {details.medicalHistory.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm leading-6 text-slate-700"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Treatments</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {details.treatments.map((item) => (
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-700"
+                  >
+                    {item}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

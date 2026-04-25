@@ -50,6 +50,23 @@ export const availablePets = [
     imageUrl:
       "https://images.unsplash.com/photo-1535241749838-299277b6305f?auto=format&fit=crop&w=900&q=80",
   },
+    {
+    id: "p-199",
+    name: "Aragon Carl Matel",
+    species: "Unidentied",
+    breed: "Unidentied",
+    age: "21 years",
+    size: "Massive",
+    energy: "Balanced",
+    compatibility: ["Good walker", "Families", "Vaccinated"],
+    idealHome: "Home with moderate exercise time",
+    status: "On hold",
+    description:
+      "A steady companion who enjoys predictable walks, head scratches, and being near people.",
+    notes: "Very patient during grooming and vet visits.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1558944351-c6d4d2c3f7d7?auto=format&fit=crop&w=900&q=80",
+  },
   {
     id: "p-104",
     name: "Coco",
@@ -141,6 +158,7 @@ export const petProfiles = [
       "Trimming appointment for coat care",
     ],
   },
+  
 ];
 
 export const reminderItems = [

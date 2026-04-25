@@ -195,18 +195,109 @@ export default function AdminPage() {
             </CardContent>
           </Card>
 
-          <div className="flex flex-wrap gap-2">
-            <Button variant="soft" className="border-0">
-              <ShieldIcon className="h-4 w-4" />
-              Review status
-            </Button>
-            <Button variant="outline" className="border-slate-200 bg-white">
-              <StethoscopeIcon className="h-4 w-4" />
-              Open health profile
-            </Button>
-          </div>
         </div>
+
       </div>
+
+      <Card>
+    <div className="justify-between items-end flex p-6">
+      <div>
+        <h1 className="text-lg font-semibold tracking-tight text-slate-900">Pet Appointments Table</h1>
+          <p className="text-sm leading-6 text-slate-600">
+            Upcoming vaccinations, follow-ups, and appointment reminders.
+          </p>
+      </div>
+    </div>
+
+    <CardContent>
+
+      {/* TABLE HEADER */}
+      <div className="grid grid-cols-4 bg-slate-100 p-3 rounded-t-xl font-semibold text-sm">
+        <div className="text-gray-800">Title</div>
+        <div className="text-gray-800">Detail</div>
+        <div className="text-gray-800">Status</div>
+        <div className="text-gray-800 text-right">Actions</div>
+      </div>
+
+      {/* TABLE BODY */}
+      <div className="divide-y">
+        {reminderItems.map((item, index) => (
+          <div
+            key={index}
+            className="grid grid-cols-4 items-center p-3 bg-white hover:bg-slate-50"
+          >
+            {/* TITLE */}
+            <div className="font-medium text-gray-800">{item.title}</div>
+
+            {/* DETAIL */}
+            <div className="text-sm text-slate-600">{item.detail}</div>
+
+            {/* STATUS */}
+            <div>
+              <Badge
+                variant={
+                  item.tone === "primary"
+                    ? "default"
+                    : item.tone === "warning"
+                    ? "secondary"
+                    : "outline"
+                }
+              >
+                {item.tone}
+              </Badge>
+            </div>
+
+            {/* ACTIONS */}
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => alert('Tipaklong')}
+              >
+                Edit
+              </Button>
+
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => alert('Tipaklong')}
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </CardContent>
+  </Card>
+
+  <Card>
+    <CardHeader>
+              <CardTitle>Pets List</CardTitle>
+              <CardDescription>
+                Adoption applications begin as pending and update after review.
+              </CardDescription>
+    </CardHeader>
+    <div className="h-50 w-full mb-4 grid grid-cols-4 overflow-y-scroll gap-4 p-2">
+         {availablePets.map((pet) => (
+          <div key={pet.id} className="flex-1 bg-white border-2 border-gray-300 rounded-2xl p-2 cursor-pointer hover:-translate-y-1">
+            <div className="w-full justify-start items-center flex border-b-2 border-b-gray-300 gap-2 pb-2">
+                <img src={pet.imageUrl} className="h-10 w-10 rounded-full object-cover"/>
+                <h1 className="text-md font-semibold text-gray-800">{pet.name}</h1>
+                <h1 className="text-sm text-gray-500">| {pet.age}</h1>
+            </div>
+            <div className="h-full w-full justify-start items-start flex gap-2 p-2">
+                <ul>
+                  <li className="text-md text-gray-800">➤ Species: {pet.species}</li>
+                  <li className="text-md text-gray-800">➤ Breed: {pet.breed}</li>
+                  <li className="text-md text-gray-800">➤ Size: {pet.size}</li>
+                </ul>
+            </div>
+
+          </div>
+         ))}
+    </div>
+  </Card>
     </div>
   );
 }
