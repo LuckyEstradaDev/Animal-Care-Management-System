@@ -1,12 +1,6 @@
 import {useMemo, useState} from "react";
 import {Badge} from "../components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
 import {petProfiles} from "../data/mockData";
 import {StethoscopeIcon} from "../components/icons";
 
@@ -29,6 +23,7 @@ export default function MyPetsPage() {
           <CardContent className="space-y-3">
             {petProfiles.map((pet) => {
               const active = pet.id === selectedPetId;
+
               return (
                 <button
                   key={pet.id}
@@ -40,7 +35,7 @@ export default function MyPetsPage() {
                       : "border-slate-200 bg-white hover:bg-slate-50"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                     <img
                       src={pet.imageUrl}
                       alt={pet.name}
@@ -48,18 +43,20 @@ export default function MyPetsPage() {
                       loading="lazy"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="text-lg font-semibold text-slate-950">
+                      <p className="break-words text-lg font-semibold text-slate-950">
                         {pet.name}
                       </p>
-                      <p className="text-sm text-slate-600">
+                      <p className="break-words text-sm text-slate-600">
                         {pet.species} | {pet.breed}
                       </p>
                     </div>
-                    <Badge variant={active ? "primary" : "default"}>Open</Badge>
+                    <Badge className="self-start sm:self-auto" variant={active ? "primary" : "default"}>
+                      Open
+                    </Badge>
                   </div>
                   <div className="mt-4 flex items-center gap-3 text-sm text-slate-600">
                     <StethoscopeIcon className="h-4 w-4" />
-                    Next visit: {pet.nextVisit}
+                    <span className="break-words">Next visit: {pet.nextVisit}</span>
                   </div>
                 </button>
               );
@@ -70,17 +67,19 @@ export default function MyPetsPage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <CardTitle>{selectedPet.name}</CardTitle>
-                  <CardDescription>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <CardTitle className="break-words">{selectedPet.name}</CardTitle>
+                  <CardDescription className="break-words">
                     {selectedPet.species} · {selectedPet.breed}
                   </CardDescription>
                 </div>
-                <Badge variant="soft">Next visit {selectedPet.nextVisit}</Badge>
+                <Badge className="self-start sm:self-auto" variant="soft">
+                  Next visit {selectedPet.nextVisit}
+                </Badge>
               </div>
             </CardHeader>
-            <CardContent className="grid gap-4 md:grid-cols-3">
+            <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div className="rounded-3xl bg-slate-50 p-4">
                 <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
                   Vaccinations
@@ -119,14 +118,13 @@ export default function MyPetsPage() {
                     key={record.label}
                     className="rounded-2xl border border-slate-200 bg-white p-4"
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="font-medium text-slate-950">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="break-words font-medium text-slate-950">
                         {record.label}
                       </p>
                       <Badge
-                        variant={
-                          record.status === "Upcoming" ? "warning" : "primary"
-                        }
+                        className="self-start sm:self-auto"
+                        variant={record.status === "Upcoming" ? "warning" : "primary"}
                       >
                         {record.status}
                       </Badge>

@@ -1,13 +1,7 @@
 import {useState} from "react";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
 import {Input} from "../components/ui/input";
 import {Label} from "../components/ui/label";
 import {Select} from "../components/ui/select";
@@ -52,9 +46,7 @@ export default function AppointmentsPage() {
                 <Select
                   id="service"
                   value={booking.service}
-                  onChange={(event) =>
-                    setBooking({...booking, service: event.target.value})
-                  }
+                  onChange={(event) => setBooking({...booking, service: event.target.value})}
                 >
                   {services.map((service) => (
                     <option key={service}>{service}</option>
@@ -62,16 +54,14 @@ export default function AppointmentsPage() {
                 </Select>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="date">Date</Label>
                   <Input
                     id="date"
                     type="date"
                     value={booking.date}
-                    onChange={(event) =>
-                      setBooking({...booking, date: event.target.value})
-                    }
+                    onChange={(event) => setBooking({...booking, date: event.target.value})}
                     required
                   />
                 </div>
@@ -81,9 +71,7 @@ export default function AppointmentsPage() {
                     id="time"
                     type="time"
                     value={booking.time}
-                    onChange={(event) =>
-                      setBooking({...booking, time: event.target.value})
-                    }
+                    onChange={(event) => setBooking({...booking, time: event.target.value})}
                     required
                   />
                 </div>
@@ -94,9 +82,7 @@ export default function AppointmentsPage() {
                 <Textarea
                   id="notes"
                   value={booking.notes}
-                  onChange={(event) =>
-                    setBooking({...booking, notes: event.target.value})
-                  }
+                  onChange={(event) => setBooking({...booking, notes: event.target.value})}
                   placeholder="Anything the clinic should know before your visit?"
                 />
               </div>
@@ -119,23 +105,25 @@ export default function AppointmentsPage() {
           <CardContent>
             {confirmation ? (
               <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-medium text-emerald-900">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <p className="break-words text-sm font-medium text-emerald-900">
                       {confirmation.number}
                     </p>
-                    <p className="text-sm text-emerald-800">
+                    <p className="break-words text-sm text-emerald-800">
                       {confirmation.service}
                     </p>
                   </div>
-                  <Badge variant="primary">{confirmation.status}</Badge>
+                  <Badge className="self-start sm:self-auto" variant="primary">
+                    {confirmation.status}
+                  </Badge>
                 </div>
-                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   <div className="rounded-2xl bg-white p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
                       Date
                     </p>
-                    <p className="mt-1 font-semibold text-slate-950">
+                    <p className="mt-1 break-words font-semibold text-slate-950">
                       {confirmation.date}
                     </p>
                   </div>
@@ -143,15 +131,15 @@ export default function AppointmentsPage() {
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
                       Time
                     </p>
-                    <p className="mt-1 font-semibold text-slate-950">
+                    <p className="mt-1 break-words font-semibold text-slate-950">
                       {confirmation.time}
                     </p>
                   </div>
-                  <div className="rounded-2xl bg-white p-4">
+                  <div className="rounded-2xl bg-white p-4 sm:col-span-2 lg:col-span-1">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
                       Status
                     </p>
-                    <p className="mt-1 font-semibold text-slate-950">
+                    <p className="mt-1 break-words font-semibold text-slate-950">
                       Awaiting confirmation
                     </p>
                   </div>

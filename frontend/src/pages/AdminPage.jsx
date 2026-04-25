@@ -213,10 +213,10 @@ export default function AdminPage() {
 
       {/* TABLE HEADER */}
       <div className="grid grid-cols-4 bg-slate-100 p-3 rounded-t-xl font-semibold text-sm">
-        <div>Title</div>
-        <div>Detail</div>
-        <div>Status</div>
-        <div className="text-right">Actions</div>
+        <div className="text-gray-800">Title</div>
+        <div className="text-gray-800">Detail</div>
+        <div className="text-gray-800">Status</div>
+        <div className="text-gray-800 text-right">Actions</div>
       </div>
 
       {/* TABLE BODY */}
@@ -227,7 +227,7 @@ export default function AdminPage() {
             className="grid grid-cols-4 items-center p-3 bg-white hover:bg-slate-50"
           >
             {/* TITLE */}
-            <div className="font-medium">{item.title}</div>
+            <div className="font-medium text-gray-800">{item.title}</div>
 
             {/* DETAIL */}
             <div className="text-sm text-slate-600">{item.detail}</div>
@@ -283,14 +283,14 @@ export default function AdminPage() {
           <div key={pet.id} className="flex-1 bg-white border-2 border-gray-300 rounded-2xl p-2 cursor-pointer hover:-translate-y-1">
             <div className="w-full justify-start items-center flex border-b-2 border-b-gray-300 gap-2 pb-2">
                 <img src={pet.imageUrl} className="h-10 w-10 rounded-full object-cover"/>
-                <h1 className="text-md font-semibold">{pet.name}</h1>
+                <h1 className="text-md font-semibold text-gray-800">{pet.name}</h1>
                 <h1 className="text-sm text-gray-500">| {pet.age}</h1>
             </div>
             <div className="h-full w-full justify-start items-start flex gap-2 p-2">
                 <ul>
-                  <li className="text-md">➤ Species: {pet.species}</li>
-                  <li className="text-md">➤ Breed: {pet.breed}</li>
-                  <li className="text-md">➤ Size: {pet.size}</li>
+                  <li className="text-md text-gray-800">➤ Species: {pet.species}</li>
+                  <li className="text-md text-gray-800">➤ Breed: {pet.breed}</li>
+                  <li className="text-md text-gray-800">➤ Size: {pet.size}</li>
                 </ul>
             </div>
 

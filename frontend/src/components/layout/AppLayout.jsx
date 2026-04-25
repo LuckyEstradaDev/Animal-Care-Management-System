@@ -1,26 +1,27 @@
 import {NavLink, Outlet, useNavigate} from "react-router-dom";
 import {Badge} from "../ui/badge";
 import {Button} from "../ui/button";
-import {
-  BellIcon,
-  CalendarIcon,
-  HeartIcon,
-  ShieldIcon,
-  SparklesIcon,
-  StethoscopeIcon,
-} from "../icons";
 import {cn} from "../../lib/cn";
 import {useAuth} from "../../context/AuthContext";
+import {
+  FaBell,
+  FaCalendarDays,
+  FaHeart,
+  FaHouse,
+  FaShieldHeart,
+  FaStethoscope,
+  FaWandMagicSparkles,
+} from "react-icons/fa6";
 
 const navigation = [
-  {to: "/dashboard", label: "Dashboard", icon: SparklesIcon},
-  {to: "/adoption", label: "Online Adoption", icon: HeartIcon},
-  {to: "/register-pet", label: "Register Pet", icon: ShieldIcon},
-  {to: "/matching", label: "Pet Matching", icon: SparklesIcon},
-  {to: "/appointments", label: "Appointments", icon: CalendarIcon},
-  {to: "/my-pets", label: "My Pets", icon: StethoscopeIcon},
-  {to: "/notifications", label: "Reminders", icon: BellIcon},
-  {to: "/adoption-status", label: "Screening", icon: ShieldIcon},
+  {to: "/dashboard", label: "Dashboard", icon: FaHouse},
+  {to: "/adoption", label: "Online Adoption", icon: FaHeart},
+  {to: "/register-pet", label: "Register Pet", icon: FaShieldHeart},
+  {to: "/matching", label: "Pet Matching", icon: FaWandMagicSparkles},
+  {to: "/appointments", label: "Appointments", icon: FaCalendarDays},
+  {to: "/my-pets", label: "My Pets", icon: FaStethoscope},
+  {to: "/notifications", label: "Reminders", icon: FaBell},
+  {to: "/adoption-status", label: "Screening", icon: FaShieldHeart},
 ];
 
 export default function AppLayout() {
@@ -29,112 +30,92 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.12),_transparent_32%),radial-gradient(circle_at_top_right,_rgba(251,191,36,0.12),_transparent_28%),linear-gradient(180deg,_#f8fafc_0%,_#eefaf4_100%)] text-slate-900">
-      <div className="min-h-screen lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">
-        <aside className="hidden lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col border-r border-white/60 bg-slate-950/92 px-4 py-5 text-slate-100 backdrop-blur">
-          <div className="rounded-2xl">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/20 text-emerald-300">
-                <HeartIcon className="h-5 w-5" />
+      <div className="flex min-h-screen flex-col">
+        <header className="sticky top-0 z-20 border-b border-white/60 bg-white/75 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-3 md:px-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-lg shadow-emerald-950/15">
+                <FaHouse className="h-5 w-5" />
               </div>
-              <div>
-                <p className="text-sm font-semibold">PawCare</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold text-slate-950">
+                  Animal Care Management
+                </p>
+                <p className="truncate text-sm text-slate-500">User portal</p>
               </div>
+            </div>
+
+            <div className="hidden shrink-0 items-center gap-2 md:flex">
+              <Badge variant="primary" className="inline-flex max-w-[12rem] truncate">
+                {isAuthenticated
+                  ? `${currentUser?.name}${currentUser?.role === "admin" ? " · Admin" : currentUser?.role === "pet_owner" ? " · Pet owner" : " · Adopter"}`
+                  : "Guest"}
+              </Badge>
+              {isAuthenticated ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-slate-200 bg-white"
+                  onClick={() => {
+                    logout();
+                    navigate("/website");
+                  }}
+                >
+                  Logout
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-slate-200 bg-white"
+                  onClick={() => navigate("/auth?mode=login")}
+                >
+                  Login
+                </Button>
+              )}
             </div>
           </div>
+        </header>
 
-          <nav className="mt-6 space-y-1">
-            {navigation.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({isActive}) =>
-                  cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
-                    isActive
-                      ? "bg-emerald-400 text-slate-950"
-                      : "text-slate-300 hover:bg-white/5 hover:text-white",
-                  )
-                }
-              >
-                <item.icon className="h-4 w-4" />
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
-        </aside>
-
-        <div className="flex min-w-0 flex-1 flex-col">
-          <header className="sticky top-0 z-20 border-b border-white/60 bg-white/75 px-4 py-3 backdrop-blur md:px-6">
-            <div className="mx-auto flex w-full max-w-6xl items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-lg shadow-emerald-950/15 lg:hidden">
-                  <HeartIcon className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-950">
-                    Animal Care Management
-                  </p>
-                  <p className="text-sm text-slate-500">User portal</p>
-                </div>
-              </div>
-
-              <div className="hidden items-center gap-2 md:flex">
-                <Badge variant="primary" className="inline-flex">
-                  {isAuthenticated
-                    ? `${currentUser?.name}${currentUser?.role === "admin" ? " · Admin" : currentUser?.role === "pet_owner" ? " · Pet owner" : " · Adopter"}`
-                    : "Guest"}
-                </Badge>
-                {isAuthenticated ? (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-slate-200 bg-white"
-                    onClick={() => {
-                      logout();
-                      navigate("/website");
-                    }}
-                  >
-                    Logout
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-slate-200 bg-white"
-                    onClick={() => navigate("/auth?mode=login")}
-                  >
-                    Login
-                  </Button>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-1 lg:hidden">
-              {navigation.map(({to, label}) => (
+        <main className="flex-1 px-4 py-5 md:px-6">
+          <div className="mx-auto w-full max-w-6xl">
+            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {navigation.map(({to, label, icon: Icon}) => (
                 <NavLink
                   key={to}
                   to={to}
                   className={({isActive}) =>
                     cn(
-                      "whitespace-nowrap rounded-full px-3 py-2 text-sm font-medium transition",
+                      "group flex min-w-0 items-center gap-3 rounded-2xl border px-3 py-2.5 transition",
                       isActive
-                        ? "bg-emerald-600 text-white"
-                        : "bg-slate-100 text-slate-700 hover:bg-slate-200",
+                        ? "border-emerald-500 bg-white text-emerald-700 shadow-sm"
+                        : "border-slate-200 bg-white/80 text-slate-600 hover:border-emerald-200 hover:text-slate-900",
                     )
                   }
                 >
-                  {label}
+                  {({isActive}) => (
+                    <>
+                      <span
+                        className={cn(
+                          "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition",
+                          isActive
+                            ? "border-emerald-500 bg-emerald-600 text-white"
+                            : "border-slate-200 bg-slate-50 text-slate-600 group-hover:border-emerald-200 group-hover:bg-emerald-50 group-hover:text-emerald-700",
+                        )}
+                      >
+                        <Icon className="h-4 w-4" />
+                      </span>
+                      <span className="min-w-0 break-words text-left text-sm font-semibold leading-tight">
+                        {label}
+                      </span>
+                    </>
+                  )}
                 </NavLink>
               ))}
             </div>
-          </header>
-
-          <main className="flex-1 px-4 py-5 md:px-6">
-            <div className="mx-auto w-full">
-              <Outlet />
-            </div>
-          </main>
-        </div>
+            <Outlet />
+          </div>
+        </main>
       </div>
     </div>
   );

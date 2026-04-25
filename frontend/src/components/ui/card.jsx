@@ -13,7 +13,7 @@ export function Card({ className, ...props }) {
 }
 
 export function CardHeader({ className, ...props }) {
-  return <div className={cn("space-y-1.5 p-6 pb-4", className)} {...props} />;
+  return <div className={cn("space-y-1.5 p-4 pb-3 sm:p-6 sm:pb-4", className)} {...props} />;
 }
 
 export function CardTitle({ className, ...props }) {
@@ -32,13 +32,13 @@ export function CardDescription({ className, ...props }) {
 }
 
 export function CardContent({ className, ...props }) {
-  return <div className={cn("px-6 pb-6", className)} {...props} />;
+  return <div className={cn("px-4 pb-4 sm:px-6 sm:pb-6", className)} {...props} />;
 }
 
 export function CardFooter({ className, ...props }) {
   return (
     <div
-      className={cn("flex items-center justify-between gap-3 px-6 pb-6", className)}
+      className={cn("flex items-center justify-between gap-3 px-4 pb-4 sm:px-6 sm:pb-6", className)}
       {...props}
     />
   );
