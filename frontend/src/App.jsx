@@ -14,6 +14,8 @@ import Website from "./pages/Website_Page";
 import HomePage from "./pages/Home_Page";
 import AboutPage from "./pages/About_Page";
 import AdminPage from "./pages/AdminPage";
+import AppointmentPage from "./pages/AppointmentPage";
+import PetsListPage from "./pages/PetsListPage";
 
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminPage />} />
+          <Route path="appointment" element={<AppointmentPage/>} />
+          <Route path="pets-list" element={<PetsListPage/>} />
         </Route>
       </Routes>
     </BrowserRouter>
