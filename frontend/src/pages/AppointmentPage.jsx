@@ -14,6 +14,7 @@ import {
 import {Link} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
+
 const AppointmentPage = () =>{
     return(
         <section className="bg-transparent h-screen w-full">
