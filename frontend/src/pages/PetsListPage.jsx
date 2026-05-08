@@ -61,7 +61,7 @@ const PetsListPage = () => {
   }
 
   useEffect(() => {
-        // fetchedPets()
+        fetchedPets()
   },[])
     return(
         <section className="min-h-screen w-full bg-trnasparent">

@@ -22,11 +22,29 @@ import {
   SparklesIcon,
   StethoscopeIcon,
 } from "../components/icons";
+import { useState, useEffect } from "react";
+import { getAllPets } from "../services/petService";
 
-const stats = [
+export default function AdminPage() {
+
+    const [pets, setPets] = useState([]);
+
+    const fetchedPets = async () =>{
+          try {
+            const res = await getAllPets();
+            setPets(res.pets);
+          } catch (error) {
+            console.log(error)
+          }
+    }
+    useEffect(() => {
+            fetchedPets()
+      },[])
+
+    const stats = [
   {
     label: "Registered Pets",
-    value: availablePets.length,
+    value: pets.length,
     note: "Ready to browse now",
     icon: HeartIcon,
   },
@@ -44,7 +62,6 @@ const stats = [
   },
 ];
 
-export default function AdminPage() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-3">
