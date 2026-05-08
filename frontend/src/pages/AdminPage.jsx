@@ -25,38 +25,20 @@ import {
 
 const stats = [
   {
-    label: "Total Pets",
+    label: "Registered Pets",
     value: availablePets.length,
     note: "Ready to browse now",
     icon: HeartIcon,
   },
   {
-    label: "Adopted Pets",
+    label: "Ready for adoption",
     value: services.length,
     note: "Consultation and Pakapon",
     icon: CalendarIcon,
   },
   {
-    label: "Total Users",
+    label: "Pet Pending Appointments",
     value: reminderItems.length,
-    note: "Vaccinations and follow-ups",
-    icon: BellIcon,
-  },
-  {
-    label: "Appointments Today",
-    value: availablePets.length,
-    note: "Ready to browse now",
-    icon: HeartIcon,
-  },
-  {
-    label: "Pending Appointments",
-    value: services.length,
-    note: "Consultation and Pakapon",
-    icon: CalendarIcon,
-  },
-  {
-    label: "Match Success Rate",
-    value: "99%",
     note: "Vaccinations and follow-ups",
     icon: BellIcon,
   },

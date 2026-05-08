@@ -18,17 +18,17 @@ import {Button} from "../components/ui/button";
 const AppointmentPage = () =>{
     return(
         <section className="bg-transparent h-screen w-full">
-                 <Card>
-                     <div className="justify-between items-end flex p-6">
+                 <div className="space-y-6">
+                     <div className="justify-between items-end flex">
                        <div>
-                         <h1 className="text-lg font-semibold tracking-tight text-slate-900">Pet Appointments Table</h1>
-                           <p className="text-sm leading-6 text-slate-600">
+                         <h1 className="text-lg font-semibold tracking-tight text-white">Pet Appointments Table</h1>
+                           <p className="text-sm leading-6 text-white">
                              Upcoming vaccinations, follow-ups, and appointment reminders.
                            </p>
                        </div>
                      </div>
                  
-                     <CardContent>
+                     <div>
                  
                        {/* TABLE HEADER */}
                        <div className="grid grid-cols-4 bg-slate-100 p-3 rounded-t-xl font-semibold text-sm">
@@ -68,27 +68,14 @@ const AppointmentPage = () =>{
                  
                              {/* ACTIONS */}
                              <div className="flex justify-end gap-2">
-                               <Button
-                                 variant="outline"
-                                 size="sm"
-                                 onClick={() => alert('Tipaklong')}
-                               >
-                                 Edit
-                               </Button>
-                 
-                               <Button
-                                 variant="destructive"
-                                 size="sm"
-                                 onClick={() => alert('Tipaklong')}
-                               >
-                                 Delete
-                               </Button>
+                               <button className="bg-emerald-500 h-10 w-10 text-white text-xs font-semibold rounded-full cursor-pointer hover:bg-emerald-600">✓</button>
+                               <button className="bg-red-500 h-10 w-10 text-white text-xs font-semibold rounded-full cursor-pointer hover:bg-red-600">🗑</button>
                              </div>
                            </div>
                          ))}
                        </div>
-                     </CardContent>
-                   </Card>
+                     </div>
+                   </div>
         </section>
     )
 }

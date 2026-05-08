@@ -70,16 +70,16 @@ const PetsListPage = () => {
                                         onClose={() => setIsEditModal(false)}
         
         />)}
-  <div className="shadow-xl rounded-md">
+  <div className="rounded-md space-y-6">
     
-    <CardHeader>
+    <div>
       <CardTitle className="text-2xl font-bold text-white">
-        🐾 Pets List
+         Registered Pet List
       </CardTitle>
       <CardDescription className="text-white">
         Adoption applications begin as pending and update after review.
       </CardDescription>
-    </CardHeader>
+    </div>
 
      {pets.length < 1 && (
         <div className="bg-slate-950 h-100 w-full rounded-xl justify-center items-center flex">
