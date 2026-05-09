@@ -18,7 +18,7 @@ const initialForm = {
   size: "Medium",
   temperament: "Calm",
   description: "",
-  reason: "",
+  registrationReason: "personal_use",
   photoUrl: "",
 };
 
@@ -96,11 +96,9 @@ export default function PetRegistrationPage() {
         species: form.species,
         breed: form.breed.trim(),
         age: form.age ? Number.parseInt(form.age, 10) : undefined,
-        description: [form.description.trim(), form.reason.trim()]
-          .filter(Boolean)
-          .join("\n\n"),
+        description: form.description.trim(),
         imageUrl: form.photoUrl.trim(),
-        availability: "not available",
+        registrationReason: form.registrationReason,
         owner: currentUser.id,
       });
 
@@ -263,14 +261,18 @@ export default function PetRegistrationPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="reason">Why is the pet being registered?</Label>
-                <Textarea
-                  id="reason"
-                  value={form.reason}
-                  onChange={(event) => setForm({...form, reason: event.target.value})}
-                  placeholder="Explain the reason for the adoption listing."
+                <Label htmlFor="registrationReason">Why is the pet being registered?</Label>
+                <Select
+                  id="registrationReason"
+                  value={form.registrationReason}
+                  onChange={(event) => setForm({...form, registrationReason: event.target.value})}
                   required
-                />
+                >
+                  <option value="personal_use">Personal use</option>
+                  <option value="adoption">For adoption</option>
+                  <option value="breeding">Breeding</option>
+                  <option value="rescue">Rescue</option>
+                </Select>
               </div>
 
               <Button type="submit" className="w-full" disabled={isSubmitting}>
@@ -345,7 +347,7 @@ export default function PetRegistrationPage() {
                         </p>
                       </div>
                       <Badge className="self-start sm:self-auto" variant="soft">
-                        {item.availability ?? "not available"}
+                        {item.registrationReason === "adoption" ? "For adoption" : "Personal"}
                       </Badge>
                     </div>
                     <p className="mt-2 text-xs uppercase tracking-[0.16em] text-slate-500">

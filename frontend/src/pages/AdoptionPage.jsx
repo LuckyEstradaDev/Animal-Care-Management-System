@@ -45,10 +45,10 @@ export default function AdoptionPage() {
     const fetchPets = async () => {
       try {
         const res = await getAllPets();
-        const availablePets = (res.pets || []).filter(
-          (pet) => pet.availability === "available",
+        const adoptionPets = (res.pets || []).filter(
+          (pet) => pet.registrationReason === "adoption",
         );
-        setPets(availablePets);
+        setPets(adoptionPets);
       } catch (fetchError) {
         setError(
           fetchError instanceof Error

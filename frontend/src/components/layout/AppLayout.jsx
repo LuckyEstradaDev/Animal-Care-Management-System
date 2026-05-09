@@ -16,7 +16,6 @@ const navigation = [
   {to: "/dashboard", label: "Dashboard", icon: SparklesIcon},
   {to: "/adoption", label: "Online Adoption", icon: HeartIcon},
   {to: "/register-pet", label: "Register Pet", icon: ShieldIcon},
-  {to: "/matching", label: "Pet Matching", icon: SparklesIcon},
   {to: "/appointments", label: "Appointments", icon: CalendarIcon},
   {to: "/my-pets", label: "My Pets", icon: StethoscopeIcon},
   {to: "/notifications", label: "Reminders", icon: BellIcon},

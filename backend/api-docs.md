@@ -88,8 +88,8 @@
     "species": "Dog",
     "breed": "Golden Retriever",
     "age": 3,
-    "availability: "available",
     "weight": 25.5,
+    "registrationReason": "personal_use",
     "owner": "507f1f77bcf86cd799439011"
   }
   ```

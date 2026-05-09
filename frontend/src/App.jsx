@@ -3,7 +3,6 @@ import AppLayout from "./components/layout/AppLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 import DashboardPage from "./pages/DashboardPage";
 import AdoptionPage from "./pages/AdoptionPage";
-import MatchingPage from "./pages/MatchingPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
 import MyPetsPage from "./pages/MyPetsPage";
 import NotificationsPage from "./pages/NotificationsPage";
@@ -28,7 +27,6 @@ function App() {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="adoption" element={<AdoptionPage />} />
           <Route path="register-pet" element={<PetRegistrationPage />} />
-          <Route path="matching" element={<MatchingPage />} />
           <Route path="appointments" element={<AppointmentsPage />} />
           <Route path="my-pets" element={<MyPetsPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
