@@ -38,6 +38,7 @@ export default function AdminPage() {
           }
     }
     useEffect(() => {
+      // Fetch all pets
             fetchedPets()
       },[])
 
