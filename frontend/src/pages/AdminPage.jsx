@@ -22,46 +22,46 @@ import {
   SparklesIcon,
   StethoscopeIcon,
 } from "../components/icons";
-import { useState, useEffect } from "react";
-import { getAllPets } from "../services/petService";
+import {useState, useEffect} from "react";
+import {getAllPets} from "../services/petService";
 
 export default function AdminPage() {
+  const [pets, setPets] = useState([]);
 
-    const [pets, setPets] = useState([]);
-
-    const fetchedPets = async () =>{
-          try {
-            const res = await getAllPets();
-            setPets(res.pets);
-          } catch (error) {
-            console.log(error)
-          }
+  const fetchedPets = async () => {
+    try {
+      const res = await getAllPets();
+      setPets(res.pets);
+    } catch (error) {
+      console.log(error);
     }
-    useEffect(() => {
-      // Fetch all pets
-            fetchedPets()
-      },[])
+  };
+  useEffect(() => {
+    // Fetch all pets
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchedPets();
+  }, []);
 
-    const stats = [
-  {
-    label: "Registered Pets",
-    value: pets.length,
-    note: "Ready to browse now",
-    icon: HeartIcon,
-  },
-  {
-    label: "Ready for adoption",
-    value: services.length,
-    note: "Consultation and Pakapon",
-    icon: CalendarIcon,
-  },
-  {
-    label: "Pet Pending Appointments",
-    value: reminderItems.length,
-    note: "Vaccinations and follow-ups",
-    icon: BellIcon,
-  },
-];
+  const stats = [
+    {
+      label: "Registered Pets",
+      value: pets.length,
+      note: "Ready to browse now",
+      icon: HeartIcon,
+    },
+    {
+      label: "Ready for adoption",
+      value: services.length,
+      note: "Consultation and Pakapon",
+      icon: CalendarIcon,
+    },
+    {
+      label: "Pet Pending Appointments",
+      value: reminderItems.length,
+      note: "Vaccinations and follow-ups",
+      icon: BellIcon,
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -194,9 +194,7 @@ export default function AdminPage() {
               ))}
             </CardContent>
           </Card>
-
         </div>
-
       </div>
     </div>
   );

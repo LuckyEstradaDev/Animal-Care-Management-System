@@ -28,7 +28,6 @@ const stats = [
 const shortcuts = [
   {title: "Online adoption", text: "Browse pets and submit an application.", to: "/adoption"},
   {title: "Register pet", text: "Submit a pet for admin review and future adoption.", to: "/register-pet"},
-  {title: "AI matching", text: "Answer a short questionnaire for recommendations.", to: "/matching"},
   {title: "Appointments", text: "Pick a service and reserve a time.", to: "/appointments"},
   {title: "My pets", text: "Open health records and treatment notes.", to: "/my-pets"},
 ];

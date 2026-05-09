@@ -1,10 +1,14 @@
 import {useEffect, useMemo, useState} from "react";
 import {Navigate} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
+import {Button} from "../components/ui/button";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
+import {Dialog} from "../components/ui/dialog";
+import {Label} from "../components/ui/label";
+import {Select} from "../components/ui/select";
 import {StethoscopeIcon} from "../components/icons";
 import {useAuth} from "../context/AuthContext";
-import {getPetsByOwner} from "../services/petService";
+import {getPetsByOwner, updatePet} from "../services/petService";
 
 const fallbackImage = "https://via.placeholder.com/320x220?text=Pet";
 
@@ -30,6 +34,9 @@ export default function MyPetsPage() {
   const [selectedPetId, setSelectedPetId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editingPetId, setEditingPetId] = useState(null);
+  const [editReason, setEditReason] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     async function loadPets() {
@@ -64,6 +71,37 @@ export default function MyPetsPage() {
 
   if (!isAuthenticated) {
     return <Navigate to="/auth?mode=login" replace />;
+  }
+
+  async function openEditDialog(pet) {
+    setEditingPetId(pet._id);
+    setEditReason(pet.registrationReason || "personal_use");
+  }
+
+  function closeEditDialog() {
+    setEditingPetId(null);
+    setEditReason("");
+  }
+
+  async function handleSaveReason() {
+    if (!editingPetId) return;
+
+    try {
+      setIsSaving(true);
+      await updatePet(editingPetId, {registrationReason: editReason});
+      setPets((current) =>
+        current.map((pet) =>
+          pet._id === editingPetId
+            ? {...pet, registrationReason: editReason}
+            : pet,
+        ),
+      );
+      closeEditDialog();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to update pet.");
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   if (isLoading) {
@@ -135,7 +173,7 @@ export default function MyPetsPage() {
                       </p>
                     </div>
                     <Badge className="self-start sm:self-auto" variant={active ? "primary" : "default"}>
-                      {pet.availability ?? "saved"}
+                      {pet.registrationReason === "adoption" ? "For adoption" : "Personal"}
                     </Badge>
                   </div>
                   <div className="mt-4 flex items-center gap-3 text-sm text-slate-600">
@@ -158,9 +196,19 @@ export default function MyPetsPage() {
                     {selectedPet.species} | {selectedPet.breed || "Unknown breed"}
                   </CardDescription>
                 </div>
-                <Badge className="self-start sm:self-auto" variant="soft">
-                  Next visit {details.nextVisit}
-                </Badge>
+                <div className="flex flex-col gap-2 self-start sm:self-auto">
+                  <Badge className="self-start sm:self-auto" variant="soft">
+                    Next visit {details.nextVisit}
+                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openEditDialog(selectedPet)}
+                    className="self-start sm:self-auto"
+                  >
+                    Edit reason
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -259,6 +307,64 @@ export default function MyPetsPage() {
           </div>
         </div>
       </div>
+
+      <Dialog
+        open={Boolean(editingPetId)}
+        onOpenChange={(open) => {
+          if (!open) closeEditDialog();
+        }}
+      >
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative w-full max-w-sm rounded-3xl bg-white p-6 shadow-2xl">
+            <button
+              type="button"
+              onClick={closeEditDialog}
+              className="absolute right-4 top-4 text-slate-500 hover:text-slate-700"
+            >
+              ✕
+            </button>
+
+            <h2 className="text-2xl font-bold text-slate-950">Edit registration reason</h2>
+            <p className="mt-2 text-sm text-slate-600">
+              Change why this pet is registered.
+            </p>
+
+            <div className="mt-6 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="reasonSelect">Registration reason</Label>
+                <Select
+                  id="reasonSelect"
+                  value={editReason}
+                  onChange={(event) => setEditReason(event.target.value)}
+                >
+                  <option value="personal_use">Personal use</option>
+                  <option value="adoption">For adoption</option>
+                  <option value="breeding">Breeding</option>
+                  <option value="rescue">Rescue</option>
+                </Select>
+              </div>
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={closeEditDialog}
+                disabled={isSaving}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={handleSaveReason}
+                disabled={isSaving}
+              >
+                {isSaving ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 }

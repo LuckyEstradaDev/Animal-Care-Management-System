@@ -25,7 +25,7 @@ const initialForm = {
   size: "Medium",
   temperament: "Calm",
   description: "",
-  reason: "",
+  registrationReason: "personal_use",
   photoUrl: "",
 };
 
@@ -103,11 +103,9 @@ export default function PetRegistrationPage() {
         species: form.species,
         breed: form.breed.trim(),
         age: form.age ? Number.parseInt(form.age, 10) : undefined,
-        description: [form.description.trim(), form.reason.trim()]
-          .filter(Boolean)
-          .join("\n\n"),
+        description: form.description.trim(),
         imageUrl: form.photoUrl.trim(),
-        availability: "not available",
+        registrationReason: form.registrationReason,
         owner: currentUser.id,
       });
 
@@ -292,9 +290,8 @@ export default function PetRegistrationPage() {
                     setForm({...form, reason: event.target.value})
                   }
                 >
-                  <option>For Adoption</option>
-                  <option>For Appointments</option>
-                  <option>Pet Profile Tracking</option>
+                  <option value={"adoption"}>For Adoption</option>
+                  <option value={"personal_use"}>For Personal Use</option>
                 </Select>
               </div>
 
@@ -380,7 +377,9 @@ export default function PetRegistrationPage() {
                         </p>
                       </div>
                       <Badge className="self-start sm:self-auto" variant="soft">
-                        {item.availability ?? "not available"}
+                        {item.registrationReason === "adoption"
+                          ? "For adoption"
+                          : "Personal"}
                       </Badge>
                     </div>
                     <p className="mt-2 text-xs uppercase tracking-[0.16em] text-slate-500">

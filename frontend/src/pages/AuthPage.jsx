@@ -97,7 +97,7 @@ export default function AuthPage() {
               </div>
               <div>
                 <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                  Animal Care Management System
+                  PawCare
                 </p>
                 <CardTitle className="mt-1 text-3xl sm:text-4xl">
                   Sign in to PawCare
