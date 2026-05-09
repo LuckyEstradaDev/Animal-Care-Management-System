@@ -7,6 +7,8 @@ import {useAuth} from "../../context/AuthContext";
 
 const navigation = [
   {to: "/admin", label: "Admin Dashboard", icon: SparklesIcon},
+  {to: "/admin/appointment", label: "Pet Appointment", icon: SparklesIcon},
+  {to: "/admin/pets-list", label: "Registered Pets", icon: SparklesIcon},
 ];
 
 export default function AdminLayout() {
@@ -33,14 +35,7 @@ export default function AdminLayout() {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className={({isActive}) =>
-                  cn(
-                    "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
-                    isActive
-                      ? "bg-emerald-400 text-slate-950"
-                      : "text-slate-300 hover:bg-white/5 hover:text-white",
-                  )
-                }
+                className="flex items-center gap-2 h-12 w-full px-3 rounded-xl text-sm text-white hover:bg-slate-800 hover:text-black transition"
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}

@@ -57,7 +57,7 @@ export async function createAdoption(
     },
     body: JSON.stringify(payload),
   });
-
+ 
   return handleResponse<AdoptionApiResponse<AdoptionRecord>>(response);
 }
 
