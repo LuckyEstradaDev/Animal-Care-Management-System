@@ -37,14 +37,17 @@ export default function AppLayout() {
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-slate-950">
-                  Animal Care Management
+                  PawCare
                 </p>
                 <p className="truncate text-sm text-slate-500">User portal</p>
               </div>
             </div>
 
             <div className="hidden shrink-0 items-center gap-2 md:flex">
-              <Badge variant="primary" className="inline-flex max-w-[12rem] truncate">
+              <Badge
+                variant="primary"
+                className="inline-flex max-w-[12rem] truncate"
+              >
                 {isAuthenticated
                   ? `${currentUser?.name}${currentUser?.role === "admin" ? " · Admin" : currentUser?.role === "pet_owner" ? " · Pet owner" : " · Adopter"}`
                   : "Guest"}

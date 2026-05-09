@@ -17,6 +17,10 @@ function getToday() {
   return new Date().toISOString().split("T")[0];
 }
 
+function isFutureSchedule(date, time) {
+  return new Date(`${date}T${time}`) > new Date();
+}
+
 const initialBooking = {
   petId: "",
   service: services[0],
@@ -93,6 +97,11 @@ export default function AppointmentsPage() {
 
     if (!booking.petId) {
       setError("Please register a pet before booking an appointment.");
+      return;
+    }
+
+    if (!isFutureSchedule(booking.date, booking.time)) {
+      setError("Please choose an appointment date and time that has not passed yet.");
       return;
     }
 
