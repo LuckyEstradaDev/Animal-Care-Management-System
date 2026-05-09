@@ -7,6 +7,7 @@ import {useAuth} from "../../context/AuthContext";
 
 const navigation = [
   {to: "/admin", label: "Admin Dashboard", icon: SparklesIcon},
+  {to: "/admin/view-adoption", label: "Pet Adoption", icon: SparklesIcon},
   {to: "/admin/appointment", label: "Pet Appointment", icon: SparklesIcon},
   {to: "/admin/pets-list", label: "Registered Pets", icon: SparklesIcon},
 ];

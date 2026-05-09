@@ -16,4 +16,4 @@ export interface IAdoption extends mongoose.Document {
   carePlan: string;
   financialPlan: string;
   status: "pending_review" | "approved" | "rejected";
-}
+} 

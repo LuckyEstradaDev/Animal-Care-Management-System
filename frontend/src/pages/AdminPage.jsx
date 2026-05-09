@@ -24,12 +24,16 @@ import {
 } from "../components/icons";
 import { useState, useEffect } from "react";
 import { getAllPets } from "../services/petService";
+import { getAllAppointments } from "../services/appoitnmentService";
+import { getAllAdoptions } from "../services/adoptionService";
 
 export default function AdminPage() {
 
     const [pets, setPets] = useState([]);
+    const [appointments, setAppointments] = useState([]);
+    const [adoption, setAdoption] = useState([])
 
-    const fetchedPets = async () =>{
+    const fetchPets = async () =>{
           try {
             const res = await getAllPets();
             setPets(res.pets);
@@ -37,9 +41,27 @@ export default function AdminPage() {
             console.log(error)
           }
     }
+    const fetchAppointments = async () => {
+          try {
+            const res = await getAllAppointments();
+            setAppointments(res.appointments);
+          } catch (error) {
+            console.log(error)
+          }
+    }
+    const fetchAdoption = async () => {
+          try {
+            const res = await getAllAdoptions();
+            setAdoption(res.adoptions);
+          } catch (error) {
+            console.log(error)
+          }
+    }
+
     useEffect(() => {
-      // Fetch all pets
-            fetchedPets()
+            fetchPets()
+            fetchAppointments()
+            fetchAdoption()
       },[])
 
     const stats = [
@@ -51,13 +73,13 @@ export default function AdminPage() {
   },
   {
     label: "Ready for adoption",
-    value: services.length,
+    value: adoption.length,
     note: "Consultation and Pakapon",
     icon: CalendarIcon,
   },
   {
     label: "Pet Pending Appointments",
-    value: reminderItems.length,
+    value: appointments.length,
     note: "Vaccinations and follow-ups",
     icon: BellIcon,
   },
