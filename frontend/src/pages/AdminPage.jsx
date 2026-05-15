@@ -22,46 +22,68 @@ import {
   SparklesIcon,
   StethoscopeIcon,
 } from "../components/icons";
-import {useState, useEffect} from "react";
-import {getAllPets} from "../services/petService";
+import { useState, useEffect } from "react";
+import { getAllPets } from "../services/petService";
+import { getAllAppointments } from "../services/appoitnmentService";
+import { getAllAdoptions } from "../services/adoptionService";
 
 export default function AdminPage() {
-  const [pets, setPets] = useState([]);
 
-  const fetchedPets = async () => {
-    try {
-      const res = await getAllPets();
-      setPets(res.pets);
-    } catch (error) {
-      console.log(error);
+    const [pets, setPets] = useState([]);
+    const [appointments, setAppointments] = useState([]);
+    const [adoption, setAdoption] = useState([])
+
+    const fetchPets = async () =>{
+          try {
+            const res = await getAllPets();
+            setPets(res.pets);
+          } catch (error) {
+            console.log(error)
+          }
     }
-  };
-  useEffect(() => {
-    // Fetch all pets
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchedPets();
-  }, []);
+    const fetchAppointments = async () => {
+          try {
+            const res = await getAllAppointments();
+            setAppointments(res.appointments);
+          } catch (error) {
+            console.log(error)
+          }
+    }
+    const fetchAdoption = async () => {
+          try {
+            const res = await getAllAdoptions();
+            setAdoption(res.adoptions);
+          } catch (error) {
+            console.log(error)
+          }
+    }
 
-  const stats = [
-    {
-      label: "Registered Pets",
-      value: pets.length,
-      note: "Ready to browse now",
-      icon: HeartIcon,
-    },
-    {
-      label: "Ready for adoption",
-      value: services.length,
-      note: "Consultation and Pakapon",
-      icon: CalendarIcon,
-    },
-    {
-      label: "Pet Pending Appointments",
-      value: reminderItems.length,
-      note: "Vaccinations and follow-ups",
-      icon: BellIcon,
-    },
-  ];
+    useEffect(() => {
+            fetchPets()
+            fetchAppointments()
+            fetchAdoption()
+      },[])
+
+    const stats = [
+  {
+    label: "Registered Pets",
+    value: pets.length,
+    note: "Ready to browse now",
+    icon: HeartIcon,
+  },
+  {
+    label: "Ready for adoption",
+    value: adoption.length,
+    note: "Consultation and Pakapon",
+    icon: CalendarIcon,
+  },
+  {
+    label: "Pet Pending Appointments",
+    value: appointments.length,
+    note: "Vaccinations and follow-ups",
+    icon: BellIcon,
+  },
+];
 
   return (
     <div className="space-y-6">

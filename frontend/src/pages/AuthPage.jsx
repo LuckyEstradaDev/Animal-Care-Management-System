@@ -23,6 +23,7 @@ const registerInitial = {
   name: "",
   email: "",
   password: "",
+  confirmPassword: "",
   role: "adopter",
 };
 
@@ -33,6 +34,7 @@ export default function AuthPage() {
   const [registerForm, setRegisterForm] = useState(registerInitial);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
   const navigate = useNavigate();
   const {login, register, currentUser, isAuthLoading} = useAuth();
 
@@ -48,6 +50,7 @@ export default function AuthPage() {
   function switchMode(nextMode) {
     setError("");
     setSuccess("");
+    setPasswordMismatch(false);
     setSearchParams({mode: nextMode});
   }
 
@@ -68,6 +71,11 @@ export default function AuthPage() {
     event.preventDefault();
     setError("");
     setSuccess("");
+
+    if (registerForm.password !== registerForm.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
     try {
       const user = await register({

@@ -22,8 +22,7 @@ function sanitizeUser(user: any) {
   return {
     id: user.id,
     firstName: user.firstName,
-    lastName: user.lastName,
-    name: `${user.firstName} ${user.lastName}`.trim(),
+    name: `${user.firstName}`,
     email: user.email,
     role: user.role,
   };
@@ -91,7 +90,7 @@ export const ensureDefaultAdmin = async () => {
 
   await authRepository.ensureAdminExists({
     firstName: "Admin",
-    lastName: "User",
+    lastName: "",
     email,
     rawPassword,
     role: "admin",

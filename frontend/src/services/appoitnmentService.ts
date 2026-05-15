@@ -59,3 +59,27 @@ export async function getAppointmentsByUser(
 
   return data;
 }
+
+export async function getAllAppointments() {
+  const response = await fetch(API_BASE_URL);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch appointments");
+  }
+
+  return data;
+}
+export async function deleteAppointment(id: string) {
+  const response = await fetch(`${API_BASE_URL}/${id}`, {
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to delete appointment");
+  }
+
+  return data;
+}
