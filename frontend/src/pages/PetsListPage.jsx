@@ -67,6 +67,13 @@ const PetsListPage = () => {
 
   const [isEditModal, setIsEditModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState(null);
+  const [search, setSearch] = useState("");
+
+  const filterPets = mockPets.filter((pet) => (pet.name.toLowerCase().includes(search.toLowerCase()) ||
+                                               pet.owner.toLowerCase().includes(search.toLowerCase()) ||
+                                               pet.breed.toLowerCase().includes(search.toLowerCase()) ||
+                                               pet.species.toLowerCase().includes(search.toLowerCase())
+  ));
 
   const fetchedPets = async () => {
     try {
@@ -109,13 +116,25 @@ const PetsListPage = () => {
         />
       )}
       <div className="rounded-md space-y-6">
-        <div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
+        <div className="justify-between items-center flex">
+          <div>
+            <CardTitle className="text-2xl font-bold text-gray-900">
             Registered Pet List
-          </CardTitle>
-          <CardDescription className="text-slate-600">
-            Adoption applications begin as pending and update after review.
-          </CardDescription>
+            </CardTitle>
+            <CardDescription className="text-slate-600">
+              Adoption applications begin as pending and update after review.
+            </CardDescription>
+          </div>
+          
+
+          <div className="w-100 gap-2">
+            <input type="text"
+                   placeholder="Search pets..."
+                   className="bg-white border border-gray-300 rounded-2xl outline-none placeholder:text-gray-500 text-gray-900 focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+                   value={search}
+                   onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
 
         {mockPets.length < 1 && (
@@ -127,7 +146,7 @@ const PetsListPage = () => {
         )}
 
         <div className=" w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-5">
-          {mockPets.map((pet) => (
+          {filterPets.map((pet) => (
             <div
               key={pet.id}
               className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between"
