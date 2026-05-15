@@ -67,7 +67,7 @@ export default function AppointmentsPage() {
         ]);
 
         const ownerPets = petResponse.pets ?? [];
-        setPets(ownerPets);
+        setPets(ownerPets.filter((pet) => pet.reviewStatus === "approved"));
         setAppointments(appointmentResponse.appointments ?? []);
         setBooking((current) => ({
           ...current,
