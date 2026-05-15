@@ -83,3 +83,24 @@ export async function deleteAppointment(id: string) {
 
   return data;
 }
+
+export async function updateAppointment(
+  id: string,
+  payload: Partial<Appointment>
+): Promise<AppointmentApiResponse<Appointment>> {
+  const response = await fetch(`${API_BASE_URL}/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update appointment");
+  }
+
+  return data;
+}
