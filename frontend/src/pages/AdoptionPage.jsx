@@ -2,7 +2,13 @@ import {useEffect, useMemo, useState} from "react";
 import {Navigate} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import {Dialog} from "../components/ui/dialog";
 import {Input} from "../components/ui/input";
 import {Label} from "../components/ui/label";
@@ -45,10 +51,13 @@ export default function AdoptionPage() {
     const fetchPets = async () => {
       try {
         const res = await getAllPets();
-        const availablePets = (res.pets || []).filter(
-          (pet) => pet.availability === "available",
+        const adoptionPets = (res.pets || []).filter(
+          (pet) =>
+            pet.registrationReason === "adoption" &&
+            pet.owner !== currentUser.id,
         );
-        setPets(availablePets);
+        console.log(res.pets);
+        setPets(adoptionPets);
       } catch (fetchError) {
         setError(
           fetchError instanceof Error
@@ -242,7 +251,9 @@ export default function AdoptionPage() {
               <div className="space-y-4">
                 <div className="overflow-hidden rounded-3xl bg-slate-100">
                   <img
-                    src={activePet.imageUrl || "https://via.placeholder.com/300"}
+                    src={
+                      activePet.imageUrl || "https://via.placeholder.com/300"
+                    }
                     alt={activePet.name}
                     className="h-56 w-full object-cover sm:h-72"
                   />
@@ -275,7 +286,9 @@ export default function AdoptionPage() {
                       <Input
                         id="fullName"
                         value={form.fullName}
-                        onChange={(e) => setForm({...form, fullName: e.target.value})}
+                        onChange={(e) =>
+                          setForm({...form, fullName: e.target.value})
+                        }
                         required
                       />
                     </div>
@@ -285,7 +298,9 @@ export default function AdoptionPage() {
                       <Input
                         id="phone"
                         value={form.phone}
-                        onChange={(e) => setForm({...form, phone: e.target.value})}
+                        onChange={(e) =>
+                          setForm({...form, phone: e.target.value})
+                        }
                         required
                       />
                     </div>
@@ -298,7 +313,9 @@ export default function AdoptionPage() {
                         id="email"
                         type="email"
                         value={form.email}
-                        onChange={(e) => setForm({...form, email: e.target.value})}
+                        onChange={(e) =>
+                          setForm({...form, email: e.target.value})
+                        }
                         required
                       />
                     </div>
@@ -308,7 +325,9 @@ export default function AdoptionPage() {
                       <Select
                         id="homeType"
                         value={form.homeType}
-                        onChange={(e) => setForm({...form, homeType: e.target.value})}
+                        onChange={(e) =>
+                          setForm({...form, homeType: e.target.value})
+                        }
                       >
                         <option>Apartment</option>
                         <option>House</option>
@@ -324,7 +343,9 @@ export default function AdoptionPage() {
                       <Select
                         id="householdSize"
                         value={form.householdSize}
-                        onChange={(e) => setForm({...form, householdSize: e.target.value})}
+                        onChange={(e) =>
+                          setForm({...form, householdSize: e.target.value})
+                        }
                       >
                         <option>1</option>
                         <option>2</option>
@@ -338,7 +359,9 @@ export default function AdoptionPage() {
                       <Select
                         id="hasChildren"
                         value={form.hasChildren}
-                        onChange={(e) => setForm({...form, hasChildren: e.target.value})}
+                        onChange={(e) =>
+                          setForm({...form, hasChildren: e.target.value})
+                        }
                       >
                         <option>No</option>
                         <option>Yes, under 10</option>
@@ -353,7 +376,9 @@ export default function AdoptionPage() {
                       <Select
                         id="hasOtherPets"
                         value={form.hasOtherPets}
-                        onChange={(e) => setForm({...form, hasOtherPets: e.target.value})}
+                        onChange={(e) =>
+                          setForm({...form, hasOtherPets: e.target.value})
+                        }
                       >
                         <option>No</option>
                         <option>Yes, calm pets</option>
@@ -366,7 +391,9 @@ export default function AdoptionPage() {
                       <Select
                         id="experience"
                         value={form.experience}
-                        onChange={(e) => setForm({...form, experience: e.target.value})}
+                        onChange={(e) =>
+                          setForm({...form, experience: e.target.value})
+                        }
                       >
                         <option>First-time adopter</option>
                         <option>Some experience</option>
@@ -380,18 +407,24 @@ export default function AdoptionPage() {
                     <Textarea
                       id="dailySchedule"
                       value={form.dailySchedule}
-                      onChange={(e) => setForm({...form, dailySchedule: e.target.value})}
+                      onChange={(e) =>
+                        setForm({...form, dailySchedule: e.target.value})
+                      }
                       placeholder="Describe who will be home, walk routines, and how long the pet may be left alone."
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="reason">Why are you suitable for this pet?</Label>
+                    <Label htmlFor="reason">
+                      Why are you suitable for this pet?
+                    </Label>
                     <Textarea
                       id="reason"
                       value={form.reason}
-                      onChange={(e) => setForm({...form, reason: e.target.value})}
+                      onChange={(e) =>
+                        setForm({...form, reason: e.target.value})
+                      }
                       placeholder="Explain why this pet fits your home, lifestyle, and expectations."
                       required
                     />
@@ -402,7 +435,9 @@ export default function AdoptionPage() {
                     <Textarea
                       id="carePlan"
                       value={form.carePlan}
-                      onChange={(e) => setForm({...form, carePlan: e.target.value})}
+                      onChange={(e) =>
+                        setForm({...form, carePlan: e.target.value})
+                      }
                       placeholder="Tell us about feeding, exercise, training, and veterinary care plans."
                       required
                     />
@@ -413,13 +448,19 @@ export default function AdoptionPage() {
                     <Textarea
                       id="financialPlan"
                       value={form.financialPlan}
-                      onChange={(e) => setForm({...form, financialPlan: e.target.value})}
+                      onChange={(e) =>
+                        setForm({...form, financialPlan: e.target.value})
+                      }
                       placeholder="Share how you plan to cover food, vaccinations, grooming, and emergencies."
                       required
                     />
                   </div>
 
-                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isSubmitting}
+                  >
                     {isSubmitting ? "Submitting..." : "Submit application"}
                   </Button>
                 </form>

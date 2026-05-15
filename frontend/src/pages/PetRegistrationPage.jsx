@@ -2,13 +2,20 @@ import {useEffect, useMemo, useState} from "react";
 import {Navigate} from "react-router-dom";
 import {Badge} from "../components/ui/badge";
 import {Button} from "../components/ui/button";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import {Input} from "../components/ui/input";
 import {Label} from "../components/ui/label";
 import {Select} from "../components/ui/select";
 import {Textarea} from "../components/ui/textarea";
 import {useAuth} from "../context/AuthContext";
 import {createPet, getPetsByOwner} from "../services/petService";
+import {ComboBox} from "@/components/ui/combo-box";
 
 const initialForm = {
   petName: "",
@@ -18,7 +25,7 @@ const initialForm = {
   size: "Medium",
   temperament: "Calm",
   description: "",
-  reason: "",
+  registrationReason: "personal_use",
   photoUrl: "",
 };
 
@@ -96,11 +103,9 @@ export default function PetRegistrationPage() {
         species: form.species,
         breed: form.breed.trim(),
         age: form.age ? Number.parseInt(form.age, 10) : undefined,
-        description: [form.description.trim(), form.reason.trim()]
-          .filter(Boolean)
-          .join("\n\n"),
+        description: form.description.trim(),
         imageUrl: form.photoUrl.trim(),
-        availability: "not available",
+        registrationReason: form.registrationReason,
         owner: currentUser.id,
       });
 
@@ -152,7 +157,9 @@ export default function PetRegistrationPage() {
                   <Input
                     id="petName"
                     value={form.petName}
-                    onChange={(event) => setForm({...form, petName: event.target.value})}
+                    onChange={(event) =>
+                      setForm({...form, petName: event.target.value})
+                    }
                     placeholder="Coco"
                     required
                   />
@@ -162,7 +169,9 @@ export default function PetRegistrationPage() {
                   <Input
                     id="breed"
                     value={form.breed}
-                    onChange={(event) => setForm({...form, breed: event.target.value})}
+                    onChange={(event) =>
+                      setForm({...form, breed: event.target.value})
+                    }
                     placeholder="Mixed Breed"
                     required
                   />
@@ -175,7 +184,9 @@ export default function PetRegistrationPage() {
                   <Select
                     id="species"
                     value={form.species}
-                    onChange={(event) => setForm({...form, species: event.target.value})}
+                    onChange={(event) =>
+                      setForm({...form, species: event.target.value})
+                    }
                   >
                     <option>Dog</option>
                     <option>Cat</option>
@@ -191,7 +202,9 @@ export default function PetRegistrationPage() {
                     type="number"
                     min="0"
                     value={form.age}
-                    onChange={(event) => setForm({...form, age: event.target.value})}
+                    onChange={(event) =>
+                      setForm({...form, age: event.target.value})
+                    }
                     placeholder="2"
                     required
                   />
@@ -201,7 +214,9 @@ export default function PetRegistrationPage() {
                   <Select
                     id="size"
                     value={form.size}
-                    onChange={(event) => setForm({...form, size: event.target.value})}
+                    onChange={(event) =>
+                      setForm({...form, size: event.target.value})
+                    }
                   >
                     <option>Small</option>
                     <option>Medium</option>
@@ -216,7 +231,9 @@ export default function PetRegistrationPage() {
                   <Select
                     id="temperament"
                     value={form.temperament}
-                    onChange={(event) => setForm({...form, temperament: event.target.value})}
+                    onChange={(event) =>
+                      setForm({...form, temperament: event.target.value})
+                    }
                   >
                     <option>Calm</option>
                     <option>Playful</option>
@@ -256,7 +273,9 @@ export default function PetRegistrationPage() {
                 <Textarea
                   id="description"
                   value={form.description}
-                  onChange={(event) => setForm({...form, description: event.target.value})}
+                  onChange={(event) =>
+                    setForm({...form, description: event.target.value})
+                  }
                   placeholder="Tell us about the pet's personality, habits, and care needs."
                   required
                 />
@@ -264,13 +283,16 @@ export default function PetRegistrationPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="reason">Why is the pet being registered?</Label>
-                <Textarea
-                  id="reason"
+                <Select
+                  id="species"
                   value={form.reason}
-                  onChange={(event) => setForm({...form, reason: event.target.value})}
-                  placeholder="Explain the reason for the adoption listing."
-                  required
-                />
+                  onChange={(event) =>
+                    setForm({...form, reason: event.target.value})
+                  }
+                >
+                  <option value={"adoption"}>For Adoption</option>
+                  <option value={"personal_use"}>For Personal Use</option>
+                </Select>
               </div>
 
               <Button type="submit" className="w-full" disabled={isSubmitting}>
@@ -297,10 +319,14 @@ export default function PetRegistrationPage() {
                         {submitted.name}
                       </p>
                       <p className="break-words text-sm text-emerald-800">
-                        {submitted.species} | {submitted.breed || "Unknown breed"}
+                        {submitted.species} |{" "}
+                        {submitted.breed || "Unknown breed"}
                       </p>
                     </div>
-                    <Badge className="self-start sm:self-auto" variant="primary">
+                    <Badge
+                      className="self-start sm:self-auto"
+                      variant="primary"
+                    >
                       Saved
                     </Badge>
                   </div>
@@ -311,7 +337,9 @@ export default function PetRegistrationPage() {
                 </div>
               ) : (
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                  <p className="font-medium text-slate-950">No submission yet.</p>
+                  <p className="font-medium text-slate-950">
+                    No submission yet.
+                  </p>
                   <p className="mt-2 text-sm leading-6 text-slate-600">
                     Once submitted, this panel will show the latest saved pet.
                   </p>
@@ -324,7 +352,8 @@ export default function PetRegistrationPage() {
             <CardHeader>
               <CardTitle>Your submissions</CardTitle>
               <CardDescription>
-                These entries are loaded from the backend for the signed-in user.
+                These entries are loaded from the backend for the signed-in
+                user.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -334,7 +363,10 @@ export default function PetRegistrationPage() {
                 </div>
               ) : mySubmissions.length > 0 ? (
                 mySubmissions.map((item) => (
-                  <div key={item._id} className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <div
+                    key={item._id}
+                    className="rounded-2xl border border-slate-200 bg-white p-4"
+                  >
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <div className="min-w-0">
                         <p className="break-words font-medium text-slate-950">
@@ -345,11 +377,16 @@ export default function PetRegistrationPage() {
                         </p>
                       </div>
                       <Badge className="self-start sm:self-auto" variant="soft">
-                        {item.availability ?? "not available"}
+                        {item.registrationReason === "adoption"
+                          ? "For adoption"
+                          : "Personal"}
                       </Badge>
                     </div>
                     <p className="mt-2 text-xs uppercase tracking-[0.16em] text-slate-500">
-                      Registered {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "recently"}
+                      Registered{" "}
+                      {item.createdAt
+                        ? new Date(item.createdAt).toLocaleDateString()
+                        : "recently"}
                     </p>
                   </div>
                 ))

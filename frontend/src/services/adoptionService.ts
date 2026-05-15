@@ -57,7 +57,7 @@ export async function createAdoption(
     },
     body: JSON.stringify(payload),
   });
-
+ 
   return handleResponse<AdoptionApiResponse<AdoptionRecord>>(response);
 }
 
@@ -66,4 +66,36 @@ export async function getAdoptionsByUser(
 ): Promise<AdoptionApiResponse<AdoptionRecord[]>> {
   const response = await fetch(`${API_BASE_URL}/user/${userId}`);
   return handleResponse<AdoptionApiResponse<AdoptionRecord[]>>(response);
+}
+
+export async function getAllAdoptions(): 
+Promise<AdoptionApiResponse<AdoptionRecord[]>> {
+  const response = await fetch(API_BASE_URL);
+
+  return handleResponse<AdoptionApiResponse<AdoptionRecord[]>>(response);
+}
+
+export async function deleteAdoption(
+  id: string
+): Promise<AdoptionApiResponse<AdoptionRecord>> {
+  const response = await fetch(`${API_BASE_URL}/${id}`, {
+    method: "DELETE",
+  });
+
+  return handleResponse<AdoptionApiResponse<AdoptionRecord>>(response);
+}
+
+export async function updateAdoption(
+  id: string,
+  payload: Partial<AdoptionPayload>
+): Promise<AdoptionApiResponse<AdoptionRecord>> {
+  const response = await fetch(`${API_BASE_URL}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  return handleResponse<AdoptionApiResponse<AdoptionRecord>>(response);
 }

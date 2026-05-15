@@ -7,7 +7,7 @@ export interface Pet {
   weight?: number;
   description?: string;
   imageUrl?: string;
-  availability?: "available" | "not available";
+  registrationReason?: "adoption" | "personal_use" | "breeding" | "rescue";
   owner?: string;
   createdAt?: string;
   updatedAt?: string;

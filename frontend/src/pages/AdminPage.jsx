@@ -22,53 +22,69 @@ import {
   SparklesIcon,
   StethoscopeIcon,
 } from "../components/icons";
-import {getAllPets} from "../services/petService"
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { getAllPets } from "../services/petService";
+import { getAllAppointments } from "../services/appoitnmentService";
+import { getAllAdoptions } from "../services/adoptionService";
 
-useEffect
+export default function AdminPage() {
 
-    
+    const [pets, setPets] = useState([]);
+    const [appointments, setAppointments] = useState([]);
+    const [adoption, setAdoption] = useState([])
 
-const stats = [
+    const fetchPets = async () =>{
+          try {
+            const res = await getAllPets();
+            setPets(res.pets);
+          } catch (error) {
+            console.log(error)
+          }
+    }
+    const fetchAppointments = async () => {
+          try {
+            const res = await getAllAppointments();
+            setAppointments(res.appointments);
+          } catch (error) {
+            console.log(error)
+          }
+    }
+    const fetchAdoption = async () => {
+          try {
+            const res = await getAllAdoptions();
+            setAdoption(res.adoptions);
+          } catch (error) {
+            console.log(error)
+          }
+    }
+
+    useEffect(() => {
+            fetchPets()
+            fetchAppointments()
+            fetchAdoption()
+      },[])
+
+    const stats = [
   {
-    label: "Total Pets",
-    value: availablePets.length,
+    label: "Registered Pets",
+    value: pets.length,
     note: "Ready to browse now",
     icon: HeartIcon,
   },
   {
-    label: "Adopted Pets",
-    value: services.length,
+    label: "Ready for adoption",
+    value: adoption.length,
     note: "Consultation and Pakapon",
     icon: CalendarIcon,
   },
   {
-    label: "Total Users",
-    value: reminderItems.length,
-    note: "Vaccinations and follow-ups",
-    icon: BellIcon,
-  },
-  {
-    label: "Appointments Today",
-    value: availablePets.length,
-    note: "Ready to browse now",
-    icon: HeartIcon,
-  },
-  {
-    label: "Pending Appointments",
-    value: services.length,
-    note: "Consultation and Pakapon",
-    icon: CalendarIcon,
-  },
-  {
-    label: "Match Success Rate",
-    value: "99%",
+    label: "Pet Pending Appointments",
+    value: appointments.length,
     note: "Vaccinations and follow-ups",
     icon: BellIcon,
   },
 ];
 
-export default function AdminPage() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-3">
@@ -200,110 +216,8 @@ export default function AdminPage() {
               ))}
             </CardContent>
           </Card>
-
         </div>
-
       </div>
-
-      <Card>
-    <div className="justify-between items-end flex p-6">
-      <div>
-        <h1 className="text-lg font-semibold tracking-tight text-slate-900">Pet Appointments Table</h1>
-          <p className="text-sm leading-6 text-slate-600">
-            Upcoming vaccinations, follow-ups, and appointment reminders.
-          </p>
-      </div>
-    </div>
-
-    <CardContent>
-
-      {/* TABLE HEADER */}
-      <div className="grid grid-cols-4 bg-slate-100 p-3 rounded-t-xl font-semibold text-sm">
-        <div className="text-gray-800">Title</div>
-        <div className="text-gray-800">Detail</div>
-        <div className="text-gray-800">Status</div>
-        <div className="text-gray-800 text-right">Actions</div>
-      </div>
-
-      {/* TABLE BODY */}
-      <div className="divide-y">
-        {reminderItems.map((item, index) => (
-          <div
-            key={index}
-            className="grid grid-cols-4 items-center p-3 bg-white hover:bg-slate-50"
-          >
-            {/* TITLE */}
-            <div className="font-medium text-gray-800">{item.title}</div>
-
-            {/* DETAIL */}
-            <div className="text-sm text-slate-600">{item.detail}</div>
-
-            {/* STATUS */}
-            <div>
-              <Badge
-                variant={
-                  item.tone === "primary"
-                    ? "default"
-                    : item.tone === "warning"
-                    ? "secondary"
-                    : "outline"
-                }
-              >
-                {item.tone}
-              </Badge>
-            </div>
-
-            {/* ACTIONS */}
-            <div className="flex justify-end gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => alert('Tipaklong')}
-              >
-                Edit
-              </Button>
-
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => alert('Tipaklong')}
-              >
-                Delete
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </CardContent>
-  </Card>
-
-  <Card>
-    <CardHeader>
-              <CardTitle>Pets List</CardTitle>
-              <CardDescription>
-                Adoption applications begin as pending and update after review.
-              </CardDescription>
-    </CardHeader>
-    <div className="h-50 w-full mb-4 grid grid-cols-4 overflow-y-scroll gap-4 p-2">
-         {availablePets.map((pet) => (
-          <div key={pet.id} className="flex-1 bg-white border-2 border-gray-300 rounded-2xl p-2 cursor-pointer hover:-translate-y-1">
-            <div className="w-full justify-start items-center flex border-b-2 border-b-gray-300 gap-2 pb-2">
-                <img src={pet.imageUrl} className="h-10 w-10 rounded-full object-cover"/>
-                <h1 className="text-md font-semibold text-gray-800">{pet.name}</h1>
-                <h1 className="text-sm text-gray-500">| {pet.age}</h1>
-            </div>
-            <div className="h-full w-full justify-start items-start flex gap-2 p-2">
-                <ul>
-                  <li className="text-md text-gray-800">➤ Species: {pet.species}</li>
-                  <li className="text-md text-gray-800">➤ Breed: {pet.breed}</li>
-                  <li className="text-md text-gray-800">➤ Size: {pet.size}</li>
-                </ul>
-            </div>
-
-          </div>
-         ))}
-    </div>
-  </Card>
     </div>
   );
 }

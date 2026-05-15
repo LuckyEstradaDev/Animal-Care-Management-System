@@ -32,10 +32,11 @@ const petSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    availability: {
+    registrationReason: {
       type: String,
-      enum: ["available", "not available"],
-      default: "available",
+      enum: ["adoption", "personal_use", "breeding", "rescue"],
+      default: "personal_use",
+      required: true,
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,

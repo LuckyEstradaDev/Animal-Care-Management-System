@@ -13,9 +13,7 @@ const NavigationBar = () => {
             <p className="text-sm font-semibold tracking-wide text-white">
               PawCare
             </p>
-            <p className="text-xs text-slate-300">
-              Animal Care Management System
-            </p>
+            <p className="text-xs text-slate-300">PawCare</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">

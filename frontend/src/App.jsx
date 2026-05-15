@@ -3,7 +3,6 @@ import AppLayout from "./components/layout/AppLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 import DashboardPage from "./pages/DashboardPage";
 import AdoptionPage from "./pages/AdoptionPage";
-import MatchingPage from "./pages/MatchingPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
 import MyPetsPage from "./pages/MyPetsPage";
 import NotificationsPage from "./pages/NotificationsPage";
@@ -14,6 +13,9 @@ import Website from "./pages/Website_Page";
 import HomePage from "./pages/Home_Page";
 import AboutPage from "./pages/About_Page";
 import AdminPage from "./pages/AdminPage";
+import AppointmentPage from "./pages/AppointmentPage";
+import PetsListPage from "./pages/PetsListPage";
+import AdminAdoption from "./pages/AdminAdoption";
 
 function App() {
   return (
@@ -28,7 +30,6 @@ function App() {
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="adoption" element={<AdoptionPage />} />
           <Route path="register-pet" element={<PetRegistrationPage />} />
-          <Route path="matching" element={<MatchingPage />} />
           <Route path="appointments" element={<AppointmentsPage />} />
           <Route path="my-pets" element={<MyPetsPage />} />
           <Route path="notifications" element={<NotificationsPage />} />
@@ -37,6 +38,9 @@ function App() {
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminPage />} />
+          <Route path="view-adoption" element={<AdminAdoption/>} />
+          <Route path="appointment" element={<AppointmentPage/>} />
+          <Route path="pets-list" element={<PetsListPage/>} />
         </Route>
       </Routes>
     </BrowserRouter>
