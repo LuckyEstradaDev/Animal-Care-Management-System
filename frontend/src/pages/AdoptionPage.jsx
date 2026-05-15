@@ -1,22 +1,9 @@
 import {useEffect, useMemo, useState} from "react";
 import {Navigate} from "react-router-dom";
-import {Badge} from "../components/ui/badge";
-import {Button} from "../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import {Dialog} from "../components/ui/dialog";
-import {Input} from "../components/ui/input";
-import {Label} from "../components/ui/label";
-import {Select} from "../components/ui/select";
-import {Textarea} from "../components/ui/textarea";
 import {getAllPets} from "../services/petService";
 import {createAdoption} from "../services/adoptionService";
 import {useAuth} from "../context/AuthContext";
+import {Dialog} from "../components/ui/dialog";
 
 const initialForm = {
   fullName: "",
@@ -37,6 +24,23 @@ function formatDate(value) {
   return value ? new Date(value).toLocaleDateString() : "Today";
 }
 
+const inputCls =
+  "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm shadow-slate-950/5 placeholder:text-slate-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15";
+
+const labelCls =
+  "block text-[11px] font-semibold uppercase tracking-widest text-slate-500";
+
+function Field({id, label, children}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className={labelCls}>
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
 export default function AdoptionPage() {
   const {currentUser, isAuthenticated} = useAuth();
   const [pets, setPets] = useState([]);
@@ -54,7 +58,8 @@ export default function AdoptionPage() {
         const adoptionPets = (res.pets || []).filter(
           (pet) =>
             pet.registrationReason === "adoption" &&
-            pet.owner !== currentUser.id,
+            pet.owner !== currentUser.id &&
+            pet.reviewStatus === "approved",
         );
         console.log(res.pets);
         setPets(adoptionPets);
@@ -141,68 +146,71 @@ export default function AdoptionPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Available pets</CardTitle>
-          <CardDescription>
-            Open a profile to answer the screening form and submit a pending
-            adoption request.
-          </CardDescription>
-        </CardHeader>
+    <div className="space-y-8">
+      {/* ── Page header ── */}
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+          Find a companion
+        </h1>
+        <p className="mt-1 text-sm text-zinc-500">
+          Browse pets open for adoption and submit a screening application.
+        </p>
+      </div>
 
-        <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {loading ? (
-            <p className="text-sm text-slate-600">Loading pets...</p>
-          ) : pets.length === 0 ? (
-            <p className="text-sm text-slate-600">
-              No pets are currently open for adoption.
-            </p>
-          ) : (
-            pets.map((pet) => (
-              <button
-                key={pet._id}
-                type="button"
-                onClick={() => openModal(pet)}
-                className="group overflow-hidden rounded-3xl border border-slate-200 bg-white text-left transition hover:-translate-y-0.5 hover:border-emerald-200 hover:shadow-xl hover:shadow-slate-950/10"
-              >
-                <div className="relative h-44 bg-slate-100 sm:h-56">
-                  <img
-                    src={pet.imageUrl || "https://via.placeholder.com/300"}
-                    alt={pet.name}
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-                    loading="lazy"
-                  />
-                  <div className="absolute left-4 top-4 rounded-full bg-slate-950/60 px-3 py-1 text-xs font-semibold text-white backdrop-blur">
-                    Ready for screening
+      {/* ── Pet grid ── */}
+      {loading ? (
+        <p className="text-sm text-zinc-400">Loading pets…</p>
+      ) : pets.length === 0 ? (
+        <p className="text-sm text-zinc-400">
+          No pets are currently open for adoption.
+        </p>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          {pets.map((pet) => (
+            <button
+              key={pet._id}
+              type="button"
+              onClick={() => openModal(pet)}
+              className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white text-left transition duration-200 hover:-translate-y-1 hover:border-zinc-300 hover:shadow-xl hover:shadow-zinc-900/10"
+            >
+              {/* Image */}
+              <div className="relative h-48 overflow-hidden bg-zinc-100">
+                <img
+                  src={pet.imageUrl || "https://via.placeholder.com/300"}
+                  alt={pet.name}
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <span className="absolute left-3 top-3 rounded-full bg-zinc-900/70 px-3 py-1 text-[11px] font-medium tracking-wide text-white backdrop-blur-sm">
+                  Open for adoption
+                </span>
+              </div>
+
+              {/* Body */}
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h3 className="truncate text-base font-semibold text-zinc-900">
+                      {pet.name}
+                    </h3>
+                    <p className="mt-0.5 truncate text-sm text-zinc-500">
+                      {pet.species} · {pet.breed}
+                    </p>
                   </div>
+                  <span className="shrink-0 rounded-lg bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600">
+                    {pet.age ? `${pet.age} yr` : "N/A"}
+                  </span>
                 </div>
+                <p className="mt-3 inline-block rounded-lg bg-zinc-50 px-2.5 py-1 text-xs text-zinc-500">
+                  {pet.weight ? `${pet.weight} kg` : "Weight N/A"}
+                </p>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
 
-                <div className="space-y-3 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="break-words text-lg font-semibold text-slate-950">
-                        {pet.name}
-                      </h3>
-                      <p className="break-words text-sm text-slate-600">
-                        {pet.species} | {pet.breed}
-                      </p>
-                    </div>
-                    <Badge className="shrink-0" variant="default">
-                      {pet.age ? `${pet.age} yrs` : "N/A"}
-                    </Badge>
-                  </div>
-
-                  <p className="break-words text-sm leading-6 text-slate-600">
-                    Weight: {pet.weight || "N/A"} kg
-                  </p>
-                </div>
-              </button>
-            ))
-          )}
-        </CardContent>
-      </Card>
-
+      {/* ── Modal ── */}
       <Dialog
         open={Boolean(activePet)}
         onOpenChange={(open) => {
@@ -210,120 +218,182 @@ export default function AdoptionPage() {
         }}
         title={activePet ? `Apply for ${activePet.name}` : "Apply for adoption"}
         description="Answer the screening questions carefully. Requests are saved as pending review."
+        contentClassName="max-w-5xl"
+        bodyClassName="bg-slate-50/70"
       >
         {activePet ? (
           submittedApplication ? (
-            <div className="grid gap-6 md:grid-cols-[0.95fr_1.05fr]">
-              <div className="overflow-hidden rounded-3xl bg-slate-50">
+            /* ── SUCCESS STATE ── */
+            <div className="grid overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-sm md:grid-cols-[0.9fr_1.1fr]">
+              <div className="relative min-h-64 overflow-hidden bg-emerald-50">
                 <img
                   src={activePet.imageUrl || "https://via.placeholder.com/300"}
                   alt={activePet.name}
-                  className="h-56 w-full object-cover sm:h-full"
+                  className="h-full min-h-64 w-full object-cover"
                 />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/70 to-transparent p-5">
+                  <p className="text-xs font-medium uppercase tracking-widest text-emerald-100">
+                    Adoption request
+                  </p>
+                  <h3 className="mt-1 text-2xl font-semibold text-white">
+                    {activePet.name}
+                  </h3>
+                </div>
               </div>
 
-              <div className="space-y-4">
-                <Badge variant="warning">Pending review</Badge>
-                <h3 className="text-2xl font-semibold text-slate-950">
-                  Adoption request submitted
-                </h3>
-                <p className="break-words text-sm text-slate-600">
-                  Your request for {activePet.name} is now in the screening
-                  queue. It will not be approved immediately.
-                </p>
+              <div className="flex flex-col justify-center gap-5 p-5 sm:p-6">
+                <span className="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-amber-700">
+                  Pending review
+                </span>
+
+                <div>
+                  <h3 className="text-xl font-semibold text-slate-950">
+                    Application submitted
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                    Your request for{" "}
+                    <span className="font-medium text-slate-800">
+                      {activePet.name}
+                    </span>{" "}
+                    is now in the screening queue. We'll reach out via email
+                    once a decision is made.
+                  </p>
+                </div>
 
                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                  <p className="break-words text-sm font-medium text-slate-950">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">
+                    Reference ID
+                  </p>
+                  <p className="mt-1 break-all text-sm font-medium text-slate-950">
                     {submittedApplication._id}
                   </p>
-                  <p className="text-sm text-slate-600">
+                  <p className="mt-0.5 text-xs text-slate-500">
                     Submitted {formatDate(submittedApplication.createdAt)}
                   </p>
                 </div>
 
-                <Button className="w-full" onClick={closeModal}>
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3 text-sm font-medium text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800"
+                >
                   Close
-                </Button>
+                </button>
               </div>
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-[0.95fr_1.05fr]">
-              <div className="space-y-4">
-                <div className="overflow-hidden rounded-3xl bg-slate-100">
+            /* ── FORM STATE ── */
+            <div className="grid gap-5 md:grid-cols-[0.85fr_1.15fr]">
+              {/* Left — pet snapshot */}
+              <div className="overflow-hidden rounded-3xl border border-emerald-100 bg-emerald-50">
+                <div className="relative h-64 overflow-hidden bg-slate-100">
                   <img
                     src={
                       activePet.imageUrl || "https://via.placeholder.com/300"
                     }
                     alt={activePet.name}
-                    className="h-56 w-full object-cover sm:h-72"
+                    className="h-full w-full object-cover"
                   />
+                  <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-emerald-700 shadow-sm backdrop-blur">
+                    Ready to adopt
+                  </span>
                 </div>
 
-                <div className="space-y-3 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-                  <h3 className="break-words text-2xl font-semibold text-slate-950">
+                <div className="p-5">
+                  <h3 className="text-xl font-semibold text-slate-950">
                     {activePet.name}
                   </h3>
-                  <p className="break-words text-sm text-slate-600">
-                    {activePet.species} | {activePet.breed}
+                  <p className="mt-1 text-sm text-slate-600">
+                    {activePet.species} · {activePet.breed}
                   </p>
-                  <p className="text-sm leading-6 text-slate-600">
-                    Screening requests stay pending until reviewed.
+                  <div className="my-4 grid grid-cols-2 gap-2">
+                    <div className="rounded-2xl bg-white/80 p-3">
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                        Age
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-slate-900">
+                        {activePet.age ? `${activePet.age} yr` : "N/A"}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-white/80 p-3">
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                        Weight
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-slate-900">
+                        {activePet.weight ? `${activePet.weight} kg` : "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-slate-600">
+                    Applications remain pending until manually reviewed. We'll
+                    contact you once a decision is reached.
                   </p>
                 </div>
               </div>
 
+              {/* Right — form */}
               <div>
-                {error ? (
-                  <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+                {error && (
+                  <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                     {error}
                   </div>
-                ) : null}
+                )}
 
-                <form className="space-y-4" onSubmit={handleSubmit}>
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="fullName">Full name</Label>
-                      <Input
+                <form
+                  className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-950/5 sm:p-5"
+                  onSubmit={handleSubmit}
+                >
+                  <div className="mb-5">
+                    <p className="text-sm font-semibold text-slate-950">
+                      Screening details
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                      Share the basics so the team can review your application.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Field id="fullName" label="Full name">
+                      <input
                         id="fullName"
+                        className={inputCls}
                         value={form.fullName}
                         onChange={(e) =>
                           setForm({...form, fullName: e.target.value})
                         }
                         required
                       />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Phone</Label>
-                      <Input
+                    </Field>
+                    <Field id="phone" label="Phone">
+                      <input
                         id="phone"
+                        className={inputCls}
                         value={form.phone}
                         onChange={(e) =>
                           setForm({...form, phone: e.target.value})
                         }
                         required
                       />
-                    </div>
+                    </Field>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <Field id="email" label="Email">
+                      <input
                         id="email"
                         type="email"
+                        className={inputCls}
                         value={form.email}
                         onChange={(e) =>
                           setForm({...form, email: e.target.value})
                         }
                         required
                       />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="homeType">Home type</Label>
-                      <Select
+                    </Field>
+                    <Field id="homeType" label="Home type">
+                      <select
                         id="homeType"
+                        className={inputCls}
                         value={form.homeType}
                         onChange={(e) =>
                           setForm({...form, homeType: e.target.value})
@@ -333,15 +403,15 @@ export default function AdoptionPage() {
                         <option>House</option>
                         <option>Condominium</option>
                         <option>Shared home</option>
-                      </Select>
-                    </div>
+                      </select>
+                    </Field>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="householdSize">People in household</Label>
-                      <Select
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <Field id="householdSize" label="People in household">
+                      <select
                         id="householdSize"
+                        className={inputCls}
                         value={form.householdSize}
                         onChange={(e) =>
                           setForm({...form, householdSize: e.target.value})
@@ -351,13 +421,12 @@ export default function AdoptionPage() {
                         <option>2</option>
                         <option>3</option>
                         <option>4+</option>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="hasChildren">Children at home</Label>
-                      <Select
+                      </select>
+                    </Field>
+                    <Field id="hasChildren" label="Children at home">
+                      <select
                         id="hasChildren"
+                        className={inputCls}
                         value={form.hasChildren}
                         onChange={(e) =>
                           setForm({...form, hasChildren: e.target.value})
@@ -366,15 +435,15 @@ export default function AdoptionPage() {
                         <option>No</option>
                         <option>Yes, under 10</option>
                         <option>Yes, 10 and above</option>
-                      </Select>
-                    </div>
+                      </select>
+                    </Field>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="hasOtherPets">Other pets at home</Label>
-                      <Select
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <Field id="hasOtherPets" label="Other pets at home">
+                      <select
                         id="hasOtherPets"
+                        className={inputCls}
                         value={form.hasOtherPets}
                         onChange={(e) =>
                           setForm({...form, hasOtherPets: e.target.value})
@@ -383,13 +452,12 @@ export default function AdoptionPage() {
                         <option>No</option>
                         <option>Yes, calm pets</option>
                         <option>Yes, energetic pets</option>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="experience">Pet care experience</Label>
-                      <Select
+                      </select>
+                    </Field>
+                    <Field id="experience" label="Pet care experience">
+                      <select
                         id="experience"
+                        className={inputCls}
                         value={form.experience}
                         onChange={(e) =>
                           setForm({...form, experience: e.target.value})
@@ -398,29 +466,28 @@ export default function AdoptionPage() {
                         <option>First-time adopter</option>
                         <option>Some experience</option>
                         <option>Experienced owner</option>
-                      </Select>
-                    </div>
+                      </select>
+                    </Field>
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="dailySchedule">Daily schedule</Label>
-                    <Textarea
+                  <div className="mt-4 space-y-4">
+                  <Field id="dailySchedule" label="Daily schedule">
+                    <textarea
                       id="dailySchedule"
+                      className={`${inputCls} min-h-[76px] resize-y`}
                       value={form.dailySchedule}
                       onChange={(e) =>
                         setForm({...form, dailySchedule: e.target.value})
                       }
-                      placeholder="Describe who will be home, walk routines, and how long the pet may be left alone."
+                      placeholder="Who will be home, walk routines, and how long the pet may be left alone."
                       required
                     />
-                  </div>
+                  </Field>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="reason">
-                      Why are you suitable for this pet?
-                    </Label>
-                    <Textarea
+                  <Field id="reason" label="Why are you suitable for this pet?">
+                    <textarea
                       id="reason"
+                      className={`${inputCls} min-h-[76px] resize-y`}
                       value={form.reason}
                       onChange={(e) =>
                         setForm({...form, reason: e.target.value})
@@ -428,41 +495,42 @@ export default function AdoptionPage() {
                       placeholder="Explain why this pet fits your home, lifestyle, and expectations."
                       required
                     />
-                  </div>
+                  </Field>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="carePlan">Care plan</Label>
-                    <Textarea
+                  <Field id="carePlan" label="Care plan">
+                    <textarea
                       id="carePlan"
+                      className={`${inputCls} min-h-[76px] resize-y`}
                       value={form.carePlan}
                       onChange={(e) =>
                         setForm({...form, carePlan: e.target.value})
                       }
-                      placeholder="Tell us about feeding, exercise, training, and veterinary care plans."
+                      placeholder="Feeding, exercise, training, and veterinary care plans."
                       required
                     />
-                  </div>
+                  </Field>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="financialPlan">Financial readiness</Label>
-                    <Textarea
+                  <Field id="financialPlan" label="Financial readiness">
+                    <textarea
                       id="financialPlan"
+                      className={`${inputCls} min-h-[76px] resize-y`}
                       value={form.financialPlan}
                       onChange={(e) =>
                         setForm({...form, financialPlan: e.target.value})
                       }
-                      placeholder="Share how you plan to cover food, vaccinations, grooming, and emergencies."
+                      placeholder="How you plan to cover food, vaccinations, grooming, and emergencies."
                       required
                     />
+                  </Field>
                   </div>
 
-                  <Button
+                  <button
                     type="submit"
-                    className="w-full"
                     disabled={isSubmitting}
+                    className="mt-5 w-full rounded-xl bg-emerald-600 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-950/15 transition hover:-translate-y-0.5 hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    {isSubmitting ? "Submitting..." : "Submit application"}
-                  </Button>
+                    {isSubmitting ? "Submitting…" : "Submit application"}
+                  </button>
                 </form>
               </div>
             </div>

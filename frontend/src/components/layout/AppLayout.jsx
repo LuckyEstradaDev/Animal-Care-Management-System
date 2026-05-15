@@ -49,7 +49,7 @@ export default function AppLayout() {
                 className="inline-flex max-w-[12rem] truncate"
               >
                 {isAuthenticated
-                  ? `${currentUser?.name}${currentUser?.role === "admin" ? " · Admin" : currentUser?.role === "pet_owner" ? " · Pet owner" : " · Adopter"}`
+                  ? `${currentUser?.name}${currentUser?.role === "admin" ? " · Admin" : currentUser?.role === "pet_owner" ? " · Pet owner" : ""}`
                   : "Guest"}
               </Badge>
               {isAuthenticated ? (

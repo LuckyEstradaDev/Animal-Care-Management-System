@@ -24,7 +24,7 @@ const registerInitial = {
   email: "",
   password: "",
   confirmPassword: "",
-  role: "adopter",
+  role: "pet_owner",
 };
 
 export default function AuthPage() {
@@ -92,249 +92,254 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.16),transparent_28%),radial-gradient(circle_at_bottom_right,rgba(251,191,36,0.12),transparent_26%),linear-gradient(180deg,#f8fafc_0%,#eefaf4_100%)] px-4 py-8 sm:py-10">
-      <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <Card className="overflow-hidden border-white/70 bg-white/85 shadow-xl shadow-emerald-950/5 backdrop-blur">
-          <CardHeader className="space-y-5">
-            <Badge variant="soft" className="w-fit">
-              Welcome to PawCare
-            </Badge>
-            <div className="flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-white shadow-lg shadow-emerald-950/15">
-                <HeartIcon className="h-7 w-7" />
+    <main className="min-h-screen bg-white px-4 py-12 sm:py-16">
+      <div className="mx-auto grid w-full max-w-5xl gap-12 lg:grid-cols-2 lg:gap-8 lg:items-center">
+        {/* ── Left — Branding panel ── */}
+        <div className="flex flex-col gap-8">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary">
+              <HeartIcon className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="text-base font-semibold tracking-tight text-zinc-900">
+              PawCare
+            </span>
+          </div>
+
+          {/* Headline */}
+          <div>
+            <h1 className="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
+              {mode === "login" ? "Welcome back." : "Create your account."}
+            </h1>
+            <p className="mt-4 text-base leading-relaxed text-zinc-500">
+              Access pet registration, appointments, and personal pet records —
+              all from one place.
+            </p>
+          </div>
+
+          {/* Feature tiles */}
+          <div className="flex flex-col gap-3">
+            <div className="flex items-start gap-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white shadow-sm">
+                <ShieldIcon className="h-4 w-4 text-zinc-600" />
               </div>
               <div>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-700">
-                  PawCare
+                <p className="text-sm font-semibold text-zinc-900">
+                  Secure authentication
                 </p>
-                <CardTitle className="mt-1 text-3xl sm:text-4xl">
-                  Sign in to PawCare
-                </CardTitle>
+                <p className="mt-0.5 text-sm text-zinc-500">
+                  Protected backend login with validated passwords.
+                </p>
               </div>
             </div>
-            <CardDescription className="max-w-xl text-base leading-7 text-slate-600">
-              Access the user portal for pet registration, appointments, and
-              personal pet records from one place.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div className="rounded-2xl border border-emerald-100 bg-emerald-50/80 p-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-emerald-700 shadow-sm">
-                    <ShieldIcon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-950">
-                      Secure authentication
-                    </p>
-                    <p className="mt-1 text-sm text-slate-600">
-                      Protected backend login with validated passwords.
-                    </p>
-                  </div>
-                </div>
+            <div className="flex items-start gap-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white shadow-sm">
+                <SparklesIcon className="h-4 w-4 text-zinc-600" />
               </div>
-
-              <div className="rounded-2xl border border-amber-100 bg-amber-50/80 p-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-amber-700 shadow-sm">
-                    <SparklesIcon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-slate-950">
-                      User portal access
-                    </p>
-                    <p className="mt-1 text-sm text-slate-600">
-                      Continue into pet registration, my pets, and appointments.
-                    </p>
-                  </div>
-                </div>
+              <div>
+                <p className="text-sm font-semibold text-zinc-900">
+                  Full portal access
+                </p>
+                <p className="mt-0.5 text-sm text-zinc-500">
+                  Pet registration, records, and appointments in one dashboard.
+                </p>
               </div>
             </div>
+          </div>
 
-            <div className="grid gap-3 md:grid-cols-2">
+          {/* Back link */}
+          <Link
+            to="/website"
+            className="text-sm font-medium text-zinc-400 underline-offset-4 transition hover:text-zinc-700 hover:underline"
+          >
+            ← Back to landing page
+          </Link>
+        </div>
+
+        {/* ── Right — Auth form ── */}
+        <div className="w-full rounded-2xl border border-zinc-200 bg-white p-8 shadow-xl shadow-zinc-900/5">
+          {/* Mode toggle */}
+          <div className="mb-7 flex gap-1 rounded-xl border border-zinc-200 bg-zinc-50 p-1">
+            {["login", "register"].map((m) => (
               <button
+                key={m}
                 type="button"
-                onClick={() => switchMode("login")}
-                className={`rounded-2xl border px-4 py-3 text-left transition ${
-                  mode === "login"
-                    ? "border-emerald-400 bg-emerald-50"
-                    : "border-slate-200 bg-white hover:bg-slate-50"
+                onClick={() => switchMode(m)}
+                className={`flex-1 rounded-lg py-2 text-sm font-medium transition ${
+                  mode === m
+                    ? "bg-white text-zinc-900 shadow-sm border border-zinc-200"
+                    : "text-zinc-400 hover:text-zinc-600"
                 }`}
               >
-                <p className="text-sm font-semibold text-slate-950">Login</p>
-                <p className="mt-1 text-sm text-slate-600">
-                  Sign in with your existing account.
-                </p>
+                {m === "login" ? "Sign in" : "Register"}
               </button>
-              <button
-                type="button"
-                onClick={() => switchMode("register")}
-                className={`rounded-2xl border px-4 py-3 text-left transition ${
-                  mode === "register"
-                    ? "border-emerald-400 bg-emerald-50"
-                    : "border-slate-200 bg-white hover:bg-slate-50"
-                }`}
+            ))}
+          </div>
+
+          {/* Alerts */}
+          {error && (
+            <div className="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="mb-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+              {success}
+            </div>
+          )}
+
+          {/* Login form */}
+          {mode === "login" ? (
+            <form className="flex flex-col gap-4" onSubmit={handleLogin}>
+              <div className="flex flex-col gap-1.5">
+                <Label
+                  htmlFor="login-email"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Email
+                </Label>
+                <Input
+                  id="login-email"
+                  type="email"
+                  value={loginForm.email}
+                  onChange={(event) =>
+                    setLoginForm({...loginForm, email: event.target.value})
+                  }
+                  placeholder="you@example.com"
+                  required
+                  className="rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label
+                  htmlFor="login-password"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Password
+                </Label>
+                <Input
+                  id="login-password"
+                  type="password"
+                  value={loginForm.password}
+                  onChange={(event) =>
+                    setLoginForm({...loginForm, password: event.target.value})
+                  }
+                  placeholder="••••••••"
+                  required
+                  className="rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="mt-1 w-full rounded-xl py-3 text-sm font-medium transition hover:-translate-y-0.5"
               >
-                <p className="text-sm font-semibold text-slate-950">Register</p>
-                <p className="mt-1 text-sm text-slate-600">
-                  Create a new secure user profile.
+                Sign in
+              </Button>
+
+              <p className="text-center text-sm text-zinc-400">
+                No account?{" "}
+                <button
+                  type="button"
+                  onClick={() => switchMode("register")}
+                  className="font-medium text-zinc-700 underline-offset-4 hover:underline"
+                >
+                  Register here
+                </button>
+              </p>
+            </form>
+          ) : (
+            <form className="flex flex-col gap-4" onSubmit={handleRegister}>
+              <div className="flex flex-col gap-1.5">
+                <Label
+                  htmlFor="register-name"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Full name
+                </Label>
+                <Input
+                  id="register-name"
+                  value={registerForm.name}
+                  onChange={(event) =>
+                    setRegisterForm({...registerForm, name: event.target.value})
+                  }
+                  placeholder="Jane Tan"
+                  required
+                  className="rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label
+                  htmlFor="register-email"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Email
+                </Label>
+                <Input
+                  id="register-email"
+                  type="email"
+                  value={registerForm.email}
+                  onChange={(event) =>
+                    setRegisterForm({
+                      ...registerForm,
+                      email: event.target.value,
+                    })
+                  }
+                  placeholder="jane@example.com"
+                  required
+                  className="rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label
+                  htmlFor="register-password"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Password
+                </Label>
+                <Input
+                  id="register-password"
+                  type="password"
+                  value={registerForm.password}
+                  onChange={(event) =>
+                    setRegisterForm({
+                      ...registerForm,
+                      password: event.target.value,
+                    })
+                  }
+                  placeholder="Create a password"
+                  required
+                  className="rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                />
+                <p className="text-xs text-zinc-400">
+                  At least 8 characters with a letter, number, and special
+                  character.
                 </p>
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-white/70 bg-white/92 shadow-xl shadow-emerald-950/5 backdrop-blur">
-          <CardHeader>
-            <CardTitle>
-              {mode === "login" ? "Login" : "Create account"}
-            </CardTitle>
-            <CardDescription>
-              {mode === "login"
-                ? "Sign in to continue to the dashboard."
-                : "Register a new account for the PawCare user portal."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {error ? (
-              <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                {error}
               </div>
-            ) : null}
 
-            {success ? (
-              <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                {success}
-              </div>
-            ) : null}
-
-            {mode === "login" ? (
-              <form className="space-y-4" onSubmit={handleLogin}>
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input
-                    id="login-email"
-                    type="email"
-                    value={loginForm.email}
-                    onChange={(event) =>
-                      setLoginForm({...loginForm, email: event.target.value})
-                    }
-                    placeholder="you@example.com"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Password</Label>
-                  <Input
-                    id="login-password"
-                    type="password"
-                    value={loginForm.password}
-                    onChange={(event) =>
-                      setLoginForm({...loginForm, password: event.target.value})
-                    }
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Login
-                </Button>
-              </form>
-            ) : (
-              <form className="space-y-4" onSubmit={handleRegister}>
-                <div className="space-y-2">
-                  <Label htmlFor="register-name">Full name</Label>
-                  <Input
-                    id="register-name"
-                    value={registerForm.name}
-                    onChange={(event) =>
-                      setRegisterForm({
-                        ...registerForm,
-                        name: event.target.value,
-                      })
-                    }
-                    placeholder="Jane Tan"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-email">Email</Label>
-                  <Input
-                    id="register-email"
-                    type="email"
-                    value={registerForm.email}
-                    onChange={(event) =>
-                      setRegisterForm({
-                        ...registerForm,
-                        email: event.target.value,
-                      })
-                    }
-                    placeholder="jane@example.com"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-password">Password</Label>
-                  <Input
-                    id="register-password"
-                    type="password"
-                    value={registerForm.password}
-                    onChange={(event) => {
-                      const newPassword = event.target.value;
-                      setRegisterForm({
-                        ...registerForm,
-                        password: newPassword,
-                      });
-                      setPasswordMismatch(newPassword !== registerForm.confirmPassword && registerForm.confirmPassword !== "");
-                    }}
-                    placeholder="Create a password"
-                    required
-                  />
-                  <p className="text-xs text-slate-500">
-                    Use at least 8 characters with a letter, a number, and a
-                    special character.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="register-confirm-password">Confirm Password</Label>
-                  <Input
-                    id="register-confirm-password"
-                    type="password"
-                    value={registerForm.confirmPassword}
-                    onChange={(event) => {
-                      const newConfirmPassword = event.target.value;
-                      setRegisterForm({
-                        ...registerForm,
-                        confirmPassword: newConfirmPassword,
-                      });
-                      setPasswordMismatch(registerForm.password !== newConfirmPassword && newConfirmPassword !== "");
-                    }}
-                    placeholder="Confirm your password"
-                    required
-                  />
-                  {passwordMismatch && (
-                    <p className="text-xs text-rose-600">
-                      Passwords do not match.
-                    </p>
-                  )}
-                </div>
-                <Button type="submit" className="w-full">
-                  Create account
-                </Button>
-              </form>
-            )}
-
-            <div className="mt-4 text-sm text-slate-600">
-              <Link
-                to="/website"
-                className="font-medium text-emerald-700 hover:text-emerald-600"
+              <Button
+                type="submit"
+                className="mt-1 w-full rounded-xl py-3 text-sm font-medium transition hover:-translate-y-0.5"
               >
-                Back to landing page
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+                Create account
+              </Button>
+
+              <p className="text-center text-sm text-zinc-400">
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => switchMode("login")}
+                  className="font-medium text-zinc-700 underline-offset-4 hover:underline"
+                >
+                  Sign in
+                </button>
+              </p>
+            </form>
+          )}
+        </div>
       </div>
     </main>
   );

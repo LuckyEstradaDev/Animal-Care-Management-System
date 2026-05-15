@@ -2,7 +2,16 @@ import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../../lib/cn";
 
-export function Dialog({ open, onOpenChange, title, description, children, className }) {
+export function Dialog({
+  open,
+  onOpenChange,
+  title,
+  description,
+  children,
+  className,
+  contentClassName,
+  bodyClassName,
+}) {
   useEffect(() => {
     if (!open) return undefined;
 
@@ -32,6 +41,7 @@ export function Dialog({ open, onOpenChange, title, description, children, class
         className={cn(
           "relative z-10 max-h-[calc(100dvh-3rem)] w-full max-w-3xl overflow-hidden overflow-y-auto rounded-[1.5rem] border border-white/70 bg-white shadow-[0_30px_90px_-35px_rgba(15,23,42,0.45)] sm:rounded-[2rem]",
           className,
+          contentClassName,
         )}
       >
         <div className="flex items-start justify-between gap-4 border-b border-slate-200 px-4 py-4 sm:px-6 sm:py-5">
@@ -53,7 +63,9 @@ export function Dialog({ open, onOpenChange, title, description, children, class
             Close
           </button>
         </div>
-        <div className={cn("px-4 py-4 sm:px-6 sm:py-6", className)}>{children}</div>
+        <div className={cn("px-4 py-4 sm:px-6 sm:py-6", bodyClassName)}>
+          {children}
+        </div>
       </div>
     </div>,
     document.body,
