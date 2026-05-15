@@ -7,6 +7,15 @@ const PetsListPage = () => {
   const [pets, setPets] = useState([]);
   const [isEditModal, setIsEditModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState(null);
+  const [search, setSearch] = useState("");
+
+  const filterPets = mockPets.filter(
+    (pet) =>
+      pet.name.toLowerCase().includes(search.toLowerCase()) ||
+      pet.owner.toLowerCase().includes(search.toLowerCase()) ||
+      pet.breed.toLowerCase().includes(search.toLowerCase()) ||
+      pet.species.toLowerCase().includes(search.toLowerCase()),
+  );
 
   const fetchPets = async () => {
     try {
@@ -47,13 +56,25 @@ const PetsListPage = () => {
         />
       )}
       <div className="rounded-md space-y-6">
-        <div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
-            Registered Pet List
-          </CardTitle>
-          <CardDescription className="text-slate-600">
-            Adoption applications begin as pending and update after review.
-          </CardDescription>
+        <div className="justify-between items-center flex">
+          <div>
+            <CardTitle className="text-2xl font-bold text-gray-900">
+              Registered Pet List
+            </CardTitle>
+            <CardDescription className="text-slate-600">
+              Adoption applications begin as pending and update after review.
+            </CardDescription>
+          </div>
+
+          <div className="w-100 gap-2">
+            <input
+              type="text"
+              placeholder="Search pets..."
+              className="bg-white border border-gray-300 rounded-2xl outline-none placeholder:text-gray-500 text-gray-900 focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
 
         {pets.length === 0 ? (
