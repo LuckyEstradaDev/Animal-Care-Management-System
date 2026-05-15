@@ -15,7 +15,7 @@ function normalizeUser(user) {
     id: user.id,
     name:
       user.name ??
-      [user.firstName, user.lastName].filter(Boolean).join(" ").trim(),
+      [user.firstName].filter(Boolean).join(" ").trim(),
     email: user.email,
     role: user.role,
   };
@@ -113,7 +113,6 @@ export function AuthProvider({children}) {
     validatePassword(password);
 
     const [firstName, ...rest] = name.trim().split(/\s+/);
-    const lastName = rest.join(" ") || "User";
 
     const data = await handleResponse(
       await fetch(`${API_BASE_URL}/register`, {

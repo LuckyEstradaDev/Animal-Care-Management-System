@@ -41,7 +41,7 @@ const PetsListPage = () => {
     fetchedPets();
   }, []);
   return (
-    <section className="min-h-screen w-full bg-trnasparent">
+    <section className="min-h-screen w-full bg-transparent">
       {isEditModal && (
         <EditPetsModal
           pet={selectedPet}
@@ -51,17 +51,17 @@ const PetsListPage = () => {
       )}
       <div className="rounded-md space-y-6">
         <div>
-          <CardTitle className="text-2xl font-bold text-white">
+          <CardTitle className="text-2xl font-bold text-gray-900">
             Registered Pet List
           </CardTitle>
-          <CardDescription className="text-white">
+          <CardDescription className="text-slate-600">
             Adoption applications begin as pending and update after review.
           </CardDescription>
         </div>
 
         {pets.length < 1 && (
-          <div className="bg-slate-950 h-100 w-full rounded-xl justify-center items-center flex">
-            <h1 className="text-sm text-gray-500 font-semibold">
+          <div className="bg-slate-100 h-100 w-full rounded-xl justify-center items-center flex">
+            <h1 className="text-sm text-slate-500 font-semibold">
               No registered pets yet
             </h1>
           </div>
@@ -91,7 +91,7 @@ const PetsListPage = () => {
                   <div className="gap-2 justify-end items-center flex">
                     <button
                       onClick={() => OpenEditModal(pet)}
-                      className="w-12 h-12 bg-gray-300 hover:bg-gray-400 text-white text-sm py-2 rounded-2xl transition cursor-pointer"
+                      className="w-12 h-12 bg-gray-300 hover:bg-gray-400 text-slate-800 text-sm py-2 rounded-2xl transition cursor-pointer"
                     >
                       ✏️
                     </button>
