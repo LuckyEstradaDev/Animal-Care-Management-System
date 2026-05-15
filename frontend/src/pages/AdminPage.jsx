@@ -22,6 +22,12 @@ import {
   SparklesIcon,
   StethoscopeIcon,
 } from "../components/icons";
+import {getAllPets} from "../services/petService"
+import { useEffect, useState } from "react";
+
+useEffect
+
+    
 
 const stats = [
   {
