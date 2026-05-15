@@ -7,8 +7,16 @@
   font-weight: 400;
   color: #0f172a;
   background:
-    radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 28%),
-    radial-gradient(circle at top right, rgba(251, 191, 36, 0.12), transparent 24%),
+    radial-gradient(
+      circle at top left,
+      rgba(16, 185, 129, 0.12),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(251, 191, 36, 0.12),
+      transparent 24%
+    ),
     linear-gradient(180deg, #f8fafc 0%, #eefaf4 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -45,4 +53,14 @@ textarea {
 
 #root {
   min-height: 100vh;
+}
+
+/* hide scrollbar but keep scrolling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none; /* Firefox */
 }

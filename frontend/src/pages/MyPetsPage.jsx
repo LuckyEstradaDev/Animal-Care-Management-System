@@ -617,7 +617,7 @@ export default function MyPetsPage() {
             </button>
 
             <form
-              className="space-y-6"
+              className="space-y-6 overflow-auto max-h-[80vh] pr-2 no-scrollbar"
               onSubmit={(event) => {
                 event.preventDefault();
                 handleSavePet();
