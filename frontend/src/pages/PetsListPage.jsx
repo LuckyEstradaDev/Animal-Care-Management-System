@@ -85,18 +85,6 @@ const PetsListPage = () => {
     }
   };
 
-  const deletePet = async (id) => {
-    const isConfirmed = confirm("Are you sure you want to delete this pet?");
-    if (!isConfirmed) return;
-
-    try {
-      await removePet(id);
-      fetchedPets();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const OpenEditModal = (pet) => {
     setIsEditModal(true);
     setSelectedPet(pet);
@@ -169,15 +157,6 @@ const PetsListPage = () => {
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="gap-2 justify-end items-center flex">
-                    <button
-                      onClick={() => deletePet(pet._id)}
-                      className="w-12 h-12 bg-red-500 hover:bg-red-600 text-white text-sm py-2 rounded-2xl transition cursor-pointer"
-                    >
-                      🗑
-                    </button>
-                  </div>
                 </div>
 
                 {/* Info */}
