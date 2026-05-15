@@ -51,10 +51,10 @@ const AppointmentPage = () =>{
   <div className="space-y-6">
     <div className="justify-between items-end flex">
       <div>
-        <h1 className="text-lg font-semibold tracking-tight text-white">
+        <h1 className="text-lg font-semibold tracking-tight text-gray-900">
           Pet Appointments Table
         </h1>
-        <p className="text-sm leading-6 text-white">
+        <p className="text-sm leading-6 text-slate-600">
           Upcoming vaccinations, follow-ups, and appointment reminders.
         </p>
       </div>
@@ -72,7 +72,7 @@ const AppointmentPage = () =>{
     {/* TABLE BODY */}
     <div className="divide-y">
       {appointments.length === 0 && (
-        <div className="bg-slate-950 h-100 w-full justify-center items-center flex rounded-xl">No Appointment Available</div>
+        <div className="bg-slate-100 h-100 w-full justify-center items-center flex rounded-xl text-slate-500">No Appointment Available</div>
       )}
       {appointments.map((item, index) => (
         <div

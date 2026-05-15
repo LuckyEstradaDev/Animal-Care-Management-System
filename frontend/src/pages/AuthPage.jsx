@@ -23,6 +23,7 @@ const registerInitial = {
   name: "",
   email: "",
   password: "",
+  confirmPassword: "",
   role: "adopter",
 };
 
@@ -33,6 +34,7 @@ export default function AuthPage() {
   const [registerForm, setRegisterForm] = useState(registerInitial);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
   const navigate = useNavigate();
   const {login, register, currentUser, isAuthLoading} = useAuth();
 
@@ -48,6 +50,7 @@ export default function AuthPage() {
   function switchMode(nextMode) {
     setError("");
     setSuccess("");
+    setPasswordMismatch(false);
     setSearchParams({mode: nextMode});
   }
 
@@ -68,6 +71,11 @@ export default function AuthPage() {
     event.preventDefault();
     setError("");
     setSuccess("");
+
+    if (registerForm.password !== registerForm.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
 
     try {
       const user = await register({
@@ -272,12 +280,14 @@ export default function AuthPage() {
                     id="register-password"
                     type="password"
                     value={registerForm.password}
-                    onChange={(event) =>
+                    onChange={(event) => {
+                      const newPassword = event.target.value;
                       setRegisterForm({
                         ...registerForm,
-                        password: event.target.value,
-                      })
-                    }
+                        password: newPassword,
+                      });
+                      setPasswordMismatch(newPassword !== registerForm.confirmPassword && registerForm.confirmPassword !== "");
+                    }}
                     placeholder="Create a password"
                     required
                   />
@@ -285,6 +295,29 @@ export default function AuthPage() {
                     Use at least 8 characters with a letter, a number, and a
                     special character.
                   </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="register-confirm-password">Confirm Password</Label>
+                  <Input
+                    id="register-confirm-password"
+                    type="password"
+                    value={registerForm.confirmPassword}
+                    onChange={(event) => {
+                      const newConfirmPassword = event.target.value;
+                      setRegisterForm({
+                        ...registerForm,
+                        confirmPassword: newConfirmPassword,
+                      });
+                      setPasswordMismatch(registerForm.password !== newConfirmPassword && newConfirmPassword !== "");
+                    }}
+                    placeholder="Confirm your password"
+                    required
+                  />
+                  {passwordMismatch && (
+                    <p className="text-xs text-rose-600">
+                      Passwords do not match.
+                    </p>
+                  )}
                 </div>
                 <Button type="submit" className="w-full">
                   Create account
