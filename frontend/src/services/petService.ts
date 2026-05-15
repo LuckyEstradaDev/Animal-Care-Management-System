@@ -1,3 +1,27 @@
+export interface MedicalHistoryItem {
+  illness: string;
+  date: string;
+  stillPresent: boolean;
+  notes?: string;
+}
+
+export interface MedicationHistoryItem {
+  medication: string;
+  dosage?: string;
+  startDate?: string;
+  endDate?: string;
+  ongoing?: boolean;
+  notes?: string;
+}
+
+export interface VaccinationRecordItem {
+  vaccine: string;
+  date: string;
+  nextDue?: string;
+  veterinarian?: string;
+  notes?: string;
+}
+
 export interface Pet {
   _id?: string;
   name: string;
@@ -5,8 +29,13 @@ export interface Pet {
   breed?: string;
   age?: number;
   weight?: number;
+  size?: string;
+  temperament?: string;
   description?: string;
   imageUrl?: string;
+  medicalHistories?: MedicalHistoryItem[];
+  medicationHistories?: MedicationHistoryItem[];
+  vaccinationRecords?: VaccinationRecordItem[];
   registrationReason?: "adoption" | "personal_use" | "breeding" | "rescue";
   owner?: string;
   createdAt?: string;

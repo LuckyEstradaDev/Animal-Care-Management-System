@@ -25,10 +25,10 @@ function formatDate(value) {
 }
 
 const inputCls =
-  "w-full rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-zinc-900";
+  "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm shadow-slate-950/5 placeholder:text-slate-400 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/15";
 
 const labelCls =
-  "block text-[11px] font-semibold uppercase tracking-widest text-zinc-400";
+  "block text-[11px] font-semibold uppercase tracking-widest text-slate-500";
 
 function Field({id, label, children}) {
   return (
@@ -218,31 +218,41 @@ export default function AdoptionPage() {
         }}
         title={activePet ? `Apply for ${activePet.name}` : "Apply for adoption"}
         description="Answer the screening questions carefully. Requests are saved as pending review."
+        contentClassName="max-w-5xl"
+        bodyClassName="bg-slate-50/70"
       >
         {activePet ? (
           submittedApplication ? (
             /* ── SUCCESS STATE ── */
-            <div className="grid gap-6 md:grid-cols-2">
-              <div className="overflow-hidden rounded-2xl">
+            <div className="grid overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-sm md:grid-cols-[0.9fr_1.1fr]">
+              <div className="relative min-h-64 overflow-hidden bg-emerald-50">
                 <img
                   src={activePet.imageUrl || "https://via.placeholder.com/300"}
                   alt={activePet.name}
-                  className="h-56 w-full object-cover sm:h-full"
+                  className="h-full min-h-64 w-full object-cover"
                 />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/70 to-transparent p-5">
+                  <p className="text-xs font-medium uppercase tracking-widest text-emerald-100">
+                    Adoption request
+                  </p>
+                  <h3 className="mt-1 text-2xl font-semibold text-white">
+                    {activePet.name}
+                  </h3>
+                </div>
               </div>
 
-              <div className="flex flex-col gap-5">
-                <span className="inline-flex w-fit items-center rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-amber-700">
+              <div className="flex flex-col justify-center gap-5 p-5 sm:p-6">
+                <span className="inline-flex w-fit items-center rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-amber-700">
                   Pending review
                 </span>
 
                 <div>
-                  <h3 className="text-xl font-semibold text-zinc-900">
+                  <h3 className="text-xl font-semibold text-slate-950">
                     Application submitted
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-zinc-500">
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600">
                     Your request for{" "}
-                    <span className="font-medium text-zinc-700">
+                    <span className="font-medium text-slate-800">
                       {activePet.name}
                     </span>{" "}
                     is now in the screening queue. We'll reach out via email
@@ -250,16 +260,14 @@ export default function AdoptionPage() {
                   </p>
                 </div>
 
-                <div className="h-px bg-zinc-100" />
-
-                <div className="rounded-xl bg-zinc-50 p-4">
-                  <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">
                     Reference ID
                   </p>
-                  <p className="mt-1 break-all text-sm font-medium text-zinc-900">
+                  <p className="mt-1 break-all text-sm font-medium text-slate-950">
                     {submittedApplication._id}
                   </p>
-                  <p className="mt-0.5 text-xs text-zinc-400">
+                  <p className="mt-0.5 text-xs text-slate-500">
                     Submitted {formatDate(submittedApplication.createdAt)}
                   </p>
                 </div>
@@ -267,7 +275,7 @@ export default function AdoptionPage() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="w-full rounded-xl border border-zinc-200 py-3 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3 text-sm font-medium text-slate-700 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800"
                 >
                   Close
                 </button>
@@ -275,28 +283,48 @@ export default function AdoptionPage() {
             </div>
           ) : (
             /* ── FORM STATE ── */
-            <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr]">
+            <div className="grid gap-5 md:grid-cols-[0.85fr_1.15fr]">
               {/* Left — pet snapshot */}
-              <div className="flex flex-col gap-4">
-                <div className="overflow-hidden rounded-2xl bg-zinc-100">
+              <div className="overflow-hidden rounded-3xl border border-emerald-100 bg-emerald-50">
+                <div className="relative h-64 overflow-hidden bg-slate-100">
                   <img
                     src={
                       activePet.imageUrl || "https://via.placeholder.com/300"
                     }
                     alt={activePet.name}
-                    className="h-52 w-full object-cover sm:h-64"
+                    className="h-full w-full object-cover"
                   />
+                  <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-emerald-700 shadow-sm backdrop-blur">
+                    Ready to adopt
+                  </span>
                 </div>
 
-                <div className="rounded-2xl bg-zinc-50 p-4">
-                  <h3 className="text-lg font-semibold text-zinc-900">
+                <div className="p-5">
+                  <h3 className="text-xl font-semibold text-slate-950">
                     {activePet.name}
                   </h3>
-                  <p className="mt-0.5 text-sm text-zinc-500">
+                  <p className="mt-1 text-sm text-slate-600">
                     {activePet.species} · {activePet.breed}
                   </p>
-                  <div className="my-3 h-px bg-zinc-200" />
-                  <p className="text-sm leading-relaxed text-zinc-500">
+                  <div className="my-4 grid grid-cols-2 gap-2">
+                    <div className="rounded-2xl bg-white/80 p-3">
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                        Age
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-slate-900">
+                        {activePet.age ? `${activePet.age} yr` : "N/A"}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-white/80 p-3">
+                      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                        Weight
+                      </p>
+                      <p className="mt-1 text-sm font-semibold text-slate-900">
+                        {activePet.weight ? `${activePet.weight} kg` : "N/A"}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-slate-600">
                     Applications remain pending until manually reviewed. We'll
                     contact you once a decision is reached.
                   </p>
@@ -306,13 +334,25 @@ export default function AdoptionPage() {
               {/* Right — form */}
               <div>
                 {error && (
-                  <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+                  <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
                     {error}
                   </div>
                 )}
 
-                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                  <div className="grid grid-cols-2 gap-3">
+                <form
+                  className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm shadow-slate-950/5 sm:p-5"
+                  onSubmit={handleSubmit}
+                >
+                  <div className="mb-5">
+                    <p className="text-sm font-semibold text-slate-950">
+                      Screening details
+                    </p>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">
+                      Share the basics so the team can review your application.
+                    </p>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <Field id="fullName" label="Full name">
                       <input
                         id="fullName"
@@ -337,7 +377,7 @@ export default function AdoptionPage() {
                     </Field>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <Field id="email" label="Email">
                       <input
                         id="email"
@@ -367,7 +407,7 @@ export default function AdoptionPage() {
                     </Field>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <Field id="householdSize" label="People in household">
                       <select
                         id="householdSize"
@@ -399,7 +439,7 @@ export default function AdoptionPage() {
                     </Field>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
                     <Field id="hasOtherPets" label="Other pets at home">
                       <select
                         id="hasOtherPets"
@@ -430,6 +470,7 @@ export default function AdoptionPage() {
                     </Field>
                   </div>
 
+                  <div className="mt-4 space-y-4">
                   <Field id="dailySchedule" label="Daily schedule">
                     <textarea
                       id="dailySchedule"
@@ -481,11 +522,12 @@ export default function AdoptionPage() {
                       required
                     />
                   </Field>
+                  </div>
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full rounded-xl bg-zinc-900 py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+                    className="mt-5 w-full rounded-xl bg-emerald-600 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-950/15 transition hover:-translate-y-0.5 hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-40"
                   >
                     {isSubmitting ? "Submitting…" : "Submit application"}
                   </button>

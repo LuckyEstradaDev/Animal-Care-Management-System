@@ -7,7 +7,7 @@ export interface IUserInterface {
   email: string;
   rawPassword: string;
   phoneNumber?: string;
-  role: "adopter" | "pet_owner" | "admin";
+  role: "pet_owner" | "admin";
 }
 
 export interface IUserLoginInterface {

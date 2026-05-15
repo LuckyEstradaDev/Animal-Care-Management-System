@@ -24,7 +24,7 @@ const registerInitial = {
   email: "",
   password: "",
   confirmPassword: "",
-  role: "adopter",
+  role: "pet_owner",
 };
 
 export default function AuthPage() {

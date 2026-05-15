@@ -24,6 +24,14 @@ const petSchema = new mongoose.Schema(
       type: Number,
       min: 0,
     },
+    size: {
+      type: String,
+      trim: true,
+    },
+    temperament: {
+      type: String,
+      trim: true,
+    },
     description: {
       type: String,
       trim: true,
@@ -31,6 +39,42 @@ const petSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       trim: true,
+    },
+    medicalHistories: {
+      type: [
+        {
+          illness: {type: String, trim: true},
+          date: {type: String, trim: true},
+          stillPresent: {type: Boolean, default: false},
+          notes: {type: String, trim: true},
+        },
+      ],
+      default: [],
+    },
+    medicationHistories: {
+      type: [
+        {
+          medication: {type: String, trim: true},
+          dosage: {type: String, trim: true},
+          startDate: {type: String, trim: true},
+          endDate: {type: String, trim: true},
+          ongoing: {type: Boolean, default: false},
+          notes: {type: String, trim: true},
+        },
+      ],
+      default: [],
+    },
+    vaccinationRecords: {
+      type: [
+        {
+          vaccine: {type: String, trim: true},
+          date: {type: String, trim: true},
+          nextDue: {type: String, trim: true},
+          veterinarian: {type: String, trim: true},
+          notes: {type: String, trim: true},
+        },
+      ],
+      default: [],
     },
     registrationReason: {
       type: String,

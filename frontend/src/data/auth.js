@@ -3,7 +3,7 @@ export const defaultUsers = [
     name: "Demo User",
     email: "demo@animalcare.test",
     password: "demo123",
-    role: "adopter",
+    role: "pet_owner",
   },
   {
     name: "Admin User",

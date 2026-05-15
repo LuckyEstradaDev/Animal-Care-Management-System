@@ -1,10 +1,16 @@
 /* eslint-disable react-refresh/only-export-components */
-import {createContext, useCallback, useContext, useEffect, useMemo, useState} from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 const SESSION_KEY = "acm_session";
 const API_BASE_URL = "http://localhost:5000/api/auth";
-const PASSWORD_REGEX =
-  /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+const PASSWORD_REGEX = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
 
 const AuthContext = createContext(null);
 
@@ -13,9 +19,7 @@ function normalizeUser(user) {
 
   return {
     id: user.id,
-    name:
-      user.name ??
-      [user.firstName].filter(Boolean).join(" ").trim(),
+    name: user.name ?? [user.firstName].filter(Boolean).join(" ").trim(),
     email: user.email,
     role: user.role,
   };
@@ -109,32 +113,35 @@ export function AuthProvider({children}) {
     return user;
   }, []);
 
-  const register = useCallback(async ({name, email, password, role = "adopter"}) => {
-    validatePassword(password);
+  const register = useCallback(
+    async ({name, email, password, role = "pet_owner"}) => {
+      validatePassword(password);
 
-    const [firstName, ...rest] = name.trim().split(/\s+/);
+      const [firstName, ...rest] = name.trim().split(/\s+/);
 
-    const data = await handleResponse(
-      await fetch(`${API_BASE_URL}/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          rawPassword: password,
-          role,
+      const data = await handleResponse(
+        await fetch(`${API_BASE_URL}/register`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            rawPassword: password,
+            role,
+          }),
         }),
-      }),
-    );
+      );
 
-    const user = normalizeUser(data.user);
-    setCurrentUser(user);
-    return user;
-  }, []);
+      const user = normalizeUser(data.user);
+      setCurrentUser(user);
+      return user;
+    },
+    [],
+  );
 
   const logout = useCallback(async () => {
     try {
