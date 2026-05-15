@@ -38,6 +38,11 @@ const petSchema = new mongoose.Schema(
       default: "personal_use",
       required: true,
     },
+    reviewStatus: {
+      type: String,
+      enum: ["in_review", "approved", "rejected"],
+      default: "in_review",
+    },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,

@@ -33,12 +33,9 @@ export default function PetRegistrationPage() {
   const {currentUser, isAuthenticated} = useAuth();
   const [form, setForm] = useState(initialForm);
   const [registeredPets, setRegisteredPets] = useState([]);
-  const [submitted, setSubmitted] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const mySubmissions = useMemo(() => registeredPets, [registeredPets]);
 
   function handlePhotoPick(event) {
     const [file] = event.target.files ?? [];
@@ -106,11 +103,11 @@ export default function PetRegistrationPage() {
         description: form.description.trim(),
         imageUrl: form.photoUrl.trim(),
         registrationReason: form.registrationReason,
+        reviewStatus: "in_review",
         owner: currentUser.id,
       });
 
       if (response.pet) {
-        setSubmitted(response.pet);
         setRegisteredPets((current) => [response.pet, ...current]);
       }
 
@@ -123,282 +120,227 @@ export default function PetRegistrationPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid gap-6 xl:grid-cols-[1fr_0.85fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Pet registration form</CardTitle>
-            <CardDescription>
-              {currentUser?.role === "pet_owner"
-                ? "Your account is marked as a pet owner."
-                : "This page is open to logged-in users, but it is designed for pet owners."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {error ? (
-              <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-                {error}
-              </div>
-            ) : null}
-
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-sm font-medium text-slate-950">
-                  Registering as {currentUser?.name}
-                </p>
-                <p className="mt-1 text-sm text-slate-600">
-                  This pet will automatically be linked to {currentUser?.email}.
-                </p>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="petName">Pet name</Label>
-                  <Input
-                    id="petName"
-                    value={form.petName}
-                    onChange={(event) =>
-                      setForm({...form, petName: event.target.value})
-                    }
-                    placeholder="Coco"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="breed">Breed</Label>
-                  <Input
-                    id="breed"
-                    value={form.breed}
-                    onChange={(event) =>
-                      setForm({...form, breed: event.target.value})
-                    }
-                    placeholder="Mixed Breed"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-3">
-                <div className="space-y-2">
-                  <Label htmlFor="species">Species</Label>
-                  <Select
-                    id="species"
-                    value={form.species}
-                    onChange={(event) =>
-                      setForm({...form, species: event.target.value})
-                    }
-                  >
-                    <option>Dog</option>
-                    <option>Cat</option>
-                    <option>Rabbit</option>
-                    <option>Bird</option>
-                    <option>Other</option>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="age">Age</Label>
-                  <Input
-                    id="age"
-                    type="number"
-                    min="0"
-                    value={form.age}
-                    onChange={(event) =>
-                      setForm({...form, age: event.target.value})
-                    }
-                    placeholder="2"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="size">Size</Label>
-                  <Select
-                    id="size"
-                    value={form.size}
-                    onChange={(event) =>
-                      setForm({...form, size: event.target.value})
-                    }
-                  >
-                    <option>Small</option>
-                    <option>Medium</option>
-                    <option>Large</option>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="temperament">Temperament</Label>
-                  <Select
-                    id="temperament"
-                    value={form.temperament}
-                    onChange={(event) =>
-                      setForm({...form, temperament: event.target.value})
-                    }
-                  >
-                    <option>Calm</option>
-                    <option>Playful</option>
-                    <option>Gentle</option>
-                    <option>Active</option>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="photoFile">Pet photo</Label>
-                  <Input
-                    id="photoFile"
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoPick}
-                  />
-                  <p className="text-xs text-slate-500">
-                    Pick an image and we&apos;ll attach it to this pet profile.
-                  </p>
-                </div>
-              </div>
-
-              {form.photoUrl ? (
-                <div className="space-y-2">
-                  <Label>Photo preview</Label>
-                  <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-                    <img
-                      src={form.photoUrl}
-                      alt="Pet preview"
-                      className="h-48 w-full object-cover"
-                    />
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Pet description</Label>
-                <Textarea
-                  id="description"
-                  value={form.description}
-                  onChange={(event) =>
-                    setForm({...form, description: event.target.value})
-                  }
-                  placeholder="Tell us about the pet's personality, habits, and care needs."
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="reason">Why is the pet being registered?</Label>
-                <Select
-                  id="species"
-                  value={form.reason}
-                  onChange={(event) =>
-                    setForm({...form, reason: event.target.value})
-                  }
-                >
-                  <option value={"adoption"}>For Adoption</option>
-                  <option value={"personal_use"}>For Personal Use</option>
-                </Select>
-              </div>
-
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Saving pet..." : "Submit pet"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Review status</CardTitle>
-              <CardDescription>
-                Newly registered pets are saved to your account right away.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {submitted ? (
-                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="min-w-0">
-                      <p className="break-words text-sm font-medium text-emerald-900">
-                        {submitted.name}
-                      </p>
-                      <p className="break-words text-sm text-emerald-800">
-                        {submitted.species} |{" "}
-                        {submitted.breed || "Unknown breed"}
-                      </p>
-                    </div>
-                    <Badge
-                      className="self-start sm:self-auto"
-                      variant="primary"
-                    >
-                      Saved
-                    </Badge>
-                  </div>
-                  <p className="mt-4 break-words text-sm leading-6 text-emerald-900/90">
-                    This pet is now tied to your account and will appear in My
-                    Pets and on the appointment page.
-                  </p>
-                </div>
-              ) : (
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                  <p className="font-medium text-slate-950">
-                    No submission yet.
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    Once submitted, this panel will show the latest saved pet.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Your submissions</CardTitle>
-              <CardDescription>
-                These entries are loaded from the backend for the signed-in
-                user.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {isLoading ? (
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                  Loading your pets...
-                </div>
-              ) : mySubmissions.length > 0 ? (
-                mySubmissions.map((item) => (
-                  <div
-                    key={item._id}
-                    className="rounded-2xl border border-slate-200 bg-white p-4"
-                  >
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="min-w-0">
-                        <p className="break-words font-medium text-slate-950">
-                          {item.name}
-                        </p>
-                        <p className="break-words text-sm text-slate-600">
-                          {item.species} | {item.breed || "Unknown breed"}
-                        </p>
-                      </div>
-                      <Badge className="self-start sm:self-auto" variant="soft">
-                        {item.registrationReason === "adoption"
-                          ? "For adoption"
-                          : "Personal"}
-                      </Badge>
-                    </div>
-                    <p className="mt-2 text-xs uppercase tracking-[0.16em] text-slate-500">
-                      Registered{" "}
-                      {item.createdAt
-                        ? new Date(item.createdAt).toLocaleDateString()
-                        : "recently"}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-                  Your submissions will appear here after you register a pet.
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+          Register a pet
+        </h1>
+        <p className="mt-1 text-sm text-zinc-500">
+          Fill in your pet's details to submit for review.
+        </p>
       </div>
+
+      {error ? (
+        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          {error}
+        </div>
+      ) : null}
+
+      <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        {/* Name & Breed */}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="petName"
+              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+            >
+              Pet name
+            </label>
+            <Input
+              id="petName"
+              value={form.petName}
+              onChange={(event) =>
+                setForm({...form, petName: event.target.value})
+              }
+              placeholder="Coco"
+              required
+              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="breed"
+              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+            >
+              Breed
+            </label>
+            <Input
+              id="breed"
+              value={form.breed}
+              onChange={(event) =>
+                setForm({...form, breed: event.target.value})
+              }
+              placeholder="Mixed Breed"
+              required
+              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+            />
+          </div>
+        </div>
+
+        {/* Species, Age, Size */}
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="species"
+              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+            >
+              Species
+            </label>
+            <Select
+              id="species"
+              value={form.species}
+              onChange={(event) =>
+                setForm({...form, species: event.target.value})
+              }
+              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 transition"
+            >
+              <option>Dog</option>
+              <option>Cat</option>
+              <option>Rabbit</option>
+              <option>Bird</option>
+              <option>Other</option>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="age"
+              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+            >
+              Age
+            </label>
+            <Input
+              id="age"
+              type="number"
+              min="0"
+              value={form.age}
+              onChange={(event) => setForm({...form, age: event.target.value})}
+              placeholder="2"
+              required
+              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="size"
+              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+            >
+              Size
+            </label>
+            <Select
+              id="size"
+              value={form.size}
+              onChange={(event) => setForm({...form, size: event.target.value})}
+              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 transition"
+            >
+              <option>Small</option>
+              <option>Medium</option>
+              <option>Large</option>
+            </Select>
+          </div>
+        </div>
+
+        {/* Temperament & Photo */}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="temperament"
+              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+            >
+              Temperament
+            </label>
+            <Select
+              id="temperament"
+              value={form.temperament}
+              onChange={(event) =>
+                setForm({...form, temperament: event.target.value})
+              }
+              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 transition"
+            >
+              <option>Calm</option>
+              <option>Playful</option>
+              <option>Gentle</option>
+              <option>Active</option>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="photoFile"
+              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+            >
+              Pet photo
+            </label>
+            <Input
+              id="photoFile"
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoPick}
+              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2 text-sm text-zinc-500 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-3 file:py-1 file:text-xs file:font-medium file:text-zinc-700 transition focus:border-zinc-900 focus:ring-0"
+            />
+            <p className="text-xs text-zinc-400">
+              Pick an image and we'll attach it to this pet profile.
+            </p>
+          </div>
+        </div>
+
+        {/* Photo preview */}
+        {form.photoUrl ? (
+          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50">
+            <img
+              src={form.photoUrl}
+              alt="Pet preview"
+              className="h-48 w-full object-cover"
+            />
+          </div>
+        ) : null}
+
+        {/* Description */}
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="description"
+            className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+          >
+            Description
+          </label>
+          <Textarea
+            id="description"
+            value={form.description}
+            onChange={(event) =>
+              setForm({...form, description: event.target.value})
+            }
+            placeholder="Tell us about the pet's personality, habits, and care needs."
+            required
+            className="min-h-[80px] resize-y rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+          />
+        </div>
+
+        {/* Registration reason */}
+        <div className="flex flex-col gap-1.5">
+          <label
+            htmlFor="reason"
+            className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+          >
+            Registration reason
+          </label>
+          <Select
+            id="species"
+            value={form.reason}
+            onChange={(event) => setForm({...form, reason: event.target.value})}
+            className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 transition"
+          >
+            <option value="adoption">For Adoption</option>
+            <option value="personal_use">For Personal Use</option>
+          </Select>
+        </div>
+
+        {/* Submit */}
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full rounded-xl py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {isSubmitting ? "Saving pet…" : "Submit pet"}
+        </Button>
+      </form>
     </div>
   );
 }

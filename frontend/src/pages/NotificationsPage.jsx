@@ -1,6 +1,12 @@
 import {useState} from "react";
 import {Badge} from "../components/ui/badge";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import {reminderItems} from "../data/mockData";
 import {BellIcon} from "../components/icons";
 
@@ -19,87 +25,128 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
+          Notifications
+        </h1>
+        <p className="mt-1 text-sm text-zinc-500">
+          Manage your reminders and delivery preferences.
+        </p>
+      </div>
+
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Upcoming notifications</CardTitle>
-            <CardDescription>
-              Notifications for vaccinations, follow-ups, and appointment reminders.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
+        {/* ── Upcoming notifications ── */}
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6">
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-zinc-900">
+                Upcoming notifications
+              </h2>
+              <p className="mt-0.5 text-sm text-zinc-500">
+                Vaccinations, follow-ups, and appointment reminders.
+              </p>
+            </div>
+            <span className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-500">
+              {reminderItems.length}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-2">
             {reminderItems.map((item) => (
               <div
                 key={item.title}
-                className="rounded-3xl border border-slate-200 bg-white p-5"
+                className="flex items-start justify-between gap-4 rounded-xl border border-zinc-100 bg-zinc-50 p-4 transition hover:border-zinc-200 hover:bg-white"
               >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex min-w-0 items-start gap-3">
-                    <div className="shrink-0 rounded-2xl bg-emerald-50 p-2 text-emerald-700">
-                      <BellIcon className="h-5 w-5" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="break-words font-medium text-slate-950">
-                        {item.title}
-                      </p>
-                      <p className="break-words text-sm text-slate-500">
-                        Automated reminder
-                      </p>
-                    </div>
+                <div className="flex items-start gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white border border-zinc-200 text-zinc-500 shadow-sm">
+                    <BellIcon className="h-4 w-4" />
                   </div>
-                  <Badge
-                    className="self-start sm:self-auto"
-                    variant={item.tone === "warning" ? "warning" : "primary"}
-                  >
-                    {item.tone}
-                  </Badge>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-zinc-900">
+                      {item.title}
+                    </p>
+                    <p className="mt-0.5 text-xs text-zinc-400">
+                      Automated reminder
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-zinc-500">
+                      {item.detail}
+                    </p>
+                  </div>
                 </div>
-                <p className="mt-3 break-words text-sm leading-6 text-slate-600">
-                  {item.detail}
-                </p>
+                <span
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                    item.tone === "warning"
+                      ? "border border-amber-200 bg-amber-50 text-amber-700"
+                      : "bg-zinc-900 text-white"
+                  }`}
+                >
+                  {item.tone}
+                </span>
               </div>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Notification preferences</CardTitle>
-            <CardDescription>
+        {/* ── Preferences ── */}
+        <div className="rounded-2xl border border-zinc-200 bg-white p-6">
+          <div className="mb-5">
+            <h2 className="text-base font-semibold text-zinc-900">
+              Notification preferences
+            </h2>
+            <p className="mt-0.5 text-sm text-zinc-500">
               Control how reminder updates are delivered.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
             {[
-              ["vaccinations", "Upcoming vaccinations"],
-              ["followUps", "Follow-up checkups"],
-              ["appointmentReminders", "Appointment reminders"],
-              ["email", "Email updates"],
-            ].map(([key, label]) => (
+              [
+                "vaccinations",
+                "Upcoming vaccinations",
+                "Get notified before scheduled vaccines.",
+              ],
+              [
+                "followUps",
+                "Follow-up checkups",
+                "Reminders for post-visit follow-ups.",
+              ],
+              [
+                "appointmentReminders",
+                "Appointment reminders",
+                "Alerts before upcoming appointments.",
+              ],
+              [
+                "email",
+                "Email updates",
+                "Receive all notifications via email.",
+              ],
+            ].map(([key, label, description]) => (
               <button
                 key={key}
                 type="button"
                 onClick={() => toggle(key)}
-                className="flex w-full items-center justify-between gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-left transition hover:bg-slate-100"
+                className="flex w-full items-center justify-between gap-4 rounded-xl border border-zinc-100 bg-zinc-50 px-4 py-3.5 text-left transition hover:border-zinc-200 hover:bg-white"
               >
-                <span className="min-w-0 break-words text-sm font-medium text-slate-950">
-                  {label}
-                </span>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-zinc-900">{label}</p>
+                  <p className="mt-0.5 text-xs text-zinc-400">{description}</p>
+                </div>
                 <span
-                  className={`flex h-6 w-11 shrink-0 items-center rounded-full p-1 transition ${
-                    preferences[key] ? "bg-emerald-600" : "bg-slate-300"
+                  className={`flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors duration-200 ${
+                    preferences[key] ? "bg-zinc-900" : "bg-zinc-200"
                   }`}
                 >
                   <span
-                    className={`h-4 w-4 rounded-full bg-white transition ${
+                    className={`h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
                       preferences[key] ? "translate-x-5" : "translate-x-0"
                     }`}
                   />
                 </span>
               </button>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

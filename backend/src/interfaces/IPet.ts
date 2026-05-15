@@ -9,5 +9,6 @@ export interface IPet extends mongoose.Document {
   description?: string;
   imageUrl?: string;
   registrationReason: "adoption" | "personal_use" | "breeding" | "rescue";
+  reviewStatus: "in_review" | "approved" | "rejected";
   owner: mongoose.Types.ObjectId;
 }
