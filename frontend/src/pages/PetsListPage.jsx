@@ -1,16 +1,75 @@
 import {CardDescription, CardTitle} from "../components/ui/card";
-import EditPetsModal from "../modal/EditPetsModal";
+import ViewPetsModal from "../modal/ViewPetsModal";
 import {getAllPets, deletePet as removePet} from "../services/petService";
 import {useEffect, useState} from "react";
 
 const PetsListPage = () => {
   const [pets, setPets] = useState([]);
-  const [isEditModal, setIsEditModal] = useState(false);
+  const [isViewModal, setIsViewModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState(null);
   const [search, setSearch] = useState("");
 
+  const mockPets = [
+  {
+    _id: "1",
+    name: "Buddy",
+    species: "Dog",
+    breed: "Golden Retriever",
+    age: 3,
+    weight: 28,
+    description: "Friendly and energetic dog who loves playing fetch.",
+    imageUrl: "https://example.com/images/buddy.jpg",
+    registrationReason: "adoption",
+    owner: "John Doe",
+    createdAt: "2026-01-10",
+    updatedAt: "2026-01-12",
+  },
+  {
+    _id: "2",
+    name: "Mittens",
+    species: "Cat",
+    breed: "British Shorthair",
+    age: 2,
+    weight: 5,
+    description: "Calm indoor cat who enjoys sleeping all day.",
+    imageUrl: "https://example.com/images/mittens.jpg",
+    registrationReason: "personal_use",
+    owner: "Jane Smith",
+    createdAt: "2026-01-08",
+    updatedAt: "2026-01-09",
+  },
+  {
+    _id: "3",
+    name: "Rocky",
+    species: "Dog",
+    breed: "German Shepherd",
+    age: 5,
+    weight: 35,
+    description: "Strong and intelligent guard dog.",
+    imageUrl: "https://example.com/images/rocky.jpg",
+    registrationReason: "breeding",
+    owner: "Mike Johnson",
+    createdAt: "2026-01-05",
+    updatedAt: "2026-01-07",
+  },
+  {
+    _id: "4",
+    name: "Luna",
+    species: "Rabbit",
+    breed: "Holland Lop",
+    age: 1,
+    weight: 2,
+    description: "Small and gentle rabbit, very friendly with kids.",
+    imageUrl: "https://example.com/images/luna.jpg",
+    registrationReason: "rescue",
+    owner: "Emily Clark",
+    createdAt: "2026-01-11",
+    updatedAt: "2026-01-13",
+  },
+];
+
   const filterPets = mockPets.filter(
-    (pet) =>
+      (pet) =>
       pet.name.toLowerCase().includes(search.toLowerCase()) ||
       pet.owner.toLowerCase().includes(search.toLowerCase()) ||
       pet.breed.toLowerCase().includes(search.toLowerCase()) ||
@@ -38,9 +97,9 @@ const PetsListPage = () => {
     }
   };
 
-  const openEditModal = (pet) => {
+  const openViewModal = (pet) => {
     setSelectedPet(pet);
-    setIsEditModal(true);
+    setIsViewModal(true);
   };
 
   useEffect(() => {
@@ -48,11 +107,10 @@ const PetsListPage = () => {
   }, []);
   return (
     <section className="min-h-screen w-full bg-transparent">
-      {isEditModal && (
-        <EditPetsModal
+      {isViewModal && (
+        <ViewPetsModal
           pet={selectedPet}
-          reFetch={() => fetchPets()}
-          onClose={() => setIsEditModal(false)}
+          onClose={() => setIsViewModal(false)}
         />
       )}
       <div className="rounded-md space-y-6">
@@ -77,7 +135,7 @@ const PetsListPage = () => {
           </div>
         </div>
 
-        {pets.length === 0 ? (
+        {filterPets.length === 0 ? (
           <div className="bg-slate-100 h-100 w-full rounded-xl justify-center items-center flex">
             <h1 className="text-sm text-slate-500 font-semibold">
               No registered pets yet
@@ -85,9 +143,10 @@ const PetsListPage = () => {
           </div>
         ) : (
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-5">
-            {pets.map((pet) => (
+            {filterPets.map((pet) => (
               <div
                 key={pet._id}
+                onClick={() => openViewModal(pet)}
                 className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 {/* Header */}
@@ -110,24 +169,6 @@ const PetsListPage = () => {
                           Owner: {pet.owner || "Owner name"}
                         </h1>
                       </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="gap-2 justify-end items-center flex">
-                      <button
-                        type="button"
-                        onClick={() => openEditModal(pet)}
-                        className="w-12 h-12 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm rounded-2xl transition"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => deletePet(pet._id)}
-                        className="w-12 h-12 bg-red-500 hover:bg-red-600 text-white text-sm rounded-2xl transition"
-                      >
-                        🗑
-                      </button>
                     </div>
                   </div>
 
