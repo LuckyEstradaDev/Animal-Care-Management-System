@@ -114,10 +114,8 @@ export function AuthProvider({children}) {
   }, []);
 
   const register = useCallback(
-    async ({name, email, password, role = "pet_owner"}) => {
+    async ({firstName, lastName, email, password, role = "pet_owner"}) => {
       validatePassword(password);
-
-      const [firstName, ...rest] = name.trim().split(/\s+/);
 
       const data = await handleResponse(
         await fetch(`${API_BASE_URL}/register`, {

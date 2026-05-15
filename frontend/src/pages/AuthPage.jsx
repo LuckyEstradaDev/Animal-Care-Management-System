@@ -20,7 +20,8 @@ const loginInitial = {
 };
 
 const registerInitial = {
-  name: "",
+  firstName: "",
+  lastName: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -79,7 +80,8 @@ export default function AuthPage() {
 
     try {
       const user = await register({
-        name: registerForm.name,
+        firstName: registerForm.firstName,
+        lastName: registerForm.lastName,
         email: registerForm.email,
         password: registerForm.password,
         role: registerForm.role,
@@ -96,7 +98,6 @@ export default function AuthPage() {
       <div className="mx-auto grid w-full max-w-5xl gap-12 lg:grid-cols-2 lg:gap-8 lg:items-center">
         {/* ── Left — Branding panel ── */}
         <div className="flex flex-col gap-8">
-          {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary">
               <HeartIcon className="h-5 w-5 text-primary-foreground" />
@@ -106,7 +107,6 @@ export default function AuthPage() {
             </span>
           </div>
 
-          {/* Headline */}
           <div>
             <h1 className="text-4xl font-semibold tracking-tight text-zinc-900 sm:text-5xl">
               {mode === "login" ? "Welcome back." : "Create your account."}
@@ -117,7 +117,6 @@ export default function AuthPage() {
             </p>
           </div>
 
-          {/* Feature tiles */}
           <div className="flex flex-col gap-3">
             <div className="flex items-start gap-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-4">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-zinc-200 bg-white shadow-sm">
@@ -147,7 +146,6 @@ export default function AuthPage() {
             </div>
           </div>
 
-          {/* Back link */}
           <Link
             to="/website"
             className="text-sm font-medium text-zinc-400 underline-offset-4 transition hover:text-zinc-700 hover:underline"
@@ -167,7 +165,7 @@ export default function AuthPage() {
                 onClick={() => switchMode(m)}
                 className={`flex-1 rounded-lg py-2 text-sm font-medium transition ${
                   mode === m
-                    ? "bg-white text-zinc-900 shadow-sm border border-zinc-200"
+                    ? "border border-zinc-200 bg-white text-zinc-900 shadow-sm"
                     : "text-zinc-400 hover:text-zinc-600"
                 }`}
               >
@@ -188,7 +186,7 @@ export default function AuthPage() {
             </div>
           )}
 
-          {/* Login form */}
+          {/* ── Login form ── */}
           {mode === "login" ? (
             <form className="flex flex-col gap-4" onSubmit={handleLogin}>
               <div className="flex flex-col gap-1.5">
@@ -250,26 +248,55 @@ export default function AuthPage() {
               </p>
             </form>
           ) : (
+            /* ── Register form ── */
             <form className="flex flex-col gap-4" onSubmit={handleRegister}>
-              <div className="flex flex-col gap-1.5">
-                <Label
-                  htmlFor="register-name"
-                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-                >
-                  Full name
-                </Label>
-                <Input
-                  id="register-name"
-                  value={registerForm.name}
-                  onChange={(event) =>
-                    setRegisterForm({...registerForm, name: event.target.value})
-                  }
-                  placeholder="Jane Tan"
-                  required
-                  className="rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
-                />
+              {/* First & Last name */}
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <Label
+                    htmlFor="register-firstname"
+                    className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                  >
+                    First name
+                  </Label>
+                  <Input
+                    id="register-firstname"
+                    value={registerForm.firstName}
+                    onChange={(event) =>
+                      setRegisterForm({
+                        ...registerForm,
+                        firstName: event.target.value,
+                      })
+                    }
+                    placeholder="Jane"
+                    required
+                    className="rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label
+                    htmlFor="register-lastname"
+                    className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                  >
+                    Last name
+                  </Label>
+                  <Input
+                    id="register-lastname"
+                    value={registerForm.lastName}
+                    onChange={(event) =>
+                      setRegisterForm({
+                        ...registerForm,
+                        lastName: event.target.value,
+                      })
+                    }
+                    placeholder="Tan"
+                    required
+                    className="rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                  />
+                </div>
               </div>
 
+              {/* Email */}
               <div className="flex flex-col gap-1.5">
                 <Label
                   htmlFor="register-email"
@@ -293,36 +320,82 @@ export default function AuthPage() {
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label
-                  htmlFor="register-password"
-                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-                >
-                  Password
-                </Label>
-                <Input
-                  id="register-password"
-                  type="password"
-                  value={registerForm.password}
-                  onChange={(event) =>
-                    setRegisterForm({
-                      ...registerForm,
-                      password: event.target.value,
-                    })
-                  }
-                  placeholder="Create a password"
-                  required
-                  className="rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
-                />
-                <p className="text-xs text-zinc-400">
-                  At least 8 characters with a letter, number, and special
-                  character.
-                </p>
+              {/* Password & Confirm */}
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex flex-col gap-1.5">
+                  <Label
+                    htmlFor="register-password"
+                    className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                  >
+                    Password
+                  </Label>
+                  <Input
+                    id="register-password"
+                    type="password"
+                    value={registerForm.password}
+                    onChange={(event) => {
+                      setRegisterForm({
+                        ...registerForm,
+                        password: event.target.value,
+                      });
+                      setPasswordMismatch(
+                        registerForm.confirmPassword !== "" &&
+                          registerForm.confirmPassword !== event.target.value,
+                      );
+                    }}
+                    placeholder="Create a password"
+                    required
+                    className={`rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:ring-0 transition ${
+                      passwordMismatch
+                        ? "border-red-300 focus:border-red-400"
+                        : "focus:border-zinc-900"
+                    }`}
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label
+                    htmlFor="register-confirm-password"
+                    className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                  >
+                    Confirm password
+                  </Label>
+                  <Input
+                    id="register-confirm-password"
+                    type="password"
+                    value={registerForm.confirmPassword}
+                    onChange={(event) => {
+                      setRegisterForm({
+                        ...registerForm,
+                        confirmPassword: event.target.value,
+                      });
+                      setPasswordMismatch(
+                        registerForm.password !== event.target.value,
+                      );
+                    }}
+                    placeholder="Re-enter password"
+                    required
+                    className={`rounded-xl border-zinc-200 px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:ring-0 transition ${
+                      passwordMismatch
+                        ? "border-red-300 focus:border-red-400"
+                        : "focus:border-zinc-900"
+                    }`}
+                  />
+                </div>
               </div>
+
+              {passwordMismatch && (
+                <p className="text-xs text-red-500">Passwords do not match.</p>
+              )}
+
+              <p className="text-xs text-zinc-400">
+                At least 8 characters with a letter, number, and special
+                character.
+              </p>
 
               <Button
                 type="submit"
-                className="mt-1 w-full rounded-xl py-3 text-sm font-medium transition hover:-translate-y-0.5"
+                disabled={passwordMismatch}
+                className="mt-1 w-full rounded-xl py-3 text-sm font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Create account
               </Button>
