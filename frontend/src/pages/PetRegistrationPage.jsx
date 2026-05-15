@@ -282,237 +282,270 @@ export default function PetRegistrationPage() {
         </p>
       </div>
 
-      {error ? (
+      {error && (
         <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
         </div>
-      ) : null}
+      )}
 
-      <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
-        {/* Name & Breed */}
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="petName"
-              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-            >
-              Pet name
-            </label>
-            <Input
-              id="petName"
-              value={form.petName}
-              onChange={(event) =>
-                setForm({...form, petName: event.target.value})
-              }
-              placeholder="Coco"
-              required
-              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
-            />
+      <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+        <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+          {/* ── Left: Photo ── */}
+          <div className="flex flex-col gap-3">
+            <div className="aspect-square w-full overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50">
+              {form.photoUrl ? (
+                <img
+                  src={form.photoUrl}
+                  alt="Pet preview"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-zinc-300">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-10 w-10"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 7.5A1.5 1.5 0 014.5 6h.75A1.5 1.5 0 007.5 4.5h9A1.5 1.5 0 0118 6h.75A1.5 1.5 0 0121 7.5v10A1.5 1.5 0 0119.5 19h-15A1.5 1.5 0 013 17.5v-10z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 11.25a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  <p className="text-xs font-medium">No photo yet</p>
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="photoFile"
+                className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+              >
+                Pet photo
+              </label>
+              <Input
+                id="photoFile"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoPick}
+                className="rounded-xl border-zinc-200 bg-white px-3.5 py-2 text-sm text-zinc-500 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-3 file:py-1 file:text-xs file:font-medium file:text-zinc-700 transition focus:border-zinc-900 focus:ring-0"
+              />
+              <p className="text-xs text-zinc-400">
+                Pick an image and we'll attach it to this pet profile.
+              </p>
+            </div>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="breed"
-              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-            >
-              Breed
-            </label>
-            <Input
-              id="breed"
-              value={form.breed}
-              onChange={(event) =>
-                setForm({...form, breed: event.target.value})
-              }
-              placeholder="Mixed Breed"
-              required
-              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
-            />
+
+          {/* ── Right: Basic details ── */}
+          <div className="flex flex-col gap-4">
+            {/* Name & Breed */}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="petName"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Pet name
+                </label>
+                <Input
+                  id="petName"
+                  value={form.petName}
+                  onChange={(event) =>
+                    setForm({...form, petName: event.target.value})
+                  }
+                  placeholder="Coco"
+                  required
+                  className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="breed"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Breed
+                </label>
+                <Input
+                  id="breed"
+                  value={form.breed}
+                  onChange={(event) =>
+                    setForm({...form, breed: event.target.value})
+                  }
+                  placeholder="Mixed Breed"
+                  required
+                  className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                />
+              </div>
+            </div>
+
+            {/* Species, Age, Weight */}
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="species"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Species
+                </label>
+                <Select
+                  id="species"
+                  value={form.species}
+                  onChange={(event) =>
+                    setForm({...form, species: event.target.value})
+                  }
+                  className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm focus:border-zinc-900 focus:ring-0 transition"
+                >
+                  <option>Dog</option>
+                  <option>Cat</option>
+                  <option>Rabbit</option>
+                  <option>Bird</option>
+                  <option>Other</option>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="age"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Age (yrs)
+                </label>
+                <Input
+                  id="age"
+                  type="number"
+                  min="0"
+                  value={form.age}
+                  onChange={(event) =>
+                    setForm({...form, age: event.target.value})
+                  }
+                  placeholder="2"
+                  required
+                  className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="weight"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Weight (kg)
+                </label>
+                <Input
+                  id="weight"
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={form.weight}
+                  onChange={(event) =>
+                    setForm({...form, weight: event.target.value})
+                  }
+                  placeholder="12.5"
+                  className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                />
+              </div>
+            </div>
+
+            {/* Size & Temperament */}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="size"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Size
+                </label>
+                <Select
+                  id="size"
+                  value={form.size}
+                  onChange={(event) =>
+                    setForm({...form, size: event.target.value})
+                  }
+                  className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm focus:border-zinc-900 focus:ring-0 transition"
+                >
+                  <option>Small</option>
+                  <option>Medium</option>
+                  <option>Large</option>
+                </Select>
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="temperament"
+                  className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                >
+                  Temperament
+                </label>
+                <Select
+                  id="temperament"
+                  value={form.temperament}
+                  onChange={(event) =>
+                    setForm({...form, temperament: event.target.value})
+                  }
+                  className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm focus:border-zinc-900 focus:ring-0 transition"
+                >
+                  <option>Calm</option>
+                  <option>Playful</option>
+                  <option>Gentle</option>
+                  <option>Active</option>
+                </Select>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="description"
+                className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+              >
+                Description
+              </label>
+              <Textarea
+                id="description"
+                value={form.description}
+                onChange={(event) =>
+                  setForm({...form, description: event.target.value})
+                }
+                placeholder="Tell us about the pet's personality, habits, and care needs."
+                required
+                className="min-h-[100px] resize-y rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+              />
+            </div>
+
+            {/* Registration reason */}
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="reason"
+                className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+              >
+                Registration reason
+              </label>
+              <Select
+                id="reason"
+                value={form.registrationReason}
+                onChange={(event) =>
+                  setForm({...form, registrationReason: event.target.value})
+                }
+                className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm focus:border-zinc-900 focus:ring-0 transition"
+              >
+                <option value="adoption">For Adoption</option>
+                <option value="personal_use">For Personal Use</option>
+                <option value="breeding">Breeding</option>
+                <option value="rescue">Rescue</option>
+              </Select>
+            </div>
           </div>
         </div>
 
-        {/* Species, Age, Weight */}
-        <div className="grid gap-3 sm:grid-cols-3">
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="species"
-              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-            >
-              Species
-            </label>
-            <Select
-              id="species"
-              value={form.species}
-              onChange={(event) =>
-                setForm({...form, species: event.target.value})
-              }
-              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 transition"
-            >
-              <option>Dog</option>
-              <option>Cat</option>
-              <option>Rabbit</option>
-              <option>Bird</option>
-              <option>Other</option>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="age"
-              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-            >
-              Age
-            </label>
-            <Input
-              id="age"
-              type="number"
-              min="0"
-              value={form.age}
-              onChange={(event) => setForm({...form, age: event.target.value})}
-              placeholder="2"
-              required
-              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="weight"
-              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-            >
-              Weight (kg)
-            </label>
-            <Input
-              id="weight"
-              type="number"
-              min="0"
-              step="0.1"
-              value={form.weight}
-              onChange={(event) =>
-                setForm({...form, weight: event.target.value})
-              }
-              placeholder="12.5"
-              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="size"
-              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-            >
-              Size
-            </label>
-            <Select
-              id="size"
-              value={form.size}
-              onChange={(event) => setForm({...form, size: event.target.value})}
-              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 transition"
-            >
-              <option>Small</option>
-              <option>Medium</option>
-              <option>Large</option>
-            </Select>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="temperament"
-              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-            >
-              Temperament
-            </label>
-            <Select
-              id="temperament"
-              value={form.temperament}
-              onChange={(event) =>
-                setForm({...form, temperament: event.target.value})
-              }
-              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 transition"
-            >
-              <option>Calm</option>
-              <option>Playful</option>
-              <option>Gentle</option>
-              <option>Active</option>
-            </Select>
-          </div>
-        </div>
-
-        {/* Temperament & Photo */}
-        <div className="grid gap-3 sm:grid-cols-2">
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="temperament"
-              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-            >
-              Temperament
-            </label>
-            <Select
-              id="temperament"
-              value={form.temperament}
-              onChange={(event) =>
-                setForm({...form, temperament: event.target.value})
-              }
-              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 transition"
-            >
-              <option>Calm</option>
-              <option>Playful</option>
-              <option>Gentle</option>
-              <option>Active</option>
-            </Select>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label
-              htmlFor="photoFile"
-              className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-            >
-              Pet photo
-            </label>
-            <Input
-              id="photoFile"
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoPick}
-              className="rounded-xl border-zinc-200 bg-white px-3.5 py-2 text-sm text-zinc-500 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-100 file:px-3 file:py-1 file:text-xs file:font-medium file:text-zinc-700 transition focus:border-zinc-900 focus:ring-0"
-            />
-            <p className="text-xs text-zinc-400">
-              Pick an image and we'll attach it to this pet profile.
-            </p>
-          </div>
-        </div>
-
-        {/* Photo preview */}
-        {form.photoUrl ? (
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50">
-            <img
-              src={form.photoUrl}
-              alt="Pet preview"
-              className="h-48 w-full object-cover"
-            />
-          </div>
-        ) : null}
-
-        {/* Description */}
-        <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="description"
-            className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-          >
-            Description
-          </label>
-          <Textarea
-            id="description"
-            value={form.description}
-            onChange={(event) =>
-              setForm({...form, description: event.target.value})
-            }
-            placeholder="Tell us about the pet's personality, habits, and care needs."
-            required
-            className="min-h-[80px] resize-y rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
-          />
-        </div>
-
-        {/* Medical histories */}
+        {/* ── Medical histories ── */}
         <div className="rounded-2xl border border-zinc-200 bg-white p-5">
-          <div className="flex items-center justify-between gap-3 mb-4">
+          <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-semibold text-zinc-900">
                 Medical histories
@@ -534,88 +567,96 @@ export default function PetRegistrationPage() {
             {form.medicalHistories.map((entry, index) => (
               <div
                 key={`medical-${index}`}
-                className="rounded-2xl border border-zinc-100 bg-zinc-50 p-4"
+                className="rounded-xl border border-zinc-100 bg-zinc-50 p-4"
               >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-                  <div className="flex-1">
-                    <Label htmlFor={`illness-${index}`}>Illness</Label>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`illness-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
+                      Illness
+                    </label>
                     <Input
                       id={`illness-${index}`}
                       value={entry.illness}
-                      onChange={(event) =>
-                        updateMedicalHistory(
-                          index,
-                          "illness",
-                          event.target.value,
-                        )
+                      onChange={(e) =>
+                        updateMedicalHistory(index, "illness", e.target.value)
                       }
                       placeholder="Skin allergy"
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
-                  <div className="flex-1">
-                    <Label htmlFor={`illness-date-${index}`}>When</Label>
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`illness-date-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
+                      When
+                    </label>
                     <Input
                       id={`illness-date-${index}`}
                       type="date"
                       value={entry.date}
-                      onChange={(event) =>
-                        updateMedicalHistory(index, "date", event.target.value)
+                      onChange={(e) =>
+                        updateMedicalHistory(index, "date", e.target.value)
                       }
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
-                  <div className="flex items-center gap-2">
+                </div>
+                <div className="mt-3 flex flex-col gap-1.5">
+                  <label
+                    htmlFor={`illness-notes-${index}`}
+                    className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                  >
+                    Notes
+                  </label>
+                  <Textarea
+                    id={`illness-notes-${index}`}
+                    value={entry.notes}
+                    onChange={(e) =>
+                      updateMedicalHistory(index, "notes", e.target.value)
+                    }
+                    placeholder="Notes for the veterinarian"
+                    className="min-h-[64px] resize-y rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                  />
+                </div>
+                <div className="mt-3 flex items-center justify-between">
+                  <label className="flex items-center gap-2 text-sm text-zinc-600 cursor-pointer">
                     <input
                       id={`stillPresent-${index}`}
                       type="checkbox"
                       checked={entry.stillPresent}
-                      onChange={(event) =>
+                      onChange={(e) =>
                         updateMedicalHistory(
                           index,
                           "stillPresent",
-                          event.target.checked,
+                          e.target.checked,
                         )
                       }
-                      className="h-4 w-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500"
+                      className="h-4 w-4 rounded border-zinc-300"
                     />
-                    <label
-                      htmlFor={`stillPresent-${index}`}
-                      className="text-sm text-zinc-600"
+                    Ongoing
+                  </label>
+                  {form.medicalHistories.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeMedicalHistory(index)}
+                      className="text-xs font-medium text-red-500 hover:text-red-600 transition"
                     >
-                      Ongoing
-                    </label>
-                  </div>
+                      Remove
+                    </button>
+                  )}
                 </div>
-                <div className="mt-3">
-                  <Label htmlFor={`illness-notes-${index}`}>Notes</Label>
-                  <Textarea
-                    id={`illness-notes-${index}`}
-                    value={entry.notes}
-                    onChange={(event) =>
-                      updateMedicalHistory(index, "notes", event.target.value)
-                    }
-                    placeholder="Notes for the veterinarian"
-                    className="mt-1"
-                  />
-                </div>
-                {form.medicalHistories.length > 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => removeMedicalHistory(index)}
-                    className="mt-3 text-xs font-medium text-rose-600 hover:text-rose-700"
-                  >
-                    Remove history
-                  </button>
-                ) : null}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Medication histories */}
+        {/* ── Medication histories ── */}
         <div className="rounded-2xl border border-zinc-200 bg-white p-5">
-          <div className="flex items-center justify-between gap-3 mb-4">
+          <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-semibold text-zinc-900">
                 Medication histories
@@ -637,130 +678,144 @@ export default function PetRegistrationPage() {
             {form.medicationHistories.map((entry, index) => (
               <div
                 key={`medication-${index}`}
-                className="rounded-2xl border border-zinc-100 bg-zinc-50 p-4"
+                className="rounded-xl border border-zinc-100 bg-zinc-50 p-4"
               >
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <Label htmlFor={`medication-${index}`}>Medication</Label>
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`medication-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
+                      Medication
+                    </label>
                     <Input
                       id={`medication-${index}`}
                       value={entry.medication}
-                      onChange={(event) =>
+                      onChange={(e) =>
                         updateMedicationHistory(
                           index,
                           "medication",
-                          event.target.value,
+                          e.target.value,
                         )
                       }
                       placeholder="Flea prevention"
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor={`dosage-${index}`}>Dosage</Label>
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`dosage-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
+                      Dosage
+                    </label>
                     <Input
                       id={`dosage-${index}`}
                       value={entry.dosage}
-                      onChange={(event) =>
-                        updateMedicationHistory(
-                          index,
-                          "dosage",
-                          event.target.value,
-                        )
+                      onChange={(e) =>
+                        updateMedicationHistory(index, "dosage", e.target.value)
                       }
                       placeholder="5 mg"
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-3 mt-3">
-                  <div>
-                    <Label htmlFor={`startDate-${index}`}>Start date</Label>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`startDate-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
+                      Start date
+                    </label>
                     <Input
                       id={`startDate-${index}`}
                       type="date"
                       value={entry.startDate}
-                      onChange={(event) =>
+                      onChange={(e) =>
                         updateMedicationHistory(
                           index,
                           "startDate",
-                          event.target.value,
+                          e.target.value,
                         )
                       }
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor={`endDate-${index}`}>End date</Label>
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`endDate-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
+                      End date
+                    </label>
                     <Input
                       id={`endDate-${index}`}
                       type="date"
                       value={entry.endDate}
-                      onChange={(event) =>
+                      onChange={(e) =>
                         updateMedicationHistory(
                           index,
                           "endDate",
-                          event.target.value,
+                          e.target.value,
                         )
                       }
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
-                  <div className="flex items-center gap-2 pt-6">
+                </div>
+                <div className="mt-3 flex flex-col gap-1.5">
+                  <label
+                    htmlFor={`medication-notes-${index}`}
+                    className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                  >
+                    Notes
+                  </label>
+                  <Textarea
+                    id={`medication-notes-${index}`}
+                    value={entry.notes}
+                    onChange={(e) =>
+                      updateMedicationHistory(index, "notes", e.target.value)
+                    }
+                    placeholder="Medication instructions"
+                    className="min-h-[64px] resize-y rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
+                  />
+                </div>
+                <div className="mt-3 flex items-center justify-between">
+                  <label className="flex items-center gap-2 text-sm text-zinc-600 cursor-pointer">
                     <input
                       id={`ongoing-${index}`}
                       type="checkbox"
                       checked={entry.ongoing}
-                      onChange={(event) =>
+                      onChange={(e) =>
                         updateMedicationHistory(
                           index,
                           "ongoing",
-                          event.target.checked,
+                          e.target.checked,
                         )
                       }
-                      className="h-4 w-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500"
+                      className="h-4 w-4 rounded border-zinc-300"
                     />
-                    <label
-                      htmlFor={`ongoing-${index}`}
-                      className="text-sm text-zinc-600"
+                    Ongoing
+                  </label>
+                  {form.medicationHistories.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeMedicationHistory(index)}
+                      className="text-xs font-medium text-red-500 hover:text-red-600 transition"
                     >
-                      Ongoing
-                    </label>
-                  </div>
+                      Remove
+                    </button>
+                  )}
                 </div>
-                <div className="mt-3">
-                  <Label htmlFor={`medication-notes-${index}`}>Notes</Label>
-                  <Textarea
-                    id={`medication-notes-${index}`}
-                    value={entry.notes}
-                    onChange={(event) =>
-                      updateMedicationHistory(
-                        index,
-                        "notes",
-                        event.target.value,
-                      )
-                    }
-                    placeholder="Medication instructions"
-                    className="mt-1"
-                  />
-                </div>
-                {form.medicationHistories.length > 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => removeMedicationHistory(index)}
-                    className="mt-3 text-xs font-medium text-rose-600 hover:text-rose-700"
-                  >
-                    Remove medication
-                  </button>
-                ) : null}
               </div>
             ))}
           </div>
         </div>
 
-        {/* Vaccination records */}
+        {/* ── Vaccination records ── */}
         <div className="rounded-2xl border border-zinc-200 bg-white p-5">
-          <div className="flex items-center justify-between gap-3 mb-4">
+          <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <p className="text-sm font-semibold text-zinc-900">
                 Vaccination records
@@ -781,138 +836,130 @@ export default function PetRegistrationPage() {
             {form.vaccinationRecords.map((entry, index) => (
               <div
                 key={`vaccination-${index}`}
-                className="rounded-2xl border border-zinc-100 bg-zinc-50 p-4"
+                className="rounded-xl border border-zinc-100 bg-zinc-50 p-4"
               >
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <Label htmlFor={`vaccine-${index}`}>Vaccine</Label>
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`vaccine-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
+                      Vaccine
+                    </label>
                     <Input
                       id={`vaccine-${index}`}
                       value={entry.vaccine}
-                      onChange={(event) =>
+                      onChange={(e) =>
                         updateVaccinationRecord(
                           index,
                           "vaccine",
-                          event.target.value,
+                          e.target.value,
                         )
                       }
                       placeholder="Rabies"
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor={`vac-date-${index}`}>
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`vac-date-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
                       Date administered
-                    </Label>
+                    </label>
                     <Input
                       id={`vac-date-${index}`}
                       type="date"
                       value={entry.date}
-                      onChange={(event) =>
-                        updateVaccinationRecord(
-                          index,
-                          "date",
-                          event.target.value,
-                        )
+                      onChange={(e) =>
+                        updateVaccinationRecord(index, "date", e.target.value)
                       }
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
                 </div>
-                <div className="grid gap-3 sm:grid-cols-2 mt-3">
-                  <div>
-                    <Label htmlFor={`nextDue-${index}`}>Next due date</Label>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`nextDue-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
+                      Next due date
+                    </label>
                     <Input
                       id={`nextDue-${index}`}
                       type="date"
                       value={entry.nextDue}
-                      onChange={(event) =>
+                      onChange={(e) =>
                         updateVaccinationRecord(
                           index,
                           "nextDue",
-                          event.target.value,
+                          e.target.value,
                         )
                       }
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor={`veterinarian-${index}`}>
+                  <div className="flex flex-col gap-1.5">
+                    <label
+                      htmlFor={`veterinarian-${index}`}
+                      className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                    >
                       Veterinarian
-                    </Label>
+                    </label>
                     <Input
                       id={`veterinarian-${index}`}
                       value={entry.veterinarian}
-                      onChange={(event) =>
+                      onChange={(e) =>
                         updateVaccinationRecord(
                           index,
                           "veterinarian",
-                          event.target.value,
+                          e.target.value,
                         )
                       }
                       placeholder="Dr. Smith"
-                      className="mt-1"
+                      className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
                     />
                   </div>
                 </div>
-                <div className="mt-3">
-                  <Label htmlFor={`vac-notes-${index}`}>Notes</Label>
+                <div className="mt-3 flex flex-col gap-1.5">
+                  <label
+                    htmlFor={`vac-notes-${index}`}
+                    className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
+                  >
+                    Notes
+                  </label>
                   <Textarea
                     id={`vac-notes-${index}`}
                     value={entry.notes}
-                    onChange={(event) =>
-                      updateVaccinationRecord(
-                        index,
-                        "notes",
-                        event.target.value,
-                      )
+                    onChange={(e) =>
+                      updateVaccinationRecord(index, "notes", e.target.value)
                     }
                     placeholder="Vaccination notes"
-                    className="mt-1"
+                    className="min-h-[64px] resize-y rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm placeholder:text-zinc-400 focus:border-zinc-900 focus:ring-0 transition"
                   />
                 </div>
-                {form.vaccinationRecords.length > 1 ? (
-                  <button
-                    type="button"
-                    onClick={() => removeVaccinationRecord(index)}
-                    className="mt-3 text-xs font-medium text-rose-600 hover:text-rose-700"
-                  >
-                    Remove vaccination
-                  </button>
-                ) : null}
+                {form.vaccinationRecords.length > 1 && (
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => removeVaccinationRecord(index)}
+                      className="text-xs font-medium text-red-500 hover:text-red-600 transition"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Registration reason */}
-        <div className="flex flex-col gap-1.5">
-          <label
-            htmlFor="reason"
-            className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400"
-          >
-            Registration reason
-          </label>
-          <Select
-            id="reason"
-            value={form.registrationReason}
-            onChange={(event) =>
-              setForm({...form, registrationReason: event.target.value})
-            }
-            className="rounded-xl border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 focus:border-zinc-900 focus:ring-0 transition"
-          >
-            <option value="adoption">For Adoption</option>
-            <option value="personal_use">For Personal Use</option>
-            <option value="breeding">Breeding</option>
-            <option value="rescue">Rescue</option>
-          </Select>
         </div>
 
         {/* Submit */}
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full rounded-xl py-3 text-sm font-medium text-white transition hover:-translate-y-0.5 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+          className="w-full rounded-xl py-3 text-sm font-medium transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {isSubmitting ? "Saving pet…" : "Submit pet"}
         </Button>

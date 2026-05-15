@@ -30,7 +30,6 @@ export interface IPet extends mongoose.Document {
   breed?: string;
   age?: number;
   weight?: number;
-  size?: string;
   temperament?: string;
   description?: string;
   imageUrl?: string;

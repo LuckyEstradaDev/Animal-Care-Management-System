@@ -24,10 +24,6 @@ const petSchema = new mongoose.Schema(
       type: Number,
       min: 0,
     },
-    size: {
-      type: String,
-      trim: true,
-    },
     temperament: {
       type: String,
       trim: true,
