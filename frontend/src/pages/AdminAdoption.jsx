@@ -131,7 +131,7 @@ const AdminAdoption = () => {
           </button>
 
           <button
-            onClick={() => setFilter("in_review")}
+            onClick={() => setFilter("pending_review")}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 cursor-pointer
             ${
               filter === "pending_review"
