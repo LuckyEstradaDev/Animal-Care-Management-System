@@ -16,6 +16,7 @@ import AdminPage from "./pages/AdminPage";
 import AppointmentPage from "./pages/AppointmentPage";
 import PetsListPage from "./pages/PetsListPage";
 import AdminAdoption from "./pages/AdminAdoption";
+import AdminPetRegistrationList from "./pages/AdminRegistrationList";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         </Route>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminPage />} />
+          <Route path="registration-list" element={<AdminPetRegistrationList/>} />
           <Route path="view-adoption" element={<AdminAdoption/>} />
           <Route path="appointment" element={<AppointmentPage/>} />
           <Route path="pets-list" element={<PetsListPage/>} />
