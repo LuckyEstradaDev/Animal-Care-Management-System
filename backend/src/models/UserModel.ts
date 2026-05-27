@@ -47,6 +47,11 @@ const userSchema = new mongoose.Schema(
       enum: ["pet_owner", "admin"],
       default: "pet_owner",
     },
+
+    emailNotifications: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
