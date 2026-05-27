@@ -20,13 +20,15 @@ export interface AdoptionRecord extends AdoptionPayload {
   status: "pending_review" | "approved" | "rejected";
   createdAt?: string;
   updatedAt?: string;
-  petId?: {
-    _id?: string;
-    name?: string;
-    species?: string;
-    breed?: string;
-    imageUrl?: string;
-  } | string;
+  petId?:
+    | {
+        _id?: string;
+        name?: string;
+        species?: string;
+        breed?: string;
+        imageUrl?: string;
+      }
+    | string;
 }
 
 export interface AdoptionApiResponse<T> {
@@ -57,7 +59,7 @@ export async function createAdoption(
     },
     body: JSON.stringify(payload),
   });
- 
+
   return handleResponse<AdoptionApiResponse<AdoptionRecord>>(response);
 }
 
@@ -68,15 +70,16 @@ export async function getAdoptionsByUser(
   return handleResponse<AdoptionApiResponse<AdoptionRecord[]>>(response);
 }
 
-export async function getAllAdoptions(): 
-Promise<AdoptionApiResponse<AdoptionRecord[]>> {
+export async function getAllAdoptions(): Promise<
+  AdoptionApiResponse<AdoptionRecord[]>
+> {
   const response = await fetch(API_BASE_URL);
 
   return handleResponse<AdoptionApiResponse<AdoptionRecord[]>>(response);
 }
 
 export async function deleteAdoption(
-  id: string
+  id: string,
 ): Promise<AdoptionApiResponse<AdoptionRecord>> {
   const response = await fetch(`${API_BASE_URL}/${id}`, {
     method: "DELETE",
@@ -87,7 +90,7 @@ export async function deleteAdoption(
 
 export async function updateAdoption(
   id: string,
-  payload: Partial<AdoptionPayload>
+  payload: Partial<AdoptionPayload>,
 ): Promise<AdoptionApiResponse<AdoptionRecord>> {
   const response = await fetch(`${API_BASE_URL}/${id}`, {
     method: "PUT",
